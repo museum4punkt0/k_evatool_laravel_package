@@ -9,9 +9,11 @@ class EvaluationToolSurveyElementTypeMultipleChoice
     /**
      * @return array
      */
-    public static function params(): array
+    public static function sampleData(): array
     {
-        return [];
+        return [
+
+        ];
     }
 
     public static function prepareRequest(Request $request)
