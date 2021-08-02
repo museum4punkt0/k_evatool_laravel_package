@@ -1,14 +1,16 @@
 <?php
 
-namespace Twoavy\EvaluationTool;
+namespace Twoavy\EvaluationTool\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 
 class EvaluationToolSurveyController extends Controller
 {
     public function index(): JsonResponse
     {
-        return response()->json("test");
+        $surveys = EvaluationToolSurvey::all();
+        return response()->json($surveys);
     }
 }
