@@ -1,0 +1,17 @@
+{
+    "name": "twoavy/evalutation-tool",
+    "description": "A laravel package for creating evaluations and surveys",
+    "type": "composer-plugin",
+    "autoload": {
+        "psr-4": {
+            "Twoavy\\EvalutationTool\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "2av GmbH",
+            "email": "developer@2av.de"
+        }
+    ],
+    "require": {}
+}
