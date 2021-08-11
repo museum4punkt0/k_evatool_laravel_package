@@ -3,6 +3,7 @@
 namespace Twoavy\EvaluationTool;
 
 use Illuminate\Support\ServiceProvider;
+use Twoavy\EvaluationTool\Console\Commands\TestCommand;
 
 class EvaluationToolServiceProvider extends ServiceProvider
 {
@@ -24,7 +25,20 @@ class EvaluationToolServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+//        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                TestCommand::class,
+            ]);
+
+            if (!class_exists('CreateEvaluationToolSurveysTable')) {
+                $this->publishes([
+                    __DIR__ . '/../database/migrations/create_evaluation_tool_surveys_table.php' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_surveys_table.php'),
+                    // you can add any number of migrations here
+                ], 'migrations');
+            }
+        }
 
         // publish seeder
         $this->publishes([
