@@ -12,11 +12,13 @@ class EvaluationToolSurvey extends Model
 
     protected $fillable = ["name", "description", "published", "publish_up", "publish_down"];
 
+    protected $withCount = ["survey_steps"];
+
     /**
      * @return HasMany
      */
     public function survey_steps(): HasMany
     {
-        return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep");
+        return $this->hasMany(EvaluationToolSurveyStep::class, "survey_id");
     }
 }

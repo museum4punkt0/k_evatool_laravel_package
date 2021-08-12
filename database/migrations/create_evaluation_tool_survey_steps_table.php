@@ -16,11 +16,12 @@ class CreateEvaluationToolSurveyStepsTable extends Migration
         Schema::create('evaluation_tool_survey_steps', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50)->nullable();
+            $table->unsignedBigInteger('survey_id');
             $table->unsignedBigInteger('survey_element_id');
             $table->unsignedInteger('group')->nullable();
             $table->unsignedBigInteger('next_step_id')->nullable();
             $table->json('result_based_next_steps')->nullable();
-            $table->json('time_based_steops')->nullable();
+            $table->json('time_based_steps')->nullable();
             $table->boolean('allow_skip')->default(false);
             $table->boolean('published')->default(true);
             $table->timestamp('publish_up')->nullable();
