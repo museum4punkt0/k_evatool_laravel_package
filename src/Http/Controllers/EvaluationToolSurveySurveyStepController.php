@@ -6,20 +6,19 @@ namespace Twoavy\EvaluationTool\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
-use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 
 class EvaluationToolSurveySurveyStepController extends Controller
 {
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function index(Request $request)
-	{
-		$surveys = EvaluationToolSurvey::all();
+    /**
+     * @param EvaluationToolSurvey $evaluationToolSurvey
+     * @return JsonResponse
+     */
+    public function index(EvaluationToolSurvey $survey): JsonResponse
+    {
+        return response()->json($survey);
+
+		$surveys = $evaluationToolSurvey->survey_steps();
 		return response()->json($surveys);
 	}
 }

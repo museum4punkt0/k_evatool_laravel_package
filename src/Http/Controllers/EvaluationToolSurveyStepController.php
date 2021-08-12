@@ -9,9 +9,7 @@ use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 class EvaluationToolSurveyStepController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function index(): JsonResponse
     {
