@@ -15,7 +15,17 @@ class CreateEvaluationToolSurveyLocalizationsTable extends Migration
     {
         Schema::create('evaluation_tool_survey_localizations', function (Blueprint $table) {
             $table->id();
+            $table->string('model', 50);
+            $table->text('field');
+            $table->text('value');
+            $table->unsignedBigInteger('language_id');
             $table->timestamps();
+            $table->softDeletes();
+        });
+        Schema::table('evaluation_tool_survey_localizations', function (Blueprint $table) {
+            $table->unsignedBigInteger('created_by')->nullable()->after('created_at');
+            $table->unsignedBigInteger('updated_by')->nullable()->after('updated_at');
+            $table->unsignedBigInteger('deleted_by')->nullable()->after('deleted_at');
         });
     }
 

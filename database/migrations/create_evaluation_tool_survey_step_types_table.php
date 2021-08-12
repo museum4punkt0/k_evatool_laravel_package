@@ -14,8 +14,18 @@ class CreateEvaluationToolSurveyStepTypesTable extends Migration
     public function up()
     {
         Schema::create('evaluation_tool_survey_step_types', function (Blueprint $table) {
-            $table->id();
+            $table->id();//!auto-increment?
+            $table->string('name', 50);
+            $table->string('description', 200);
+            $table->json('params');
             $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::table('evaluation_tool_survey_step_types', function (Blueprint $table) {
+            $table->unsignedBigInteger('created_by')->nullable()->after('created_at');
+            $table->unsignedBigInteger('updated_by')->nullable()->after('updated_at');
+            $table->unsignedBigInteger('deleted_by')->nullable()->after('deleted_at');
         });
     }
 
