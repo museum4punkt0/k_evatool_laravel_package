@@ -35,6 +35,7 @@ class EvaluationToolServiceProvider extends ServiceProvider
             if (!class_exists('CreateEvaluationToolSurveysTable')) {
                 $this->publishes([
                     __DIR__ . '/../database/migrations/create_evaluation_tool_surveys_table.php' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_surveys_table.php'),
+                    __DIR__ . '/../database/migrations/create_evaluation_tool_survey_steps_table.php' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_survey_steps_table.php'),
                     // you can add any number of migrations here
                 ], 'migrations');
             }

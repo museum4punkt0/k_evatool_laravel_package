@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStoreRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 
-class EvaluationToolSurveyController extends Controller
+class EvaluationToolSurveysController extends Controller
 {
     public function index(): JsonResponse
     {
