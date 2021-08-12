@@ -9,6 +9,7 @@ use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyElementController
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyStepTypeController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyStepResultController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyStepResultAssetController;
+use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyStepController;
 
 Route::prefix('api/evaluation-tool')->group(function () {
     Route::apiResource('survey-languages', EvaluationToolSurveyLanguageController::class);
@@ -19,5 +20,5 @@ Route::prefix('api/evaluation-tool')->group(function () {
     Route::apiResource('survey-step-types', EvaluationToolSurveyStepTypeController::class);
     Route::apiResource('survey-step-results', EvaluationToolSurveyStepResultController::class);
     Route::apiResource('survey-step-result-assets', EvaluationToolSurveyStepResultAssetController::class);
-    // Route::apiResource('surveys.survey-steps', EvaluationToolSurveysSurveyStepsController::class);
+    Route::apiResource('surveys.survey-steps', EvaluationToolSurveySurveyStepController::class);
 });

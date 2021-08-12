@@ -37,3 +37,7 @@ get {{BASEURL}}/survey-step-results
 ## surveyStepResultAssets
 ### get all
 get {{BASEURL}}/survey-step-result-assets
+
+## survey steps of survey
+### get all
+get {{BASEURL}}/surveys/1/survey-steps
