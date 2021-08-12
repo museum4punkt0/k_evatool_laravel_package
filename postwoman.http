@@ -1,0 +1,39 @@
+
+# https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+@BASEURL = http://localhost:8085/api/evaluation-tool
+
+
+
+## surveyLanguages
+### get all
+get {{BASEURL}}/survey-languages
+
+
+## surveyLocalizations
+### get all
+get {{BASEURL}}/survey-localizations
+
+## surveys
+### get all
+get {{BASEURL}}/surveys
+
+
+## surveySteps
+### get all
+get {{BASEURL}}/survey-steps
+
+## surveyElements
+### get all
+get {{BASEURL}}/survey-elements
+
+## surveyStepTypes
+### get all
+get {{BASEURL}}/survey-step-types
+
+## surveyStepResults
+### get all
+get {{BASEURL}}/survey-step-results
+
+## surveyStepResultAssets
+### get all
+get {{BASEURL}}/survey-step-result-assets
