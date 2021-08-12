@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 
-class EvaluationToolSurveyStepsController extends Controller
+class EvaluationToolSurveyStepController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,8 +15,7 @@ class EvaluationToolSurveyStepsController extends Controller
      */
     public function index(): JsonResponse
     {
-        $surveys = EvaluationToolSurveyStep::all();
-        return response()->json($surveys);
+        $surveySteps = EvaluationToolSurveyStep::all();
+        return response()->json($surveySteps);
     }
-
 }
