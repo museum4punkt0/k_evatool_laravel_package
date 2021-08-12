@@ -4,12 +4,12 @@
 
 
 
-## surveyLanguages
+## languages
 ### get all
 get {{BASEURL}}/survey-languages
 
 
-## surveyLocalizations
+## localizations
 ### get all
 get {{BASEURL}}/survey-localizations
 
@@ -18,26 +18,26 @@ get {{BASEURL}}/survey-localizations
 get {{BASEURL}}/surveys
 
 
-## surveySteps
+## steps
 ### get all
 get {{BASEURL}}/survey-steps
 
-## surveyElements
+## elements
 ### get all
 get {{BASEURL}}/survey-elements
 
-## surveyStepTypes
+## step types
 ### get all
 get {{BASEURL}}/survey-step-types
 
-## surveyStepResults
+## step results
 ### get all
 get {{BASEURL}}/survey-step-results
 
-## surveyStepResultAssets
+## step result assets
 ### get all
 get {{BASEURL}}/survey-step-result-assets
 
-## survey steps of survey
+## steps of one particular survey
 ### get all
 get {{BASEURL}}/surveys/1/survey-steps
