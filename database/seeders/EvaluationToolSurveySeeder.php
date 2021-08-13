@@ -1,12 +1,11 @@
 <?php
 
-namespace Twoavy\EvaluationTool\Seeders;
+namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyFactory;
-use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 
-class EvaluationToolSeeder extends Seeder
+class EvaluationToolSurveySeeder extends Seeder
 {
     /**
      * Run the database seeds.
