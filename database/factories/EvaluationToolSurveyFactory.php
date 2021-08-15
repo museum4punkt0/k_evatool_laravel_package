@@ -2,8 +2,8 @@
 
 namespace Twoavy\EvaluationTool\Factories;
 
-use App\Models\EvaluationToolSurvey;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 
 class EvaluationToolSurveyFactory extends Factory
 {

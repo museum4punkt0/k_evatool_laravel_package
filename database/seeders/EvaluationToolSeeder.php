@@ -2,7 +2,6 @@
 
 namespace Twoavy\EvaluationTool\Seeders;
 
-use Database\Seeders\EvaluationToolSurveySeeder;
 use Illuminate\Database\Seeder;
 
 class EvaluationToolSeeder extends Seeder
