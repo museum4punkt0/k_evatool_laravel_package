@@ -6,19 +6,26 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStoreRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
+use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 
 class EvaluationToolSurveyController extends Controller
 {
+    use EvaluationToolResponse;
+
     /**
+     * Retrieve a list of all surveys
+     *
      * @return JsonResponse
      */
     public function index(): JsonResponse
     {
         $surveys = EvaluationToolSurvey::all();
-        return response()->json($surveys);
+        return $this->showAll($surveys);
     }
 
     /**
+     *  Retrieve a single survey
+     *
      * @param EvaluationToolSurvey $survey
      * @return JsonResponse
      */
@@ -28,11 +35,16 @@ class EvaluationToolSurveyController extends Controller
     }
 
     /**
+     *
+     *
      * @param EvaluationToolSurveyStoreRequest $request
      * @return JsonResponse
      */
     public function store(EvaluationToolSurveyStoreRequest $request): JsonResponse
     {
-        return response()->json($request->all());
+        $survey = new EvaluationToolSurvey();
+        $survey->fill($request->all());
+        $survey->save();
+        return response()->json($survey);
     }
 }
