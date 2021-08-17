@@ -31,11 +31,11 @@ class EvaluationToolSurveyController extends Controller
      */
     public function show(EvaluationToolSurvey $survey): JsonResponse
     {
-        return response()->json($survey);
+        return $this->showOne($survey);
     }
 
     /**
-     *
+     * Stores a survey record
      *
      * @param EvaluationToolSurveyStoreRequest $request
      * @return JsonResponse
@@ -45,6 +45,38 @@ class EvaluationToolSurveyController extends Controller
         $survey = new EvaluationToolSurvey();
         $survey->fill($request->all());
         $survey->save();
-        return response()->json($survey);
+
+        return $this->showOne($survey->refresh());
+    }
+
+    /**
+     * Updates a survey record
+     *
+     * @param EvaluationToolSurveyStoreRequest $request
+     * @param EvaluationToolSurvey $survey
+     * @return JsonResponse
+     */
+    public function update(EvaluationToolSurveyStoreRequest $request, EvaluationToolSurvey $survey): JsonResponse
+    {
+        $survey->fill($request->all());
+        $survey->save();
+
+        return $this->showOne($survey->refresh());
+    }
+
+    /**
+     * Updates a survey record
+     *
+     * @param EvaluationToolSurvey $survey
+     * @return JsonResponse
+     */
+    public function destroy(EvaluationToolSurvey $survey): JsonResponse
+    {
+        if($survey->survey_steps()->count() > 0) {
+            return $this->errorResponse("cannot be deleted, has survey steps", 409);
+        }
+
+        $survey->delete();
+        return $this->showOne($survey->refresh());
     }
 }

@@ -24,7 +24,9 @@ class EvaluationToolSurveyStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => "required"
+            "name"        => "required|min:2|max:100",
+            "description" => "max:500",
+            "published"   => "boolean",
         ];
     }
 }

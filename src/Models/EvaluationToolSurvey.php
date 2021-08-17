@@ -5,11 +5,12 @@ namespace Twoavy\EvaluationTool\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyTransformer;
 
 class EvaluationToolSurvey extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     // transforms data on api responses
     public $transformer = EvaluationToolSurveyTransformer::class;
@@ -18,16 +19,30 @@ class EvaluationToolSurvey extends Model
     protected $perPage = 25;
 
     // fields that can be mass-assigned via create or fill methods
-    protected $fillable = ["name", "description", "published", "publish_up", "publish_down", "admin_layout"];
+    protected $fillable = [
+        "name",
+        "description",
+        "published",
+        "publish_up",
+        "publish_down",
+        "admin_layout"
+    ];
 
     // date fields
-    protected $dates = ["publish_up", "publish_down"];
+    protected $dates = [
+        "publish_up",
+        "publish_down"
+    ];
 
     // specially cast fields
-    protected $casts = ["admin_layout" => "object"];
+    protected $casts = [
+        "admin_layout" => "object"
+    ];
 
     // relations that are included with their element count
-    protected $withCount = ["survey_steps"];
+    protected $withCount = [
+        "survey_steps"
+    ];
 
     /**
      * @return HasMany
