@@ -6,13 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyElementTransformer;
 
 class EvaluationToolSurveyElement extends Model
 {
     use HasFactory, SoftDeletes;
 
     // transforms data on api responses
-    public $transformer = EvaluationToolSurveyStepTransformer::class;
+    public $transformer = EvaluationToolSurveyElementTransformer::class;
 
     // number of items on paginated responses
     protected $perPage = 25;
@@ -21,6 +22,8 @@ class EvaluationToolSurveyElement extends Model
     protected $fillable = [
         "name",
         "description",
+        "survey_element_type_id",
+        "params",
         "published",
         "publish_up",
         "publish_down",
@@ -35,19 +38,6 @@ class EvaluationToolSurveyElement extends Model
 
     // specially cast fields
     protected $casts = [
-        "admin_layout" => "object"
+        "params" => "json"
     ];
-
-    // relations that are included with their element count
-    protected $withCount = [
-        "survey_steps"
-    ];
-
-    /**
-     * @return HasMany
-     */
-    public function survey_steps(): HasMany
-    {
-        return $this->hasMany(EvaluationToolSurveyStep::class, "survey_id");
-    }
 }
