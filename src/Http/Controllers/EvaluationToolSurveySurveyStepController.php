@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
+use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 
 class EvaluationToolSurveySurveyStepController extends Controller
 {

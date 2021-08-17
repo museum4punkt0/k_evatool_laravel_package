@@ -65,7 +65,7 @@ class EvaluationToolSurveyController extends Controller
     }
 
     /**
-     * Updates a survey record
+     * Deletes a survey record
      *
      * @param EvaluationToolSurvey $survey
      * @return JsonResponse
