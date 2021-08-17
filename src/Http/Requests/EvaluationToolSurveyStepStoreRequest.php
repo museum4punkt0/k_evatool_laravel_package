@@ -25,7 +25,7 @@ class EvaluationToolSurveyStepStoreRequest extends FormRequest
     {
         // TODO: rules
         return [
-            // "name"        => "required|min:2|max:100",
+            "name"        => "min:2|max:100",
             // "description" => "max:500",
             // "published"   => "boolean",
         ];

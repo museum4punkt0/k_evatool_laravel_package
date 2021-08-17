@@ -10,6 +10,8 @@ use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 
 class EvaluationToolSurveyStepController extends Controller
 {
+    use EvaluationToolResponse;
+
     /**
      * Retrieve a list of all survey steps
      * 
