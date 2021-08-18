@@ -23,8 +23,7 @@ class CreateEvaluationToolSurveyStepResultsTable extends Migration
             $table->json('result_value');
             $table->unsignedBigInteger('result_language_id');
             $table->boolean('is_skipped');
-            // TODO: relative date?
-            $table->date('time');
+            $table->string('time', 16)->nullable();
             $table->json('params');
             $table->timestamps();
             $table->softDeletes();
