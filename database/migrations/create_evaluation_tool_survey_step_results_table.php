@@ -21,6 +21,7 @@ class CreateEvaluationToolSurveyStepResultsTable extends Migration
             $table->integer('changed_answer')->default(0);
             $table->uuid('session_id');
             $table->json('result_value');
+            $table->unsignedBigInteger('result_language_id');
             $table->boolean('is_skipped');
             // TODO: relative date?
             $table->date('time');

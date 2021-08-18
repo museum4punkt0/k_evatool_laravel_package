@@ -20,9 +20,19 @@ class EvaluationToolSurveyStepResult extends Model
 
     // fields that can be mass-assigned via create or fill methods
     protected $fillable = [
-        "params"
+        "survey_step_id",
+        "presented_at",
+        "answered_at",
+        "changed_answer",
+        "session_id",
+        "result_language_id",
+        "result_value",
+        "is_skipped",
+        "time",
+        "params",
     ];
     protected $casts = [
         'params' => 'json',
+        'result_value' => 'json',
     ];
 }
