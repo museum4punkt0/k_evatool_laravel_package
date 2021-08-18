@@ -18,16 +18,15 @@ class EvaluationToolSurveyLanguageSeeder extends Seeder
             'code' => 'de',
             'sub_code' => 'de_DE',
             'title' => 'Deutsch',
-            'default' => 'true',
-            'published' => 'true',
+            'default' => true,
+            'published' => true,
         ]);
-        // EvaluationToolSurveyLanguage::create([
-        //     'code' => 'en',
-        //     'sub_code' => 'en_US',
-        //     'title' => 'English',
-        //     'default' => 'false',
-        //     'published' => 'false',
-        // ]);
-
+        EvaluationToolSurveyLanguage::create([
+            'code' => 'en',
+            'sub_code' => 'en_US',
+            'title' => 'English',
+            'default' => false,
+            'published' => false,
+        ]);
     }
 }
