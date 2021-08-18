@@ -49,13 +49,15 @@ class EvaluationToolServiceProvider extends ServiceProvider
 
         // publish seeder
         $this->publishes([
-            __DIR__ . '/../database/seeders/EvaluationToolSeeder.php' => database_path('seeders/EvaluationToolSeeder.php'),
-        ]);
+            // __DIR__ . '/../database/seeders/EvaluationToolSeeder.php' => database_path('seeders/EvaluationToolSeeder.php'),
+            __DIR__ . '/../database/seeders/EvaluationToolSurveyLanguageSeeder.php' => database_path('seeders/EvaluationToolSurveyLanguageSeeder.php'),
+            __DIR__ . '/../database/seeders/EvaluationToolSurveyElementTypeSeeder.php' => database_path('seeders/EvaluationToolSurveyElementTypeSeeder.php'),
+        ], 'seeders');
 
         // publish factories
         $this->publishes([
-            __DIR__ . '/../database/factories/EvaluationToolSurveyFactory.php' => database_path('factories/EvaluationToolSurveyFactory.php'),
-        ]);
+            __DIR__ . '/../database/factories/EvaluationToolSurveyLanguageFactory.php' => database_path('factories/EvaluationToolSurveyLanguageFactory.php'),
+        ], 'factories');
     }
 
     protected function publishResources()

@@ -4,7 +4,7 @@ namespace Twoavy\EvaluationTool\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class EvaluationToolSurveyStepSeeder extends Seeder
+class EvaluationToolDemoDataSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -13,6 +13,8 @@ class EvaluationToolSurveyStepSeeder extends Seeder
      */
     public function run()
     {
-        //
+        $this->call([
+        //     EvaluationToolSurveyElementTypeSeeder::class,
+        ]);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Twoavy\EvaluationTool\Seeders;
 
 use Illuminate\Database\Seeder;
 
