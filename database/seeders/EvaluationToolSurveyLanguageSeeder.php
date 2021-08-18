@@ -14,20 +14,14 @@ class EvaluationToolSurveyLanguageSeeder extends Seeder
      */
     public function run()
     {
+        // Todo: Rework to use factory (here two factories, one for default language, one for secondary languages
         EvaluationToolSurveyLanguage::create([
             'code' => 'de',
             'sub_code' => 'de_DE',
             'title' => 'Deutsch',
-            'default' => 'true',
-            'published' => 'true',
+            'default' => false,
+            'published' => true,
         ]);
-        // EvaluationToolSurveyLanguage::create([
-        //     'code' => 'en',
-        //     'sub_code' => 'en_US',
-        //     'title' => 'English',
-        //     'default' => 'false',
-        //     'published' => 'false',
-        // ]);
 
     }
 }

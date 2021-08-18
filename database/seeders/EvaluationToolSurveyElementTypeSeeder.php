@@ -14,10 +14,11 @@ class EvaluationToolSurveyElementTypeSeeder extends Seeder
      */
     public function run()
     {
+        // Todo: Rework to use factory
         EvaluationToolSurveyElementType::create([
             'name' => 'test element type',
-            'description' => 'testdescription',
-            'params' => '{}',
+            'description' => 'test description',
+            'params' => new \StdClass,
         ]);
     }
 }

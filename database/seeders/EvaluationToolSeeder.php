@@ -14,8 +14,10 @@ class EvaluationToolSeeder extends Seeder
     public function run()
     {
         $this->call([
+            EvaluationToolSurveySeeder::class,
             EvaluationToolSurveyLanguageSeeder::class,
             EvaluationToolSurveyElementTypeSeeder::class,
+            EvaluationToolSurveyLocalizationSeeder::class
         ]);
     }
 }
