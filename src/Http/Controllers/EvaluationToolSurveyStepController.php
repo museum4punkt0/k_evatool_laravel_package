@@ -20,6 +20,7 @@ class EvaluationToolSurveyStepController extends Controller
     public function index(): JsonResponse
     {
         $surveySteps = EvaluationToolSurveyStep::all();
+        // return $this->showAll($surveySteps);
         return response()->json($surveySteps);
     }
 
