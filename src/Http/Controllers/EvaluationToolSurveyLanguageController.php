@@ -14,13 +14,13 @@ class EvaluationToolSurveyLanguageController extends Controller
 
     /**
      * Retrieve a list of all survey languages
-     * 
+     *
      * @return JsonResponse
      */
     public function index(): JsonResponse
     {
         $surveyLanguages = EvaluationToolSurveyLanguage::all();
-        return response()->json($surveyLanguages);
+        return $this->showAll($surveyLanguages);
     }
 
     /**

@@ -21,7 +21,7 @@ class EvaluationToolSurveyElementController extends Controller
     public function index(): JsonResponse
     {
         $surveyElements = EvaluationToolSurveyElement::all();
-        return response()->json($surveyElements);
+        return $this->showAll($surveyElements);
     }
      /**
      *  Retrieve a single survey element

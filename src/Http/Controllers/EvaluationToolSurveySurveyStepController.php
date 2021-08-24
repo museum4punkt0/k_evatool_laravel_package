@@ -9,6 +9,7 @@ use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 
 class EvaluationToolSurveySurveyStepController extends Controller
 {
+    use EvaluationToolResponse;
     /**
      * @param EvaluationToolSurvey $survey
      * @return JsonResponse
@@ -16,6 +17,6 @@ class EvaluationToolSurveySurveyStepController extends Controller
     public function index(EvaluationToolSurvey $survey): JsonResponse
     {
         $surveySteps = $survey->survey_steps;
-        return response()->json($surveySteps);
+        return $this->showAll($surveySteps);
     }
 }

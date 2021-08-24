@@ -15,13 +15,13 @@ class EvaluationToolSurveyLocalizationController extends Controller
     use EvaluationToolResponse;
     /**
      *  Retrieve a list of all survey localizations
-     * 
+     *
      * @return JsonResponse
      */
     public function index(): JsonResponse
     {
         $surveyLocalizations = EvaluationToolSurveyLocalization::all();
-        return response()->json($surveyLocalizations);
+        return $this->showAll($surveyLocalizations);
     }
 
     /**

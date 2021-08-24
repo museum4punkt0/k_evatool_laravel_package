@@ -14,14 +14,14 @@ class EvaluationToolSurveyStepController extends Controller
 
     /**
      * Retrieve a list of all survey steps
-     * 
+     *
      * @return JsonResponse
      */
     public function index(): JsonResponse
     {
         $surveySteps = EvaluationToolSurveyStep::all();
         // return $this->showAll($surveySteps);
-        return response()->json($surveySteps);
+        return $this->showAll($surveySteps);
     }
 
     /**

@@ -14,13 +14,13 @@ class EvaluationToolSurveyElementTypeController extends Controller
 
     /**
      * Retrieve a list of all survey element types
-     * 
+     *
      * @return JsonResponse
      */
     public function index(): JsonResponse
     {
         $surveyElementTypes = EvaluationToolSurveyElementType::all();
-        return response()->json($surveyElementTypes);
+        return $this->showAll($surveyElementTypes);
     }
 
 

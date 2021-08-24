@@ -13,13 +13,13 @@ class EvaluationToolSurveyStepResultAssetController extends Controller
     use EvaluationToolResponse;
     /**
      *  Retrieve a list of all survey step result assets
-     * 
+     *
      * @return JsonResponse
      */
     public function index(): JsonResponse
     {
         $surveyStepResultAssets = EvaluationToolSurveyStepResultAsset::all();
-        return response()->json($surveyStepResultAssets);
+        return $this->showAll($surveyStepResultAssets);
     }
 
     /**
