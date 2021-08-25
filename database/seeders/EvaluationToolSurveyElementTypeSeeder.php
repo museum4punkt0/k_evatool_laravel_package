@@ -3,7 +3,8 @@
 namespace Twoavy\EvaluationTool\Seeders;
 
 use Illuminate\Database\Seeder;
-use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElementType;
+use PhpParser\Node\Expr\Cast\Object_;
+use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyElementTypeFactory;
 
 class EvaluationToolSurveyElementTypeSeeder extends Seeder
 {
@@ -14,11 +15,14 @@ class EvaluationToolSurveyElementTypeSeeder extends Seeder
      */
     public function run()
     {
-        // Todo: Rework to use factory
+        EvaluationToolSurveyElementTypeFactory::times(1)->binaryQuestion()->create();
+        EvaluationToolSurveyElementTypeFactory::times(1)->multipleChoiceQuestion()->create();
+/*
         EvaluationToolSurveyElementType::create([
             'name' => 'test element type',
             'description' => 'test description',
             'params' => new \StdClass,
         ]);
+*/
     }
 }
