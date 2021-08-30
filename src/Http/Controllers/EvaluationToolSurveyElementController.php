@@ -4,7 +4,6 @@ namespace Twoavy\EvaluationTool\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyElementStoreRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;

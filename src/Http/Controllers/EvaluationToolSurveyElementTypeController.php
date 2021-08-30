@@ -4,6 +4,8 @@ namespace Twoavy\EvaluationTool\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyElementTypeFactory;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyElementTypeStoreRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElementType;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
@@ -54,7 +56,7 @@ class EvaluationToolSurveyElementTypeController extends Controller
      * Updates a survey element type record
      *
      * @param EvaluationToolSurveyElementTypeStoreRequest $request
-     * @param EvaluationToolSurvey $survey
+     * @param EvaluationToolSurveyElementType $surveyElementType
      * @return JsonResponse
      */
     public function update(EvaluationToolSurveyElementTypeStoreRequest $request, EvaluationToolSurveyElementType $surveyElementType): JsonResponse
@@ -80,5 +82,12 @@ class EvaluationToolSurveyElementTypeController extends Controller
 
         $surveyElementType->delete();
         return $this->showOne($surveyElementType->refresh());
+    }
+
+    public static function seedSurveyElementTypes()
+    {
+        DB::table("evaluation_tool_survey_element_types")->truncate();
+        EvaluationToolSurveyElementTypeFactory::times(1)->binaryQuestion()->create();
+        EvaluationToolSurveyElementTypeFactory::times(1)->multipleChoiceQuestion()->create();
     }
 }

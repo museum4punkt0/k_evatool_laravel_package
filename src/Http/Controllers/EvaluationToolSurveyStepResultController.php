@@ -5,7 +5,6 @@ namespace Twoavy\EvaluationTool\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStepResultStoreRequest;
-use Illuminate\Http\Request;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 
@@ -27,7 +26,7 @@ class EvaluationToolSurveyStepResultController extends Controller
     /**
      *  Retrieve a single survey step result
      *
-     * @param EvaluationToolSurveyStepResultAsset $surveyStepResult
+     * @param EvaluationToolSurveyStepResult $surveyStepResult
      * @return JsonResponse
      */
     public function show(EvaluationToolSurveyStepResult $surveyStepResult): JsonResponse
@@ -38,7 +37,7 @@ class EvaluationToolSurveyStepResultController extends Controller
     /**
      * Stores a survey step result record
      *
-     * @param EvaluationToolSurveyStepStoreRequest $request
+     * @param EvaluationToolSurveyStepResultStoreRequest $request
      * @return JsonResponse
      */
     public function store(EvaluationToolSurveyStepResultStoreRequest $request): JsonResponse
@@ -68,7 +67,7 @@ class EvaluationToolSurveyStepResultController extends Controller
     /**
      * Deletes a survey step result record
      *
-     * @param EvaluationToolSurveyStepResult $surveyStepResultAsset
+     * @param EvaluationToolSurveyStepResult $surveyStepResult
      * @return JsonResponse
      */
     public function destroy(EvaluationToolSurveyStepResult $surveyStepResult): JsonResponse

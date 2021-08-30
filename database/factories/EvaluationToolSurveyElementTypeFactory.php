@@ -3,6 +3,7 @@
 namespace Twoavy\EvaluationTool\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElementType;
 
 class EvaluationToolSurveyElementTypeFactory extends Factory
@@ -21,33 +22,29 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
      */
     public function definition(): array
     {
-        return [
-            "name"        => ucfirst($this->faker->word),
-            "description" => $this->faker->boolean() ? ucfirst((string)$this->faker->words($this->faker->numberBetween(1, 10), true)) : null,
-            'params' => new \StdClass,
-        ];
+        return [];
     }
 
     public function binaryQuestion(): EvaluationToolSurveyElementTypeFactory
     {
-        return $this->state(function (array $attributes) {
+        return $this->state(function () {
             return [
-
-                'name' => 'binary Question',
-                'description' => 'binary Question description',
-                'params' => new \StdClass,
+                'id'          => 1,
+                'name'        => 'Binary Question',
+                'description' => 'Binary Question description',
+                'params'      => new StdClass,
             ];
         });
     }
 
     public function multipleChoiceQuestion(): EvaluationToolSurveyElementTypeFactory
     {
-        return $this->state(function (array $attributes) {
+        return $this->state(function () {
             return [
-
-                'name' => 'multiple Choice Question',
-                'description' => 'multiple Choice Question description',
-                'params' => new \StdClass,
+                'id'          => 2,
+                'name'        => 'Multiple Choice Question',
+                'description' => 'Multiple Choice Question description',
+                'params'      => new StdClass,
             ];
         });
     }

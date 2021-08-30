@@ -4,6 +4,7 @@ namespace Twoavy\EvaluationTool;
 
 use Illuminate\Support\ServiceProvider;
 use Twoavy\EvaluationTool\Console\Commands\TestCommand;
+use Twoavy\EvaluationTool\Console\Commands\TypesCommand;
 
 class EvaluationToolServiceProvider extends ServiceProvider
 {
@@ -30,6 +31,7 @@ class EvaluationToolServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 TestCommand::class,
+                TypesCommand::class
             ]);
 
             if (!class_exists('CreateEvaluationToolSurveysTable')) {

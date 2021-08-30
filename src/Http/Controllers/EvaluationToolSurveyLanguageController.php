@@ -37,7 +37,7 @@ class EvaluationToolSurveyLanguageController extends Controller
     /**
      * Stores a survey language record
      *
-     * @param EvaluationToolSurveyStoreRequest $request
+     * @param EvaluationToolSurveyLanguageStoreRequest $request
      * @return JsonResponse
      */
     public function store(EvaluationToolSurveyLanguageStoreRequest $request): JsonResponse

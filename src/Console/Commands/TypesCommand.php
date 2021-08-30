@@ -3,22 +3,23 @@
 namespace Twoavy\EvaluationTool\Console\Commands;
 
 use Illuminate\Console\Command;
+use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyElementTypeController;
 
-class TestCommand extends Command
+class TypesCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'evaluation:test';
+    protected $signature = 'evaluation:types';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Evaluation tool test command';
+    protected $description = 'Evaluation tool seed types command';
 
     /**
      * Create a new command instance.
@@ -37,7 +38,7 @@ class TestCommand extends Command
      */
     public function handle(): int
     {
-        $this->info("Evaluation tool test successful");
+        EvaluationToolSurveyElementTypeController::seedSurveyElementTypes();
         return 0;
     }
 }

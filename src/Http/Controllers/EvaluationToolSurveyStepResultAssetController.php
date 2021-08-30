@@ -36,7 +36,7 @@ class EvaluationToolSurveyStepResultAssetController extends Controller
     /**
      * Stores a survey step result asset record
      *
-     * @param EvaluationToolSurveyStepStoreRequest $request
+     * @param EvaluationToolSurveyStepResultAssetStoreRequest $request
      * @return JsonResponse
      */
     public function store(EvaluationToolSurveyStepResultAssetStoreRequest $request): JsonResponse
