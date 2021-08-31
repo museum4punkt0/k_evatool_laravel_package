@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Validation\Rule;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyTransformer;
 
 class EvaluationToolSurvey extends Model
@@ -50,5 +51,16 @@ class EvaluationToolSurvey extends Model
     public function survey_steps(): HasMany
     {
         return $this->hasMany(EvaluationToolSurveyStep::class, "survey_id");
+    }
+
+    public static function rules(): array
+    {
+        return [
+            "name"                   => "required|min:2|max:100",
+            "survey_element_type_id" => [
+                "required",
+                Rule::exists("evaluation_tool_survey_element_types", "id")
+            ]
+        ];
     }
 }

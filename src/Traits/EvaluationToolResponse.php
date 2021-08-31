@@ -66,6 +66,7 @@ trait EvaluationToolResponse
 
     protected function showAll(Collection $collection, $code = 200, $transformerOverride = false, $paginate = true): JsonResponse
     {
+        // handle empty collection
         if ($collection->isEmpty()) {
             return $this->successResponse([
                 "data" => $collection,

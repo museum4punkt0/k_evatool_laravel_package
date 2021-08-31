@@ -20,7 +20,7 @@ class EvaluationToolSurveyController extends Controller
     public function index(): JsonResponse
     {
         $surveys = EvaluationToolSurvey::all();
-         return $this->showAll($surveys);
+        return $this->showAll($surveys);
     }
 
     /**
@@ -72,7 +72,7 @@ class EvaluationToolSurveyController extends Controller
      */
     public function destroy(EvaluationToolSurvey $survey): JsonResponse
     {
-        if($survey->survey_steps()->count() > 0) {
+        if ($survey->survey_steps()->count() > 0) {
             return $this->errorResponse("cannot be deleted, has survey steps", 409);
         }
 

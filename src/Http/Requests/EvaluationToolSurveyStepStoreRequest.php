@@ -3,6 +3,8 @@
 namespace Twoavy\EvaluationTool\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 
 class EvaluationToolSurveyStepStoreRequest extends FormRequest
 {
@@ -23,11 +25,6 @@ class EvaluationToolSurveyStepStoreRequest extends FormRequest
      */
     public function rules(): array
     {
-        // TODO: rules
-        return [
-            "name"        => "min:2|max:100",
-            // "description" => "max:500",
-            // "published"   => "boolean",
-        ];
+        return EvaluationToolSurvey::rules();
     }
 }

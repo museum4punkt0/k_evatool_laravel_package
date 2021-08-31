@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElementType;
+use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeMultipleChoice;
 
 class EvaluationToolSurveyElementTypeFactory extends Factory
 {
@@ -44,7 +45,7 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
                 'id'          => 2,
                 'name'        => 'Multiple Choice Question',
                 'description' => 'Multiple Choice Question description',
-                'params'      => new StdClass,
+                'params'      => EvaluationToolSurveyElementTypeMultipleChoice::params(),
             ];
         });
     }

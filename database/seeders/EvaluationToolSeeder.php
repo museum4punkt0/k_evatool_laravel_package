@@ -3,6 +3,8 @@
 namespace Twoavy\EvaluationTool\Seeders;
 
 use Illuminate\Database\Seeder;
+use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyController;
+use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyElementTypeController;
 
 class EvaluationToolSeeder extends Seeder
 {
@@ -13,10 +15,11 @@ class EvaluationToolSeeder extends Seeder
      */
     public function run()
     {
+        EvaluationToolSurveyElementTypeController::seedSurveyElementTypes();
+
         $this->call([
             EvaluationToolSurveySeeder::class,
             EvaluationToolSurveyLanguageSeeder::class,
-            EvaluationToolSurveyElementTypeSeeder::class,
             EvaluationToolSurveyLocalizationSeeder::class
         ]);
     }

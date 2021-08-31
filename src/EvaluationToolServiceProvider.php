@@ -5,6 +5,8 @@ namespace Twoavy\EvaluationTool;
 use Illuminate\Support\ServiceProvider;
 use Twoavy\EvaluationTool\Console\Commands\TestCommand;
 use Twoavy\EvaluationTool\Console\Commands\TypesCommand;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
+use Twoavy\EvaluationTool\Observers\EvaluationToolSurveyObserver;
 
 class EvaluationToolServiceProvider extends ServiceProvider
 {
@@ -27,6 +29,9 @@ class EvaluationToolServiceProvider extends ServiceProvider
     {
         $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
 //        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        // observers
+        EvaluationToolSurvey::observe(EvaluationToolSurveyObserver::class);
 
         if ($this->app->runningInConsole()) {
             $this->commands([
