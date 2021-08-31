@@ -17,6 +17,7 @@ class EvaluationToolSurveyElementTypeTransformer extends TransformerAbstract
     {
         return [
             "id"               => (int)$surveyElementType->id,
+            "key"               => (string)$surveyElementType->key,
             "name"             => (string)$surveyElementType->name,
             "description"      => (string)$surveyElementType->description,
             "params"           => $surveyElementType->params,

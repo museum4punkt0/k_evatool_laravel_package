@@ -3,6 +3,8 @@
 namespace Twoavy\EvaluationTool\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
+use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeMultipleChoice;
 
 class EvaluationToolSurveyStoreRequest extends FormRequest
 {
@@ -21,7 +23,7 @@ class EvaluationToolSurveyStoreRequest extends FormRequest
      *
      * @return array
      */
-    public function rules(): array
+    public function rules(Request $request): array
     {
         return [
             "name"        => "required|min:2|max:100",

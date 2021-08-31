@@ -15,6 +15,7 @@ class CreateEvaluationToolSurveyElementTypesTable extends Migration
     {
         Schema::create('evaluation_tool_survey_element_types', function (Blueprint $table) {
             $table->id();//!auto-increment?
+            $table->string('key', 50)->unique()->key();
             $table->string('name', 50);
             $table->string('description', 200);
             $table->json('params');

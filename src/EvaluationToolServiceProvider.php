@@ -6,7 +6,9 @@ use Illuminate\Support\ServiceProvider;
 use Twoavy\EvaluationTool\Console\Commands\TestCommand;
 use Twoavy\EvaluationTool\Console\Commands\TypesCommand;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Observers\EvaluationToolSurveyObserver;
+use Twoavy\EvaluationTool\Observers\EvaluationToolSurveyElementObserver;
 
 class EvaluationToolServiceProvider extends ServiceProvider
 {
@@ -32,6 +34,7 @@ class EvaluationToolServiceProvider extends ServiceProvider
 
         // observers
         EvaluationToolSurvey::observe(EvaluationToolSurveyObserver::class);
+        EvaluationToolSurveyElement::observe(EvaluationToolSurveyElementObserver::class);
 
         if ($this->app->runningInConsole()) {
             $this->commands([
