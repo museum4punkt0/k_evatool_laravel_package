@@ -1,9 +1,9 @@
 <?php
 
-namespace Database\Factories;
+namespace Twoavy\EvaluationTool\Factories;
 
-use App\Models\EvaluationToolSurveyLocalization;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLocalization;
 
 class EvaluationToolSurveyLocalizationFactory extends Factory
 {
@@ -19,7 +19,7 @@ class EvaluationToolSurveyLocalizationFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
             //

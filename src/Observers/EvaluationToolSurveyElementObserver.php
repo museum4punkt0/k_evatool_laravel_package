@@ -8,16 +8,20 @@ use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElementType;
 class EvaluationToolSurveyElementObserver
 {
     /**
-     * @param EvaluationToolSurvey $element
+     * @param EvaluationToolSurveyElement $element
      * @return void
      */
     public function creating(EvaluationToolSurveyElement $element)
     {
-        $element->survey_element_type_id = EvaluationToolSurveyElementType::where('key', request()->survey_element_type)->first()->id;
+        if (request()->has("survey_element_type")) {
+            $element->survey_element_type_id = EvaluationToolSurveyElementType::where('key', request()->survey_element_type)
+                ->first()
+                ->id;
+        }
     }
 
     /**
-     * @param EvaluationToolSurvey $element
+     * @param EvaluationToolSurveyElement $element
      * @return void
      */
     public function created(EvaluationToolSurveyElement $element)

@@ -3,27 +3,25 @@
 namespace Twoavy\EvaluationTool\SurveyElementTypes;
 
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
-use stdClass;
-use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 
 class EvaluationToolSurveyElementTypeMultipleChoice
 {
     /**
-     * @return stdClass
+     * @return array
      */
     public static function params(): array
     {
         return [];
     }
 
-    public static function prepareRequest(Request $request) {
+    public static function prepareRequest(Request $request)
+    {
         $languageKeys = [];
-        if($request->has('params.options')){
-            if(is_array($request->params['options'])){
-                foreach($request->params['options'] as $key => $value){
-                    foreach($value as $language_key => $language_value){
-                        $languageKeys[] = $language_key;
+        if ($request->has('params.options')) {
+            if (is_array($request->params['options'])) {
+                foreach ($request->params['options'] as $value) {
+                    foreach ($value as $languageKey => $languageValue) {
+                        $languageKeys[] = $languageKey;
                     }
                 }
             }
@@ -39,11 +37,11 @@ class EvaluationToolSurveyElementTypeMultipleChoice
     {
         $maxCount = 10;
         return [
-            'params.options' => ['required', 'array', 'min:1'],
-            'params.options.*' => ['array'],
-            'languageKeys.*' => ['required', 'exists:evaluation_tool_survey_languages,code'],
-            'params.min_elements' => ['integer', 'min:1', 'max:'.$maxCount],
-            'params.max_elements' => ['integer', 'min:1', 'max:'.$maxCount, 'gte:min_elements']
+            'params.options'      => ['required', 'array', 'min:1'],
+            'params.options.*'    => ['array'],
+            'languageKeys.*'      => ['required', 'exists:evaluation_tool_survey_languages,code'],
+            'params.min_elements' => ['integer', 'min:1', 'max:' . $maxCount],
+            'params.max_elements' => ['integer', 'min:1', 'max:' . $maxCount, 'gte:min_elements']
         ];
     }
 }

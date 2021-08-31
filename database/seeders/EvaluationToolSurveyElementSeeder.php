@@ -3,6 +3,7 @@
 namespace Twoavy\EvaluationTool\Seeders;
 
 use Illuminate\Database\Seeder;
+use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyElementFactory;
 
 class EvaluationToolSurveyElementSeeder extends Seeder
 {
@@ -13,6 +14,6 @@ class EvaluationToolSurveyElementSeeder extends Seeder
      */
     public function run()
     {
-        //
+        EvaluationToolSurveyElementFactory::times(250)->create();
     }
 }

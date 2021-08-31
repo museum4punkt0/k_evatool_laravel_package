@@ -25,8 +25,6 @@ class EvaluationToolSurveyObserver
     }
 
     /**
-     * Handle the Section "updated" event.
-     *
      * @return void
      */
     public function updating(EvaluationToolSurvey $survey)

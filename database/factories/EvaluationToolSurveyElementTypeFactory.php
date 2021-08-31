@@ -31,7 +31,7 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
         return $this->state(function () {
             return [
                 'id'          => 1,
-                'key'        => 'binary',
+                'key'         => 'binary',
                 'name'        => 'Binary Question',
                 'description' => 'Binary Question description',
                 'params'      => new StdClass,
@@ -44,7 +44,7 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
         return $this->state(function () {
             return [
                 'id'          => 2,
-                'key'        => 'multipleChoice',
+                'key'         => 'multipleChoice',
                 'name'        => 'Multiple Choice Question',
                 'description' => 'Multiple Choice Question description',
                 'params'      => EvaluationToolSurveyElementTypeMultipleChoice::params(),
