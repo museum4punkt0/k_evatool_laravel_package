@@ -51,7 +51,7 @@ class EvaluationToolSurveyElementTypeTest extends TestCase
         $response->assertStatus(422);
     }
 
-    public function test_create_survey_element_type_with_too_short_name()
+    public function test_create_survey_element_with_too_short_name()
     {
         $data = $this->validData();
         $data["name"] = "";
@@ -66,6 +66,26 @@ class EvaluationToolSurveyElementTypeTest extends TestCase
 
         $transformed = EvaluationToolHelper::transformModel($surveyElement);
         $transformed["name"] = "";
+
+        $response = $this->put('/api/evaluation-tool/survey-elements/' . $surveyElement->id, $transformed);
+        $response->assertStatus(422);
+    }
+
+    public function test_create_survey_element_without_params()
+    {
+        $data = $this->validData();
+        unset($data["params"]);
+
+        $response = $this->post('/api/evaluation-tool/survey-elements', $data);
+        $response->assertStatus(422);
+    }
+
+    public function test_update_survey_element_without_params()
+    {
+        $surveyElement = EvaluationToolSurveyElement::where("survey_element_type_id", 2)->first();
+
+        $transformed = EvaluationToolHelper::transformModel($surveyElement);
+        unset($transformed["params"]);
 
         $response = $this->put('/api/evaluation-tool/survey-elements/' . $surveyElement->id, $transformed);
         $response->assertStatus(422);
