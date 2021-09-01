@@ -2,6 +2,8 @@
 
 namespace Twoavy\EvaluationTool\Helpers;
 
+use Illuminate\Http\Request;
+
 class EvaluationToolHelper
 {
     public static function transformModel($model, $removeDataKey = true): ?array
@@ -15,5 +17,17 @@ class EvaluationToolHelper
             return $transformation->toArray();
         }
         return $model;
+    }
+
+    public static function reverseTransform(Request $request, $transformer) {
+        $transformedInput = [];
+
+        foreach ($request->request->all() as $input => $value) {
+            if($transformer::originalAttribute($input)) {
+                $transformedInput[$transformer::originalAttribute($input)] = $value;
+            }
+        }
+
+        $request->replace($transformedInput);
     }
 }
