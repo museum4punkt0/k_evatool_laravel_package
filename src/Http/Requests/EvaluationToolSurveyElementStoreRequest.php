@@ -4,14 +4,19 @@ namespace Twoavy\EvaluationTool\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
+use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
+use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyElementTransformer;
 
 class EvaluationToolSurveyElementStoreRequest extends FormRequest
 {
     public function __construct(Request $request)
     {
+        // reverse reqeust keys through transformer
+        EvaluationToolHelper::reverseTransform($request, EvaluationToolSurveyElementTransformer::class);
+
         if ($request->has('survey_element_type')) {
             $this->elementType = ucfirst($request->survey_element_type);
-            $this->className = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . ucfirst($request->survey_element_type);
+            $this->className   = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . ucfirst($request->survey_element_type);
             if (class_exists($this->className)) {
                 $this->className::prepareRequest($request);
             }
@@ -31,18 +36,26 @@ class EvaluationToolSurveyElementStoreRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @param Request $request
      * @return array
      */
-    public function rules(Request $request): array
+    public function rules(): array
     {
         // TODO: rules
-        $rules    = [
-            "name" => "required|min:2|max:100",
+        $rules = [
+            "name"                => "required|min:2|max:100",
+            "survey_element_type" => [
+                "required",
+                "exists:evaluation_tool_survey_element_types,key"
+            ]
             // "description" => "max:500",
             // "published"   => "boolean",
         ];
 
-        return array_merge($rules, $this->className::rules());
+        if (class_exists($this->className)) {
+            return array_merge($rules, $this->className::rules());
+        }
+        return $rules;
+
+
     }
 }
