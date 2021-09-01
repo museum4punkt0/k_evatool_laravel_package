@@ -89,5 +89,6 @@ class EvaluationToolSurveyElementTypeController extends Controller
         DB::table("evaluation_tool_survey_element_types")->truncate();
         EvaluationToolSurveyElementTypeFactory::times(1)->binaryQuestion()->create();
         EvaluationToolSurveyElementTypeFactory::times(1)->multipleChoiceQuestion()->create();
+        EvaluationToolSurveyElementTypeFactory::times(1)->simpleText()->create();
     }
 }

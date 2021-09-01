@@ -19,6 +19,22 @@ class EvaluationToolSurveyLanguageSeeder extends Seeder
             'code' => 'de',
             'sub_code' => 'de_DE',
             'title' => 'Deutsch',
+            'default' => true,
+            'published' => true,
+        ]);
+
+        EvaluationToolSurveyLanguage::create([
+            'code' => 'en',
+            'sub_code' => 'en_GB',
+            'title' => 'English',
+            'default' => false,
+            'published' => true,
+        ]);
+
+        EvaluationToolSurveyLanguage::create([
+            'code' => 'fr',
+            'sub_code' => 'fr_FR',
+            'title' => 'Français',
             'default' => false,
             'published' => true,
         ]);

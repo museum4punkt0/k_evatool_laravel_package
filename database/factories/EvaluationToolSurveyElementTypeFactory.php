@@ -51,4 +51,17 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
             ];
         });
     }
+
+    public function simpleText(): EvaluationToolSurveyElementTypeFactory
+    {
+        return $this->state(function () {
+            return [
+                'id'          => 3,
+                'key'         => 'simpleText',
+                'name'        => 'Simple text',
+                'description' => 'Simple text description',
+                'params'      => new StdClass(),
+            ];
+        });
+    }
 }
