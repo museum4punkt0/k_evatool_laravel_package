@@ -1,0 +1,8 @@
+#!/bin/sh
+
+cd ../../../
+pwd
+# ./vendor/bin/sail artisan test
+docker-compose exec -T "laravel.test" php artisan test
+
+exit 0
