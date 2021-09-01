@@ -3,8 +3,6 @@
 namespace Tests\Feature;
 
 use Tests\TestCase;
-use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
-use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 
 class EvaluationToolSurveyElementMultipleChoiceTest extends TestCase
 {
@@ -29,15 +27,6 @@ class EvaluationToolSurveyElementMultipleChoiceTest extends TestCase
         ];
     }
 
-    public function test_create_survey_element_multiple_choice_without_name()
-    {
-        $data = $this->validData();
-        unset($data["name"]);
-
-        $response = $this->post('/api/evaluation-tool/survey-elements', $data);
-        $response->assertStatus(422);
-    }
-
     public function test_create_survey_element_multiple_choice_max_less_than_min()
     {
         $data = $this->validData();
@@ -46,16 +35,4 @@ class EvaluationToolSurveyElementMultipleChoiceTest extends TestCase
         $response = $this->post('/api/evaluation-tool/survey-elements', $data);
         $response->assertStatus(422);
     }
-
-    public function test_update_survey_element_multiple_choice_without_name()
-    {
-        $surveyElement = EvaluationToolSurveyElement::where("survey_element_type_id", 2)->first();
-
-        $transformed = EvaluationToolHelper::transformModel($surveyElement);
-        unset($transformed["name"]);
-
-        $response = $this->put('/api/evaluation-tool/survey-elements/' . $surveyElement->id, $transformed);
-        $response->assertStatus(422);
-    }
-
 }
