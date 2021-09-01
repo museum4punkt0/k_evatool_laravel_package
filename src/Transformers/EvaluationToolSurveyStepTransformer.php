@@ -16,16 +16,16 @@ class EvaluationToolSurveyStepTransformer extends TransformerAbstract
     public function transform(EvaluationToolSurveyStep $surveyStep): array
     {
         return [
-            "id"               => (int)$surveyStep->id,
-            "name"             => (string)$surveyStep->name,
-            "survey_id"        => (int)$surveyStep->survey_id,
-            "survey_element_id"=> (int)$surveyStep->survey_element_id,
-            "published"        => (bool)$surveyStep->published,
-            "publishUp"        => $surveyStep->publish_up,
-            "publishDown"      => $surveyStep->publish_down,
-            "createdAt"        => $surveyStep->created_at,
-            "updatedAt"        => $surveyStep->updated_at,
-            "deletedAt"        => (string)$surveyStep->deleted_at,
+            "id"              => (int)$surveyStep->id,
+            "name"            => (string)$surveyStep->name,
+            "surveyId"        => (int)$surveyStep->survey_id,
+            "surveyElementId" => (int)$surveyStep->survey_element_id,
+            "published"       => (bool)$surveyStep->published,
+            "publishUp"       => $surveyStep->publish_up,
+            "publishDown"     => $surveyStep->publish_down,
+            "createdAt"       => $surveyStep->created_at,
+            "updatedAt"       => $surveyStep->updated_at,
+            "deletedAt"       => (string)$surveyStep->deleted_at,
         ];
     }
 
@@ -44,12 +44,13 @@ class EvaluationToolSurveyStepTransformer extends TransformerAbstract
     public static function attributes(): array
     {
         return [
-            "id"          => "id",
-            "name"        => "name",
-            "survey_id"        => "survey_id",
-            "published"   => "published",
-            "publishUp"   => "publish_up",
-            "publishDown" => "publish_down",
+            "id"              => "id",
+            "name"            => "name",
+            "surveyId"        => "survey_id",
+            "surveyELementId" => "survey_element_id",
+            "published"       => "published",
+            "publishUp"       => "publish_up",
+            "publishDown"     => "publish_down",
         ];
     }
 }

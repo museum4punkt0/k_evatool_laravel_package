@@ -18,7 +18,7 @@ class EvaluationToolSurveyLanguageTransformer extends TransformerAbstract
         return [
             "id"               => (int)$surveyLanguage->id,
             "code"             => (string)$surveyLanguage->code,
-            "sub_code"             => (string)$surveyLanguage->sub_code,
+            "subCode"             => (string)$surveyLanguage->sub_code,
             "title"             => (string)$surveyLanguage->title,
             "default"             => (bool)$surveyLanguage->default,
             "published"             => (bool)$surveyLanguage->published,
@@ -45,7 +45,7 @@ class EvaluationToolSurveyLanguageTransformer extends TransformerAbstract
         return [
             "id"          => "id",
             "code"        => "code",
-            "sub_code"    => "sub_code",
+            "subCode"    => "sub_code",
             "title"       => "title",
             "default"     => "default",
             "published"     => "published"

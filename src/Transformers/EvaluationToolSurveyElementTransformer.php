@@ -16,14 +16,14 @@ class EvaluationToolSurveyElementTransformer extends TransformerAbstract
     public function transform(EvaluationToolSurveyElement $surveyElement): array
     {
         return [
-            "id"               => (int)$surveyElement->id,
-            "name"             => (string)$surveyElement->name,
-            "description"      => (string)$surveyElement->description,
-            "survey_element_type_id" => (int)$surveyElement->survey_element_type_id,
-            "params"           => $surveyElement->params,
-            "createdAt"        => $surveyElement->created_at,
-            "updatedAt"        => $surveyElement->updated_at,
-            "deletedAt"        => (string)$surveyElement->deleted_at,
+            "id"                  => (int)$surveyElement->id,
+            "name"                => (string)$surveyElement->name,
+            "description"         => (string)$surveyElement->description,
+            "surveyElementTypeId" => (int)$surveyElement->survey_element_type_id,
+            "params"              => $surveyElement->params,
+            "createdAt"           => $surveyElement->created_at,
+            "updatedAt"           => $surveyElement->updated_at,
+            "deletedAt"           => (string)$surveyElement->deleted_at,
         ];
     }
 
@@ -42,14 +42,14 @@ class EvaluationToolSurveyElementTransformer extends TransformerAbstract
     public static function attributes(): array
     {
         return [
-            "id"          => "id",
-            "name"        => "name",
-            "description" => "descriptoin",
-            "survey_element_type_id" => "survey_element_type_id",
-            "params"      => "params",
-            "published"   => "published",
-            "publishUp"   => "publish_up",
-            "publishDown" => "publish_down",
+            "id"                  => "id",
+            "name"                => "name",
+            "description"         => "descriptoin",
+            "surveyElementTypeId" => "survey_element_type_id",
+            "params"              => "params",
+            "published"           => "published",
+            "publishUp"           => "publish_up",
+            "publishDown"         => "publish_down",
         ];
     }
 }

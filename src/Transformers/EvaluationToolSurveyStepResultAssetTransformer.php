@@ -16,13 +16,13 @@ class EvaluationToolSurveyStepResultAssetTransformer extends TransformerAbstract
     public function transform(EvaluationToolSurveyStepResultAsset $surveyStepResultAsset): array
     {
         return [
-            "id"               => (int)$surveyStepResultAsset->id,
-            "filename"             => (string)$surveyStepResultAsset->filename,
-            "transcription"             => (string)$surveyStepResultAsset->transcription,
-            "survey_step_result_id"             => (int)$surveyStepResultAsset->survey_step_result_id,
-            "createdAt"        => $surveyStepResultAsset->created_at,
-            "updatedAt"        => $surveyStepResultAsset->updated_at,
-            "deletedAt"        => (string)$surveyStepResultAsset->deleted_at,
+            "id"                 => (int)$surveyStepResultAsset->id,
+            "filename"           => (string)$surveyStepResultAsset->filename,
+            "transcription"      => (string)$surveyStepResultAsset->transcription,
+            "surveyStepResultId" => (int)$surveyStepResultAsset->survey_step_result_id,
+            "createdAt"          => $surveyStepResultAsset->created_at,
+            "updatedAt"          => $surveyStepResultAsset->updated_at,
+            "deletedAt"          => (string)$surveyStepResultAsset->deleted_at,
         ];
     }
 
@@ -41,11 +41,11 @@ class EvaluationToolSurveyStepResultAssetTransformer extends TransformerAbstract
     public static function attributes(): array
     {
         return [
-            "id"          => "id",
-            "filename"        => "filename",
-            "transcription"    => "transcription",
-            "title"       => "title",
-            "survey_step_result_id"     => "survey_step_result_id"
+            "id"                 => "id",
+            "filename"           => "filename",
+            "transcription"      => "transcription",
+            "title"              => "title",
+            "surveyStepResultId" => "survey_step_result_id"
         ];
     }
 }
