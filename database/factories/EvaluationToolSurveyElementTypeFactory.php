@@ -47,7 +47,7 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
                 'key'         => 'multipleChoice',
                 'name'        => 'Multiple Choice Question',
                 'description' => 'Multiple Choice Question description',
-                'params'      => EvaluationToolSurveyElementTypeMultipleChoice::params(),
+                'params'      => EvaluationToolSurveyElementTypeMultipleChoice::typeParams(),
             ];
         });
     }

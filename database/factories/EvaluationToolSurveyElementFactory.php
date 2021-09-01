@@ -32,11 +32,20 @@ class EvaluationToolSurveyElementFactory extends Factory
             $publishDown = Carbon::now()->addDays($this->faker->numberBetween(6, 25))->roundHour();
         }
 
+        $params = new StdClass();
+
+        $surveyElementType            = EvaluationToolSurveyElementType::all()->random(1)[0];
+        $surveyElementParamsClassName = "Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType" . ucfirst($surveyElementType->key);
+        if (class_exists($surveyElementParamsClassName)) {
+            $params = $surveyElementParamsClassName::sampleParams();
+        }
+
+
         return [
             "name"                   => ucfirst($this->faker->word),
-            "survey_element_type_id" => EvaluationToolSurveyElementType::all()->random(1)[0]->id,
+            "survey_element_type_id" => $surveyElementType->id,
             "description"            => $this->faker->boolean() ? ucfirst((string)$this->faker->words($this->faker->numberBetween(1, 10), true)) : null,
-            "params"                 => new StdClass,
+            "params"                 => $params,
             "published"              => $this->faker->boolean(80),
             "publish_up"             => $publishPeriod ? $publishUp : null,
             "publish_down"           => $publishPeriod ? $publishDown : null,

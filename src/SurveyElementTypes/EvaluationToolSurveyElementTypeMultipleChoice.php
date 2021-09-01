@@ -2,18 +2,34 @@
 
 namespace Twoavy\EvaluationTool\SurveyElementTypes;
 
+use Faker\Factory;
 use Illuminate\Http\Request;
+use StdClass;
 
 class EvaluationToolSurveyElementTypeMultipleChoice
 {
     /**
      * @return array
      */
-    public static function sampleData(): array
+    public static function sampleParams(): array
     {
-        return [
 
+        $faker       = Factory::create();
+        $minSelected = $faker->numberBetween(1, 3);
+        $maxSelected = $faker->numberBetween($minSelected, $minSelected + $faker->numberBetween(1, 3));
+
+        return [
+            "options"      => [
+
+            ],
+            "min_selected" => $minSelected,
+            "max_selected" => $maxSelected
         ];
+    }
+
+    public static function typeParams(): StdClass
+    {
+        return new StdClass();
     }
 
     public static function prepareRequest(Request $request)
