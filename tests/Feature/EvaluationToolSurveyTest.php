@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use Database\Seeders\DatabaseSeeder;
 use Faker\Factory;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyFactory;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 
 class EvaluationToolSurveyTest extends TestCase
 {
@@ -50,8 +50,8 @@ class EvaluationToolSurveyTest extends TestCase
 
     public function test_create_survey_with_name_too_long()
     {
-        $faker = Factory::create();
-        $data = [
+        $faker    = Factory::create();
+        $data     = [
             "name" => $faker->words(100, true)
         ];
         $response = $this->post('/api/evaluation-tool/surveys', $data);
@@ -66,10 +66,19 @@ class EvaluationToolSurveyTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_delete_survey()
+    public function test_delete_survey_without_steps()
     {
-        $survey   = EvaluationToolSurvey::all()->random(1)[0];
+        EvaluationToolSurveyFactory::times(1)->create();
+        $survey   = EvaluationToolSurvey::all()->last();
         $response = $this->delete('/api/evaluation-tool/surveys/' . $survey->id);
         $response->assertStatus(200);
+    }
+
+    public function test_delete_survey_with_steps()
+    {
+        $surveyStep = EvaluationToolSurveyStep::all()->last();
+        $survey     = EvaluationToolSurvey::find($surveyStep->survey_id);
+        $response   = $this->delete('/api/evaluation-tool/surveys/' . $survey->id);
+        $response->assertStatus(409);
     }
 }
