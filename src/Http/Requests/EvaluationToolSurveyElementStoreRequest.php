@@ -4,8 +4,6 @@ namespace Twoavy\EvaluationTool\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
-use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeMultipleChoice;
-use Illuminate\Support\Arr;
 
 class EvaluationToolSurveyElementStoreRequest extends FormRequest
 {
@@ -33,6 +31,7 @@ class EvaluationToolSurveyElementStoreRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
+     * @param Request $request
      * @return array
      */
     public function rules(Request $request): array
