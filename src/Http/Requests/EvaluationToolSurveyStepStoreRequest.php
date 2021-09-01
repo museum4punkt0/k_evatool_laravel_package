@@ -32,6 +32,8 @@ class EvaluationToolSurveyStepStoreRequest extends FormRequest
      */
     public function rules(): array
     {
+        // TODO: check if next step belongs to survey
+        $surveyId = request()->segment(4);
         return [
             "survey_element_id" => "required|numeric|exists:evaluation_tool_survey_elements,id",
             "next_step_id"      => "numeric|exists:evaluation_tool_survey_steps,id",
