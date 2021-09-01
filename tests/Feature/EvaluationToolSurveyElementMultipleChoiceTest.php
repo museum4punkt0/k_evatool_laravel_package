@@ -13,8 +13,8 @@ class EvaluationToolSurveyElementMultipleChoiceTest extends TestCase
         return [
             "name" => "Test",
             "params" => [
-                "min_elements" => 2,
-                "max_elements" => 2,
+                "minSelectable" => 2,
+                "maxSelectable" => 2,
                 "options" => [
                     [
                         "de" => "Option 1 DE",
@@ -32,7 +32,7 @@ class EvaluationToolSurveyElementMultipleChoiceTest extends TestCase
     public function test_create_survey_element_multiple_choice_max_less_than_min()
     {
         $data = $this->validData();
-        $data["params"]["max_elements"] = $data["params"]["min_elements"]--;
+        $data["params"]["maxSelectable"] = $data["params"]["minSelectable"]--;
 
         $response = $this->post('/api/evaluation-tool/survey-elements', $data);
         $response->assertStatus(422);
@@ -43,7 +43,7 @@ class EvaluationToolSurveyElementMultipleChoiceTest extends TestCase
         $surveyElement = EvaluationToolSurveyElement::where("survey_element_type_id", 2)->first();
 
         $transformed = EvaluationToolHelper::transformModel($surveyElement);
-        $transformed["params"]["max_elements"] = $transformed["params"]["min_elements"]--;
+        $transformed["params"]["maxSelectable"] = $transformed["params"]["minSelectable"]--;
 
         $response = $this->put('/api/evaluation-tool/survey-elements/' . $surveyElement->id, $transformed);
         $response->assertStatus(422);

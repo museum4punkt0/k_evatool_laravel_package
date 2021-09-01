@@ -15,15 +15,15 @@ class EvaluationToolSurveyElementTypeMultipleChoice
     {
 
         $faker = Factory::create();
-        $minElements = $faker->numberBetween(1, 3);
-        $maxElements = $faker->numberBetween($minElements, $minElements + $faker->numberBetween(1, 3));
+        $minSelectable = $faker->numberBetween(1, 3);
+        $maxSelectable = $faker->numberBetween($minSelectable, $minSelectable + $faker->numberBetween(1, 3));
 
         return [
             "options" => [
 
             ],
-            "min_elements" => $minElements,
-            "max_elements" => $maxElements,
+            "minSelectable" => $minSelectable,
+            "maxSelectable" => $maxSelectable,
         ];
     }
 
@@ -57,8 +57,8 @@ class EvaluationToolSurveyElementTypeMultipleChoice
             'params.options' => ['required', 'array', 'min:1'],
             'params.options.*' => ['array'],
             'languageKeys.*' => ['required', 'exists:evaluation_tool_survey_languages,code'],
-            'params.min_elements' => ['integer', 'min:1', 'max:' . $maxCount],
-            'params.max_elements' => ['integer', 'min:1', 'max:' . $maxCount, 'gte:min_elements'],
+            'params.minSelectable' => ['integer', 'min:1', 'max:' . $maxCount],
+            'params.maxSelectable' => ['integer', 'min:1', 'max:' . $maxCount, 'gte:min_elements'],
         ];
     }
 }

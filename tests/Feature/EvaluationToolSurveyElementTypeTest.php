@@ -12,12 +12,12 @@ class EvaluationToolSurveyElementTypeTest extends TestCase
     private function validData(): array
     {
         return [
-            "name"                => "Test",
+            "name" => "Test",
             "survey_element_type" => "multipleChoice",
-            "params"              => [
-                "min_elements" => 2,
-                "max_elements" => 2,
-                "options"      => [
+            "params" => [
+                "minSelectable" => 2,
+                "maxSelectable" => 2,
+                "options" => [
                     [
                         "de" => "Option 1 DE",
                         "en" => "Option 1 EN",
@@ -53,7 +53,7 @@ class EvaluationToolSurveyElementTypeTest extends TestCase
 
     public function test_create_survey_element_type_with_too_short_name()
     {
-        $data         = $this->validData();
+        $data = $this->validData();
         $data["name"] = "";
 
         $response = $this->post('/api/evaluation-tool/survey-elements', $data);
@@ -64,7 +64,7 @@ class EvaluationToolSurveyElementTypeTest extends TestCase
     {
         $surveyElement = EvaluationToolSurveyElement::where("survey_element_type_id", 2)->first();
 
-        $transformed         = EvaluationToolHelper::transformModel($surveyElement);
+        $transformed = EvaluationToolHelper::transformModel($surveyElement);
         $transformed["name"] = "";
 
         $response = $this->put('/api/evaluation-tool/survey-elements/' . $surveyElement->id, $transformed);
