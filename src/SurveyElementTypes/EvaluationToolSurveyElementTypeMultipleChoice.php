@@ -31,7 +31,6 @@ class EvaluationToolSurveyElementTypeMultipleChoice
         $request->request->add(['languageKeys' => $languageKeys]);
     }
 
-
     /**
      * @return array
      */
@@ -39,11 +38,11 @@ class EvaluationToolSurveyElementTypeMultipleChoice
     {
         $maxCount = 10;
         return [
-            'params.options'      => ['required', 'array', 'min:1'],
-            'params.options.*'    => ['array'],
-            'languageKeys.*'      => ['required', 'exists:evaluation_tool_survey_languages,code'],
+            'params.options' => ['required', 'array', 'min:1'],
+            'params.options.*' => ['array'],
+            'languageKeys.*' => ['required', 'exists:evaluation_tool_survey_languages,code'],
             'params.min_elements' => ['integer', 'min:1', 'max:' . $maxCount],
-            'params.max_elements' => ['integer', 'min:1', 'max:' . $maxCount, 'gte:min_elements']
+            'params.max_elements' => ['integer', 'min:1', 'max:' . $maxCount, 'gte:min_elements'],
         ];
     }
 }
