@@ -43,7 +43,6 @@ class EvaluationToolSurveyElementMultipleChoiceTest extends TestCase
         $surveyElement = EvaluationToolSurveyElement::where("survey_element_type_id", 2)->first();
 
         $transformed = EvaluationToolHelper::transformModel($surveyElement);
-        // dd($transformed);
         $transformed["params"]["max_elements"] = $transformed["params"]["min_elements"]--;
 
         $response = $this->put('/api/evaluation-tool/survey-elements/' . $surveyElement->id, $transformed);
