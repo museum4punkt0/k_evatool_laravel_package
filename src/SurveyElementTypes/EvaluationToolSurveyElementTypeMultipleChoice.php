@@ -14,16 +14,16 @@ class EvaluationToolSurveyElementTypeMultipleChoice
     public static function sampleParams(): array
     {
 
-        $faker       = Factory::create();
-        $minSelected = $faker->numberBetween(1, 3);
-        $maxSelected = $faker->numberBetween($minSelected, $minSelected + $faker->numberBetween(1, 3));
+        $faker = Factory::create();
+        $minElements = $faker->numberBetween(1, 3);
+        $maxElements = $faker->numberBetween($minElements, $minElements + $faker->numberBetween(1, 3));
 
         return [
-            "options"      => [
+            "options" => [
 
             ],
-            "min_selected" => $minSelected,
-            "max_selected" => $maxSelected
+            "min_elements" => $minElements,
+            "max_elements" => $maxElements,
         ];
     }
 
