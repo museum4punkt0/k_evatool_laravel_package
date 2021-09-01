@@ -40,11 +40,18 @@ class EvaluationToolSurveySurveyStepController extends Controller
 
     /**
      * @param EvaluationToolSurvey $survey
+     * @param EvaluationToolSurveyStep $surveyStep
      * @param EvaluationToolSurveyStepStoreRequest $request
      * @return JsonResponse
      */
-    public function update(EvaluationToolSurvey $survey, EvaluationToolSurveyStepStoreRequest $request): JsonResponse
+    public function update(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $surveyStep, EvaluationToolSurveyStepStoreRequest $request): JsonResponse
     {
-        return $this->showOne($survey);
+        // check if survey id and step id match
+        if ($surveyStep->survey_id !== $survey->id) {
+            return $this->errorResponse("survey id does not match step id", 409);
+        }
+        $surveyStep->fill($request->all());
+        $surveyStep->save();
+        return $this->showOne($surveyStep);
     }
 }
