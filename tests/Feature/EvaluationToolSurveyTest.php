@@ -22,7 +22,7 @@ class EvaluationToolSurveyTest extends TestCase
 
     public function test_get_survey()
     {
-        $survey   = EvaluationToolSurvey::all()->random(1)[0];
+        $survey = EvaluationToolSurvey::all()->random(1)[0];
         $response = $this->get('/api/evaluation-tool/surveys/' . $survey->id);
         try {
             $response->assertStatus(200);
@@ -33,8 +33,8 @@ class EvaluationToolSurveyTest extends TestCase
 
     public function test_create_survey()
     {
-        $data     = [
-            "name" => "Test"
+        $data = [
+            "name" => "Test",
         ];
         $response = $this->post('/api/evaluation-tool/surveys', $data);
         try {
@@ -46,7 +46,7 @@ class EvaluationToolSurveyTest extends TestCase
 
     public function test_create_survey_without_name()
     {
-        $data     = [];
+        $data = [];
         $response = $this->post('/api/evaluation-tool/surveys', $data);
         try {
             $response->assertStatus(422);
@@ -57,8 +57,8 @@ class EvaluationToolSurveyTest extends TestCase
 
     public function test_create_survey_with_name_too_short()
     {
-        $data     = [
-            "name" => "A"
+        $data = [
+            "name" => "A",
         ];
         $response = $this->post('/api/evaluation-tool/surveys', $data);
         try {
@@ -70,9 +70,9 @@ class EvaluationToolSurveyTest extends TestCase
 
     public function test_create_survey_with_name_too_long()
     {
-        $faker    = Factory::create();
-        $data     = [
-            "name" => $faker->words(100, true)
+        $faker = Factory::create();
+        $data = [
+            "name" => $faker->words(100, true),
         ];
         $response = $this->post('/api/evaluation-tool/surveys', $data);
         try {
@@ -84,8 +84,8 @@ class EvaluationToolSurveyTest extends TestCase
 
     public function test_update_survey()
     {
-        $survey   = EvaluationToolSurvey::all()->random(1)[0];
-        $data     = $survey->toArray();
+        $survey = EvaluationToolSurvey::all()->random(1)[0];
+        $data = $survey->toArray();
         $response = $this->put('/api/evaluation-tool/surveys/' . $survey->id, $data);
         try {
             $response->assertStatus(200);
@@ -97,7 +97,7 @@ class EvaluationToolSurveyTest extends TestCase
     public function test_delete_survey_without_steps()
     {
         EvaluationToolSurveyFactory::times(1)->create();
-        $survey   = EvaluationToolSurvey::all()->last();
+        $survey = EvaluationToolSurvey::all()->last();
         $response = $this->delete('/api/evaluation-tool/surveys/' . $survey->id);
         try {
             $response->assertStatus(200);
