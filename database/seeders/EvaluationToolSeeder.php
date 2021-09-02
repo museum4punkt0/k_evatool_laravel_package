@@ -21,7 +21,8 @@ class EvaluationToolSeeder extends Seeder
             EvaluationToolSurveyLanguageSeeder::class,
             EvaluationToolSurveyElementSeeder::class,
             EvaluationToolSurveyLocalizationSeeder::class,
-            EvaluationToolSurveyStepSeeder::class
+            EvaluationToolSurveyStepSeeder::class,
+            EvaluationToolAssetSeeder::class,
         ]);
     }
 }

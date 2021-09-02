@@ -8,6 +8,7 @@ use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElementType;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeEmoji;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeMultipleChoice;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeStarRating;
+use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeVideo;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeYayNay;
 
 class EvaluationToolSurveyElementTypeFactory extends Factory
@@ -103,6 +104,19 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
                 'name'        => 'Emoji',
                 'description' => 'Emoji description',
                 'params'      => EvaluationToolSurveyElementTypeEmoji::typeParams(),
+            ];
+        });
+    }
+
+    public function video(): EvaluationToolSurveyElementTypeFactory
+    {
+        return $this->state(function () {
+            return [
+                'id'          => 7,
+                'key'         => 'video',
+                'name'        => 'Video',
+                'description' => 'Video description',
+                'params'      => EvaluationToolSurveyElementTypeVideo::typeParams(),
             ];
         });
     }

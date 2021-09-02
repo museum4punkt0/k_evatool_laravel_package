@@ -19,7 +19,15 @@ class EvaluationToolServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->config["filesystems.disks.evaluation_tool"] = [
+            'driver' => 'local',
+            'root'   => storage_path('app/evaluation-tool/assets'),
+        ];
+
+        $this->app->config["filesystems.disks.evaluation_tool_demo_assets"] = [
+            'driver' => 'local',
+            'root'   => base_path('packages/twoavy/evaluation-tool/assets'),
+        ];
     }
 
     /**
@@ -43,14 +51,15 @@ class EvaluationToolServiceProvider extends ServiceProvider
 
             if (!class_exists('CreateEvaluationToolSurveysTable')) {
                 $this->publishes([
-                    __DIR__ . '/../database/migrations/create_evaluation_tool_surveys_table.php' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_surveys_table.php'),
-                    __DIR__ . '/../database/migrations/create_evaluation_tool_survey_steps_table.php' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_survey_steps_table.php'),
-                    __DIR__ . '/../database/migrations/create_evaluation_tool_survey_element_types_table.php' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_survey_element_types_table.php'),
-                    __DIR__ . '/../database/migrations/create_evaluation_tool_survey_step_results_table.php' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_survey_step_results_table.php'),
+                    __DIR__ . '/../database/migrations/create_evaluation_tool_surveys_table.php'                   => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_surveys_table.php'),
+                    __DIR__ . '/../database/migrations/create_evaluation_tool_survey_steps_table.php'              => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_survey_steps_table.php'),
+                    __DIR__ . '/../database/migrations/create_evaluation_tool_survey_element_types_table.php'      => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_survey_element_types_table.php'),
+                    __DIR__ . '/../database/migrations/create_evaluation_tool_survey_step_results_table.php'       => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_survey_step_results_table.php'),
                     __DIR__ . '/../database/migrations/create_evaluation_tool_survey_step_result_assets_table.php' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_survey_step_result_assets_table.php'),
-                    __DIR__ . '/../database/migrations/create_evaluation_tool_survey_elements_table.php' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_survey_elements_table.php'),
-                    __DIR__ . '/../database/migrations/create_evaluation_tool_survey_languages_table.php' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_survey_languages_table.php'),
-                    __DIR__ . '/../database/migrations/create_evaluation_tool_survey_localizations_table.php' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_survey_localizations_table.php'),
+                    __DIR__ . '/../database/migrations/create_evaluation_tool_survey_elements_table.php'           => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_survey_elements_table.php'),
+                    __DIR__ . '/../database/migrations/create_evaluation_tool_survey_languages_table.php'          => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_survey_languages_table.php'),
+                    __DIR__ . '/../database/migrations/create_evaluation_tool_survey_localizations_table.php'      => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_survey_localizations_table.php'),
+                    __DIR__ . '/../database/migrations/create_evaluation_tool_assets_table.php'                    => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_evaluation_tool_assets_table.php'),
                 ], 'migrations');
             }
         }
