@@ -32,13 +32,22 @@ class EvaluationToolSurveyStepFactory extends Factory
             $publishDown = Carbon::now()->addDays($this->faker->numberBetween(6, 25))->roundHour();
         }
 
+        $surveyId = EvaluationToolSurvey::all()->random(1)[0]->id;
+
+        // check if a potential next step is available
+        $nextStepId = null;
+        if ($nextStep = EvaluationToolSurveyStep::where("survey_id", $surveyId)->first()) {
+            $nextStepId = $nextStep->id;
+        }
+
         return [
             "name"              => ucfirst($this->faker->word),
             "survey_element_id" => EvaluationToolSurveyElement::all()->random(1)[0]->id,
-            "survey_id"         => EvaluationToolSurvey::all()->random(1)[0]->id,
-            "published"              => $this->faker->boolean(80),
-            "publish_up"             => $publishPeriod ? $publishUp : null,
-            "publish_down"           => $publishPeriod ? $publishDown : null,
+            "survey_id"         => $surveyId,
+            "next_step_id"      => $nextStepId,
+            "published"         => $this->faker->boolean(80),
+            "publish_up"        => $publishPeriod ? $publishUp : null,
+            "publish_down"      => $publishPeriod ? $publishDown : null,
         ];
     }
 }
