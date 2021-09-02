@@ -2,6 +2,7 @@
 
 namespace Twoavy\EvaluationTool\Transformers;
 
+use CodeInc\HumanReadableFileSize\HumanReadableFileSize;
 use League\Fractal\TransformerAbstract;
 use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
 
@@ -15,8 +16,13 @@ class EvaluationToolAssetTransformer extends TransformerAbstract
      */
     public function transform(EvaluationToolAsset $asset): array
     {
+
         return [
             "id"        => (int)$asset->id,
+            "filename"  => (string)$asset->filename,
+            "hash"      => (string)$asset->hash,
+            "size"      => (int)$asset->size,
+            "sizeHuman" => HumanReadableFileSize::getHumanSize($asset->size),
             "createdAt" => $asset->created_at,
             "updatedAt" => $asset->updated_at,
             "deletedAt" => (string)$asset->deleted_at,

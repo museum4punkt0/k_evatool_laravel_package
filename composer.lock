@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2d85c0fa44f2abf122b24c8b7ac5c0c5",
+    "content-hash": "ba2bb62c3060ba06e63614090c97c6b7",
     "packages": [
         {
             "name": "brick/math",
@@ -65,6 +65,50 @@
                 }
             ],
             "time": "2021-08-15T20:50:18+00:00"
+        },
+        {
+            "name": "codeinc/human-readable-file-size",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/codeinchq/human-readable-file-size.git",
+                "reference": "666a20f3330588b657aa7f82ac827c6aebf41d56"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/codeinchq/human-readable-file-size/zipball/666a20f3330588b657aa7f82ac827c6aebf41d56",
+                "reference": "666a20f3330588b657aa7f82ac827c6aebf41d56",
+                "shasum": ""
+            },
+            "require": {
+                "ext-intl": "*",
+                "php": ">=7.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "CodeInc\\HumanReadableFileSize\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Joan Fabrégat",
+                    "email": "joan@codeinc.co",
+                    "homepage": "https://www.codeinc.co",
+                    "role": "developer"
+                }
+            ],
+            "description": "Human readable file size",
+            "homepage": "https://github.com/codeinchq/human-readable-file-size",
+            "support": {
+                "issues": "https://github.com/codeinchq/human-readable-file-size/issues",
+                "source": "https://github.com/codeinchq/human-readable-file-size/tree/1.0.0"
+            },
+            "time": "2020-01-31T13:37:48+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
