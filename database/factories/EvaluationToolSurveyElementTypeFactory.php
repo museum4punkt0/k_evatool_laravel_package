@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElementType;
+use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeEmoji;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeMultipleChoice;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeStarRating;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeYayNay;
@@ -87,8 +88,21 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
                 'id'          => 5,
                 'key'         => 'yayNay',
                 'name'        => 'Yay nay',
-                'description' => 'Star rating description',
+                'description' => 'Yay nay description',
                 'params'      => EvaluationToolSurveyElementTypeYayNay::typeParams(),
+            ];
+        });
+    }
+
+    public function emoji(): EvaluationToolSurveyElementTypeFactory
+    {
+        return $this->state(function () {
+            return [
+                'id'          => 6,
+                'key'         => 'emoji',
+                'name'        => 'Emoji',
+                'description' => 'Emoji description',
+                'params'      => EvaluationToolSurveyElementTypeEmoji::typeParams(),
             ];
         });
     }

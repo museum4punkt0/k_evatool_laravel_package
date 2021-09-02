@@ -92,5 +92,6 @@ class EvaluationToolSurveyElementTypeController extends Controller
         EvaluationToolSurveyElementTypeFactory::times(1)->simpleText()->create();
         EvaluationToolSurveyElementTypeFactory::times(1)->starRating()->create();
         EvaluationToolSurveyElementTypeFactory::times(1)->yayNay()->create();
+        EvaluationToolSurveyElementTypeFactory::times(1)->emoji()->create();
     }
 }
