@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElementType;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeMultipleChoice;
+use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeStarRating;
 
 class EvaluationToolSurveyElementTypeFactory extends Factory
 {
@@ -61,6 +62,19 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
                 'name'        => 'Simple text',
                 'description' => 'Simple text description',
                 'params'      => new StdClass(),
+            ];
+        });
+    }
+
+    public function starRating(): EvaluationToolSurveyElementTypeFactory
+    {
+        return $this->state(function () {
+            return [
+                'id'          => 4,
+                'key'         => 'starRating',
+                'name'        => 'Star rating',
+                'description' => 'Star rating description',
+                'params'      => EvaluationToolSurveyElementTypeStarRating::typeParams(),
             ];
         });
     }

@@ -90,5 +90,6 @@ class EvaluationToolSurveyElementTypeController extends Controller
         EvaluationToolSurveyElementTypeFactory::times(1)->binaryQuestion()->create();
         EvaluationToolSurveyElementTypeFactory::times(1)->multipleChoiceQuestion()->create();
         EvaluationToolSurveyElementTypeFactory::times(1)->simpleText()->create();
+        EvaluationToolSurveyElementTypeFactory::times(1)->starRating()->create();
     }
 }

@@ -14,6 +14,6 @@ class EvaluationToolSurveyStepSeeder extends Seeder
      */
     public function run()
     {
-        EvaluationToolSurveyStepFactory::times(250)->create();
+        EvaluationToolSurveyStepFactory::times(750)->create();
     }
 }

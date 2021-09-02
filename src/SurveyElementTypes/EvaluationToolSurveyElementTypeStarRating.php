@@ -2,13 +2,10 @@
 
 namespace Twoavy\EvaluationTool\SurveyElementTypes;
 
-use Faker\Factory;
 use Illuminate\Http\Request;
 use StdClass;
-use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
-use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 
-class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElementTypeBase
+class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElementTypeBase
 {
 
     public function __construct()
@@ -21,16 +18,18 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
      */
     public function sampleParams(): array
     {
-        $text                               = [];
-        $text[$this->primaryLanguage->code] = $this->faker->words($this->faker->numberBetween(3, 50), true);
+
+        $question                               = [];
+        $question[$this->primaryLanguage->code] = $this->faker->words($this->faker->numberBetween(3, 20), true);
         foreach ($this->secondaryLanguages as $secondaryLanguage) {
-            if ($this->faker->boolean(30)) {
-                $text[$secondaryLanguage->code] = $this->faker->words($this->faker->numberBetween(3, 50), true);
+            if ($this->faker->boolean(60)) {
+                $question[$secondaryLanguage->code] = $this->faker->words($this->faker->numberBetween(3, 20), true);
             }
         }
 
         return [
-            "text" => $text,
+            "question"       => $question,
+            "allowHalfSteps" => $this->faker->boolean(20),
         ];
     }
 

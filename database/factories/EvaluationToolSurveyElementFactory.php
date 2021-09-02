@@ -37,7 +37,8 @@ class EvaluationToolSurveyElementFactory extends Factory
         $surveyElementType            = EvaluationToolSurveyElementType::all()->random(1)[0];
         $surveyElementParamsClassName = "Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType" . ucfirst($surveyElementType->key);
         if (class_exists($surveyElementParamsClassName)) {
-            $params = $surveyElementParamsClassName::sampleParams();
+            $surveyElementParamsClass = new $surveyElementParamsClassName;
+            $params                   = $surveyElementParamsClass->sampleParams();
         }
 
 

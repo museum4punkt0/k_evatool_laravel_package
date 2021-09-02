@@ -6,17 +6,23 @@ use Faker\Factory;
 use Illuminate\Http\Request;
 use StdClass;
 
-class EvaluationToolSurveyElementTypeMultipleChoice
+class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurveyElementTypeBase
 {
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
     /**
      * @return array
      */
-    public static function sampleParams(): array
+    public function sampleParams(): array
     {
 
         $faker = Factory::create();
-        $minSelectable = $faker->numberBetween(1, 3);
-        $maxSelectable = $faker->numberBetween($minSelectable, $minSelectable + $faker->numberBetween(1, 3));
+        $minSelectable = $this->faker->numberBetween(1, 3);
+        $maxSelectable = $this->faker->numberBetween($minSelectable, $minSelectable + $faker->numberBetween(1, 3));
 
         return [
             "options" => [
