@@ -7,6 +7,7 @@ use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElementType;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeMultipleChoice;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeStarRating;
+use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeYayNay;
 
 class EvaluationToolSurveyElementTypeFactory extends Factory
 {
@@ -75,6 +76,19 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
                 'name'        => 'Star rating',
                 'description' => 'Star rating description',
                 'params'      => EvaluationToolSurveyElementTypeStarRating::typeParams(),
+            ];
+        });
+    }
+
+    public function yayNay(): EvaluationToolSurveyElementTypeFactory
+    {
+        return $this->state(function () {
+            return [
+                'id'          => 5,
+                'key'         => 'yayNay',
+                'name'        => 'Yay nay',
+                'description' => 'Star rating description',
+                'params'      => EvaluationToolSurveyElementTypeYayNay::typeParams(),
             ];
         });
     }
