@@ -11,7 +11,9 @@ class EvaluationToolSurveyElementStoreRequest extends FormRequest
 {
     public function __construct(Request $request)
     {
-        // reverse reqeust keys through transformer
+        parent::__construct();
+
+        // reverse request keys through transformer
         EvaluationToolHelper::reverseTransform($request, EvaluationToolSurveyElementTransformer::class);
 
         if ($request->has('survey_element_type')) {
