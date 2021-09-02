@@ -42,12 +42,10 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
     public static function prepareRequest(Request $request)
     {
         $languageKeys = [];
-        if ($request->has('params.options')) {
-            if (is_array($request->params['options'])) {
-                foreach ($request->params['options'] as $value) {
-                    foreach ($value as $languageKey => $languageValue) {
-                        $languageKeys[] = $languageKey;
-                    }
+        if ($request->has('params.text')) {
+            if (is_array($request->params['text'])) {
+                foreach ($request->params['text'] as $key => $value) {
+                    $languageKeys[] = $key;
                 }
             }
         }
@@ -61,11 +59,9 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
     {
         $maxCount = 10;
         return [
-            'params.options'      => ['required', 'array', 'min:1'],
-            'params.options.*'    => ['array'],
-            'languageKeys.*'      => ['required', 'exists:evaluation_tool_survey_languages,code'],
-            'params.min_elements' => ['integer', 'min:1', 'max:' . $maxCount],
-            'params.max_elements' => ['integer', 'min:1', 'max:' . $maxCount, 'gte:min_elements'],
+            'params.text'    => ['required', 'array', 'min:1'],
+            'params.text.*'  => ['min:1', "max:500"],
+            'languageKeys.*' => ['required', 'exists:evaluation_tool_survey_languages,code'],
         ];
     }
 }

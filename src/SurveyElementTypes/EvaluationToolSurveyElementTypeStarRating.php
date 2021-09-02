@@ -29,6 +29,7 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
 
         return [
             "question"       => $question,
+            "numberOfSteps"  => $this->faker->numberBetween(3, 10),
             "allowHalfSteps" => $this->faker->boolean(20),
         ];
     }
@@ -41,12 +42,10 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
     public static function prepareRequest(Request $request)
     {
         $languageKeys = [];
-        if ($request->has('params.options')) {
-            if (is_array($request->params['options'])) {
-                foreach ($request->params['options'] as $value) {
-                    foreach ($value as $languageKey => $languageValue) {
-                        $languageKeys[] = $languageKey;
-                    }
+        if ($request->has('params.question')) {
+            if (is_array($request->params['question'])) {
+                foreach ($request->params['question'] as $key => $value) {
+                    $languageKeys[] = $key;
                 }
             }
         }
@@ -58,13 +57,17 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
      */
     public static function rules(): array
     {
-        $maxCount = 10;
         return [
-            'params.options'      => ['required', 'array', 'min:1'],
-            'params.options.*'    => ['array'],
-            'languageKeys.*'      => ['required', 'exists:evaluation_tool_survey_languages,code'],
-            'params.min_elements' => ['integer', 'min:1', 'max:' . $maxCount],
-            'params.max_elements' => ['integer', 'min:1', 'max:' . $maxCount, 'gte:min_elements'],
+            'params.numberOfSteps'  => [
+                'required',
+                'numeric',
+                'min:3',
+                'max:10'
+            ],
+            'params.question'       => 'required|array',
+            'params.question.*'     => 'min:1|max:200',
+            'languageKeys.*'        => 'required|exists:evaluation_tool_survey_languages,code',
+            'params.allowHalfSteps' => 'boolean',
         ];
     }
 }
