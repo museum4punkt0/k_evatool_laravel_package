@@ -27,6 +27,16 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
             "createdAt"        => $survey->created_at,
             "updatedAt"        => $survey->updated_at,
             "deletedAt"        => (string)$survey->deleted_at,
+            "links"            => [
+                [
+                    "rel"  => "self",
+                    "href" => route("surveys.show", $survey->id)
+                ],
+                [
+                    "rel"  => "survey-steps",
+                    "href" => route("surveys.survey-steps.index", $survey->id)
+                ],
+            ]
         ];
     }
 
