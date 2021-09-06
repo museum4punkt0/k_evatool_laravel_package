@@ -15,8 +15,9 @@ class EvaluationToolAssetController extends Controller
 
     public function __construct()
     {
-        $this->demoDisk = Storage::disk("evaluation_tool_demo_assets");
-        $this->disk     = Storage::disk("evaluation_tool");
+        $this->disk       = Storage::disk("evaluation_tool_assets");
+        $this->demoDisk   = Storage::disk("evaluation_tool_demo_assets");
+        $this->uploadDisk = Storage::disk("evaluation_tool_uploads");
     }
 
     /**
@@ -53,6 +54,25 @@ class EvaluationToolAssetController extends Controller
         $asset->size     = $this->demoDisk->size($filename);
 
         $this->disk->put($filenameSlug, $this->demoDisk->get($filename));
+
+        $asset->save();
+    }
+
+    public function createTusAsset($tusData)
+    {
+        touch("create.txt");
+        $asset = new EvaluationToolAsset();
+
+        $filename     = $tusData["name"];
+        $filenameSlug = Str::slug(pathinfo($filename, 8), "_") . "." . strtolower(pathinfo($filename, 4));
+
+        $asset->filename = $filenameSlug;
+        $asset->hash     = hash_file('md5', $this->uploadDisk->path($filename));
+        $asset->size     = $this->uploadDisk->size($filename);
+
+        $this->disk->put($filenameSlug, $this->uploadDisk->get($filename));
+
+        $this->uploadDisk->delete($filename);
 
         $asset->save();
     }

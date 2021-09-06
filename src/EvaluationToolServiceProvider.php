@@ -2,9 +2,12 @@
 
 namespace Twoavy\EvaluationTool;
 
+use TusPhp\Events\TusEvent;
+use TusPhp\Tus\Server as TusServer;
 use Illuminate\Support\ServiceProvider;
 use Twoavy\EvaluationTool\Console\Commands\TestCommand;
 use Twoavy\EvaluationTool\Console\Commands\TypesCommand;
+use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolAssetController;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Observers\EvaluationToolSurveyObserver;
@@ -19,15 +22,44 @@ class EvaluationToolServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->config["filesystems.disks.evaluation_tool"] = [
+        $this->app->config["filesystems.disks.evaluation_tool_assets"] = [
             'driver' => 'local',
             'root'   => storage_path('app/evaluation-tool/assets'),
+        ];
+
+        $this->app->config["filesystems.disks.evaluation_tool_uploads"] = [
+            'driver' => 'local',
+            'root'   => storage_path('app/evaluation-tool/uploads'),
         ];
 
         $this->app->config["filesystems.disks.evaluation_tool_demo_assets"] = [
             'driver' => 'local',
             'root'   => base_path('packages/twoavy/evaluation-tool/assets'),
         ];
+
+        // add tus server
+        $this->app->singleton('tus-server', function ($app) {
+            $server = new TusServer('redis');
+
+            $server
+                ->setApiPath('/tus') // tus server endpoint.
+                ->setUploadDir(storage_path('app/evaluation-tool/uploads')); // uploads dir.
+
+            $server->event()->addListener('tus-server.upload.created', function (TusEvent $event) {
+            });
+
+            $server->event()->addListener('tus-server.upload.progress', function (TusEvent $event) {
+            });
+
+            $server->event()->addListener('tus-server.upload.complete', function (TusEvent $event) {
+                (new Http\Controllers\EvaluationToolAssetController)->createTusAsset($event->getFile()->details());
+            });
+
+            $server->event()->addListener('tus-server.upload.merged', function (TusEvent $event) {
+            });
+
+            return $server;
+        });
     }
 
     /**

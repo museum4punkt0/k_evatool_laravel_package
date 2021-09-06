@@ -20,7 +20,7 @@ class EvaluationToolSurveyStepTransformer extends TransformerAbstract
             "name"            => (string)$surveyStep->name,
             "surveyId"        => (int)$surveyStep->survey_id,
             "surveyElementId" => (int)$surveyStep->survey_element_id,
-            "nextStepId"      => (int)$surveyStep->next_step_id,
+            "nextStepId"      => $surveyStep->next_step_id ? (int)$surveyStep->next_step_id : null,
             "published"       => (bool)$surveyStep->published,
             "publishUp"       => $surveyStep->publish_up,
             "publishDown"     => $surveyStep->publish_down,

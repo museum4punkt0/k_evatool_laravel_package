@@ -26,3 +26,8 @@ Route::prefix('api/evaluation-tool')
         Route::apiResource('survey-step-result-assets', EvaluationToolSurveyStepResultAssetController::class);
         Route::apiResource('surveys.survey-steps', EvaluationToolSurveySurveyStepController::class);
     });
+
+Route::any('/tus/{any?}', function () {
+    return app('tus-server')->serve();
+})->where('any', '.*');
+

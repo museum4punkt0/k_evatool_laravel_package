@@ -3,6 +3,7 @@
     "description": "A laravel package for creating evaluations and surveys",
     "require": {
         "php": "^7.3|^8.0",
+        "ankitpokhrel/tus-php": "^2.1",
         "codeinc/human-readable-file-size": "^1.0",
         "fakerphp/faker": "^1.15",
         "illuminate/bus": "^8.0",
