@@ -47,12 +47,14 @@ class EvaluationToolSurveyStepStoreRequest extends FormRequest
             "published"           => "boolean",
             "publish_up"          => [
                 "sometimes",
+                "nullable",
                 "date",
                 "date_format:Y-m-d H:i:s",
                 "before:publish_down"
             ],
             "publish_down"        => [
                 "sometimes",
+                "nullable",
                 "date",
                 "date_format:Y-m-d H:i:s",
                 "after:publish_up"
