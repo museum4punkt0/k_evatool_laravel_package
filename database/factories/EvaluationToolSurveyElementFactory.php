@@ -43,7 +43,7 @@ class EvaluationToolSurveyElementFactory extends Factory
 
 
         return [
-            "name"                   => ucfirst($this->faker->word),
+            "name"                   => $surveyElementType->name,
             "survey_element_type_id" => $surveyElementType->id,
             "description"            => $this->faker->boolean() ? ucfirst((string)$this->faker->words($this->faker->numberBetween(1, 10), true)) : null,
             "params"                 => $params,

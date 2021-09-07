@@ -40,9 +40,11 @@ class EvaluationToolSurveyStepFactory extends Factory
             $nextStepId = $nextStep->id;
         }
 
+        $surveyElement = EvaluationToolSurveyElement::all()->random(1)[0];
+
         return [
-            "name"              => ucfirst($this->faker->word),
-            "survey_element_id" => EvaluationToolSurveyElement::all()->random(1)[0]->id,
+            "name"              => $surveyElement->name,
+            "survey_element_id" => $surveyElement->id,
             "survey_id"         => $surveyId,
             "next_step_id"      => $nextStepId,
             "published"         => $this->faker->boolean(80),

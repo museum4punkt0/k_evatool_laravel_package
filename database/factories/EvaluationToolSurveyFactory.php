@@ -22,8 +22,9 @@ class EvaluationToolSurveyFactory extends Factory
     public function definition(): array
     {
         return [
-            "name"        => ucfirst($this->faker->word),
-            "description" => $this->faker->boolean() ? ucfirst((string)$this->faker->words($this->faker->numberBetween(1, 10), true)) : null
+            "name"        => "Umfrage",
+//            "description" => $this->faker->boolean() ? ucfirst((string)$this->faker->words($this->faker->numberBetween(1, 10), true)) : null
+            "description" => $this->faker->boolean() ? "Kurze Textbeschreibung der Umfrage" : null
         ];
     }
 }
