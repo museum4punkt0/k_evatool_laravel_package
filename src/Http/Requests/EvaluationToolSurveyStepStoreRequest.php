@@ -17,8 +17,9 @@ class EvaluationToolSurveyStepStoreRequest extends FormRequest
 
         $this->surveyId = request()->segment(4);
         if ($request->has('next_step_id')) {
-            $nextStepSurveyId = EvaluationToolSurveyStep::find($request->next_step_id)->survey_id;
-            $request->request->add(["next_step_survey_id" => $nextStepSurveyId]);
+            if ($nextStepSurveyId = EvaluationToolSurveyStep::find($request->next_step_id)) {
+                $request->request->add(["next_step_survey_id" => $nextStepSurveyId->survey_id]);
+            }
         }
     }
 
@@ -42,8 +43,8 @@ class EvaluationToolSurveyStepStoreRequest extends FormRequest
 
         return [
             "survey_element_id"   => "required|numeric|exists:evaluation_tool_survey_elements,id",
-            "next_step_id"        => "numeric|exists:evaluation_tool_survey_steps,id",
-            "next_step_survey_id" => "required|in:" . $this->surveyId,
+            "next_step_id"        => "nullable|numeric|exists:evaluation_tool_survey_steps,id",
+            "next_step_survey_id" => "in:" . $this->surveyId,
             "published"           => "boolean",
             "publish_up"          => [
                 "sometimes",
