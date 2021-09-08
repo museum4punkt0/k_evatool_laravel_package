@@ -60,7 +60,7 @@ class EvaluationToolAssetController extends Controller
 
     public function createTusAsset($tusData)
     {
-        touch("create.txt");
+//        touch("create.txt");
         $asset = new EvaluationToolAsset();
 
         $filename     = $tusData["name"];

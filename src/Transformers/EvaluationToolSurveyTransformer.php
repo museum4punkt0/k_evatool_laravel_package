@@ -61,6 +61,7 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
             "published"   => "published",
             "publishUp"   => "publish_up",
             "publishDown" => "publish_down",
+            "adminLayout" => "admin_layout",
         ];
     }
 }
