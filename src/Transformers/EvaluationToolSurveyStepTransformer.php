@@ -24,6 +24,8 @@ class EvaluationToolSurveyStepTransformer extends TransformerAbstract
             "published"       => (bool)$surveyStep->published,
             "publishUp"       => $surveyStep->publish_up,
             "publishDown"     => $surveyStep->publish_down,
+            "group"           => (string)$surveyStep->group,
+            "allowSkip"       => (bool)$surveyStep->allow_skip,
             "createdAt"       => $surveyStep->created_at,
             "updatedAt"       => $surveyStep->updated_at,
             "deletedAt"       => (string)$surveyStep->deleted_at,
