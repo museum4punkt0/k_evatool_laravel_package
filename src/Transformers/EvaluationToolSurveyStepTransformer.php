@@ -66,6 +66,8 @@ class EvaluationToolSurveyStepTransformer extends TransformerAbstract
             "surveyId"        => "survey_id",
             "surveyElementId" => "survey_element_id",
             "nextStepId"      => "next_step_id",
+            "group"           => "group",
+            "allowSkip"       => "allow_skip",
             "published"       => "published",
             "publishUp"       => "publish_up",
             "publishDown"     => "publish_down",
