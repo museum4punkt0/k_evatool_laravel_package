@@ -19,6 +19,7 @@ Route::prefix('api/evaluation-tool')
         Route::apiResource('survey-localizations', EvaluationToolSurveyLocalizationController::class);
         Route::apiResource('assets', EvaluationToolAssetController::class);
         Route::apiResource('surveys', EvaluationToolSurveyController::class);
+        Route::put('surveys/{survey}/admin-layout', [EvaluationToolSurveyController::class, "updateAdminLayout"]);
         Route::apiResource('survey-steps', EvaluationToolSurveyStepController::class);
         Route::apiResource('survey-elements', EvaluationToolSurveyElementController::class);
         Route::apiResource('survey-element-types', EvaluationToolSurveyElementTypeController::class);

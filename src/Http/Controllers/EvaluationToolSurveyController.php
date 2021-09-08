@@ -4,6 +4,7 @@ namespace Twoavy\EvaluationTool\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStoreAdminLayoutRequest;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStoreRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
@@ -78,5 +79,19 @@ class EvaluationToolSurveyController extends Controller
 
         $survey->delete();
         return $this->showOne($survey->refresh());
+    }
+
+    /**
+     * @param EvaluationToolSurvey $survey
+     * @param EvaluationToolSurveyStoreAdminLayoutRequest $request
+     * @return JsonResponse
+     */
+    public function updateAdminLayout(EvaluationToolSurvey $survey, EvaluationToolSurveyStoreAdminLayoutRequest $request): JsonResponse
+    {
+        $survey->admin_layout = $request->admin_layout;
+        $survey->save();
+
+        return $this->showOne($survey);
+
     }
 }
