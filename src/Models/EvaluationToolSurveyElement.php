@@ -43,9 +43,15 @@ class EvaluationToolSurveyElement extends Model
     ];
 
     protected $with = ["survey_element_type"];
+    protected $withCount = ["survey_steps"];
 
     public function survey_element_type(): HasOne
     {
-        return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyElementType", "id","survey_element_type_id");
+        return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyElementType", "id", "survey_element_type_id");
+    }
+
+    public function survey_steps()
+    {
+        return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep", "survey_element_id", "id");
     }
 }
