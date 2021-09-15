@@ -25,6 +25,19 @@ class EvaluationToolSurveySurveyStepController extends Controller
 
     /**
      * @param EvaluationToolSurvey $survey
+     * @param EvaluationToolSurveyStep $surveyStep
+     * @return JsonResponse
+     */
+    public function show(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $surveyStep): JsonResponse
+    {
+        if($surveyStep->survey_id !== $survey->id) {
+            return $this->errorResponse("step does not belong to survey", 409);
+        }
+        return $this->showOne($surveyStep);
+    }
+
+    /**
+     * @param EvaluationToolSurvey $survey
      * @param EvaluationToolSurveyStepStoreRequest $request
      * @return JsonResponse
      */
