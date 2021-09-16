@@ -50,7 +50,7 @@ class EvaluationToolSurveyElement extends Model
         return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyElementType", "id", "survey_element_type_id");
     }
 
-    public function survey_steps()
+    public function survey_steps(): HasMany
     {
         return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep", "survey_element_id", "id");
     }

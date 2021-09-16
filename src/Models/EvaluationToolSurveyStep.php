@@ -4,7 +4,7 @@ namespace Twoavy\EvaluationTool\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepTransformer;
 
@@ -38,4 +38,15 @@ class EvaluationToolSurveyStep extends Model
         "publish_up",
         "publish_down"
     ];
+
+    protected $casts = [
+        "time_based_steps" => "object"
+    ];
+
+    protected $with = ["survey_element"];
+
+    public function survey_element(): HasOne
+    {
+        return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement", "id", "survey_element_id");
+    }
 }
