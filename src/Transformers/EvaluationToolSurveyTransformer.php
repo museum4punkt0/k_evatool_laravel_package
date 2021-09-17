@@ -22,7 +22,7 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
             "published"        => (bool)$survey->published,
             "publishUp"        => $survey->publish_up,
             "publishDown"      => $survey->publish_down,
-            "adminLayout"      => $survey->admin_layout,
+            "adminLayout"      => $survey->admin_layout ?: [],
             "surveyStepsCount" => $survey->survey_steps_count,
             "createdAt"        => $survey->created_at,
             "updatedAt"        => $survey->updated_at,
