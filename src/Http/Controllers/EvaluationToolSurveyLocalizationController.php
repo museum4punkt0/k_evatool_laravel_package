@@ -13,6 +13,12 @@ use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 class EvaluationToolSurveyLocalizationController extends Controller
 {
     use EvaluationToolResponse;
+
+    public function __construct()
+    {
+        $this->middleware("auth:api")->except(["index", "show"]);
+    }
+
     /**
      *  Retrieve a list of all survey localizations
      *

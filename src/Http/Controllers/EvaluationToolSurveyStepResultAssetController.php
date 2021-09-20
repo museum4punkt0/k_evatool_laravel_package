@@ -11,6 +11,12 @@ use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 class EvaluationToolSurveyStepResultAssetController extends Controller
 {
     use EvaluationToolResponse;
+
+    public function __construct()
+    {
+        $this->middleware("auth:api")->except(["index", "show", "store", "update", "destroy"]);
+    }
+
     /**
      *  Retrieve a list of all survey step result assets
      *

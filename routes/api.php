@@ -13,14 +13,13 @@ use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyStepResultAssetCo
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyStepController;
 
 Route::prefix('api/evaluation-tool')
-    ->middleware('api')
+    ->middleware(['api'])
     ->group(function () {
         Route::apiResource('survey-languages', EvaluationToolSurveyLanguageController::class);
         Route::apiResource('survey-localizations', EvaluationToolSurveyLocalizationController::class);
         Route::apiResource('assets', EvaluationToolAssetController::class);
         Route::apiResource('surveys', EvaluationToolSurveyController::class);
         Route::put('surveys/{survey}/admin-layout', [EvaluationToolSurveyController::class, "updateAdminLayout"]);
-        Route::apiResource('survey-steps', EvaluationToolSurveyStepController::class);
         Route::apiResource('survey-elements', EvaluationToolSurveyElementController::class);
         Route::apiResource('survey-element-types', EvaluationToolSurveyElementTypeController::class);
         Route::apiResource('survey-step-results', EvaluationToolSurveyStepResultController::class);
@@ -30,5 +29,5 @@ Route::prefix('api/evaluation-tool')
 
 Route::any('/tus/{any?}', function () {
     return app('tus-server')->serve();
-})->where('any', '.*');
+})->middleware('auth:api')->where('any', '.*');
 

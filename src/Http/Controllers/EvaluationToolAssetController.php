@@ -16,6 +16,9 @@ class EvaluationToolAssetController extends Controller
 
     public function __construct()
     {
+
+        $this->middleware("auth:api")->except(["index", "show"]);
+
         $this->disk       = Storage::disk("evaluation_tool_assets");
         $this->demoDisk   = Storage::disk("evaluation_tool_demo_assets");
         $this->uploadDisk = Storage::disk("evaluation_tool_uploads");

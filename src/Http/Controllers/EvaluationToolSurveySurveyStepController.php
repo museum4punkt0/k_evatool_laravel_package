@@ -13,6 +13,11 @@ class EvaluationToolSurveySurveyStepController extends Controller
 {
     use EvaluationToolResponse;
 
+    public function __construct()
+    {
+        $this->middleware("auth:api")->except(["index", "show"]);
+    }
+
     /**
      * @param EvaluationToolSurvey $survey
      * @return JsonResponse
