@@ -25,6 +25,11 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
         $maxSelectable = $this->faker->numberBetween($minSelectable, $minSelectable + $faker->numberBetween(1, 3));
 
         return [
+            "question" => [
+                "de" => "Frage",
+                "en" => "Question",
+                "fr" => "Question",
+            ],
             "options" => [
 
             ],
@@ -60,6 +65,7 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
     {
         $maxCount = 10;
         return [
+            'params.question' => ['required', 'array', 'min:1'],
             'params.options' => ['required', 'array', 'min:1'],
             'params.options.*' => ['array'],
             'languageKeys.*' => ['required', 'exists:evaluation_tool_survey_languages,code'],
