@@ -17,6 +17,8 @@ class CreateEvaluationToolAssetsTable extends Migration
             $table->id();
             $table->string('filename', 50);
             $table->string('hash', 100);
+            $table->string('mime', 50);
+            $table->json('meta')->nullable();
             $table->integer('size');
             $table->timestamps();
             $table->softDeletes();

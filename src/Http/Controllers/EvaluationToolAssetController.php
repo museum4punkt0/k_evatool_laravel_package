@@ -3,6 +3,7 @@
 namespace Twoavy\EvaluationTool\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use getID3;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -52,6 +53,8 @@ class EvaluationToolAssetController extends Controller
         $asset->filename = $filenameSlug;
         $asset->hash     = hash_file('md5', $this->demoDisk->path($filename));
         $asset->size     = $this->demoDisk->size($filename);
+        $asset->mime     = mime_content_type($this->demoDisk->path($filename));
+        $asset->meta     = $this->getFileMetaData($this->demoDisk->path($filename));
 
         $this->disk->put($filenameSlug, $this->demoDisk->get($filename));
 
@@ -69,11 +72,33 @@ class EvaluationToolAssetController extends Controller
         $asset->filename = $filenameSlug;
         $asset->hash     = hash_file('md5', $this->uploadDisk->path($filename));
         $asset->size     = $this->uploadDisk->size($filename);
+        $asset->mime     = mime_content_type($this->uploadDisk->path($filename));
+        $asset->mime     = $this->getFileMetaData($this->uploadDisk->path($filename));
 
         $this->disk->put($filenameSlug, $this->uploadDisk->get($filename));
 
         $this->uploadDisk->delete($filename);
 
         $asset->save();
+    }
+
+    public function getFileMetaData($path): array
+    {
+        $getId3   = new getID3();
+        $metaData = $getId3->analyze($path);
+
+//        print_r($metaData);
+
+        $metaDataPrepared = [];
+
+        if($metaData["video"]) {
+            $metaDataPrepared["video"] = $metaData["video"];
+        }
+
+        if($metaData["audio"]) {
+            $metaDataPrepared["audio"] = $metaData["audio"];
+        }
+
+        return $metaDataPrepared;
     }
 }

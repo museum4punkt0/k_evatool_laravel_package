@@ -12,6 +12,7 @@
         "illuminate/database": "^8.0",
         "illuminate/pipeline": "^8.0",
         "illuminate/support": "^8.0",
+        "james-heinrich/getid3": "^1.9",
         "spatie/laravel-fractal": "^5.8"
     },
     "require-dev": {
