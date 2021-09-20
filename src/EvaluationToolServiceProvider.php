@@ -38,10 +38,10 @@ class EvaluationToolServiceProvider extends ServiceProvider
 
         // add tus server
         $this->app->singleton('tus-server', function ($app) {
-            $server = new TusServer('redis');
+            $server = new TusServer('file');
 
             $server
-                ->setApiPath('/tus') // tus server endpoint.
+                ->setApiPath('/tus')
                 ->setUploadDir(storage_path('app/evaluation-tool/uploads'));
 
             $server->event()->addListener('tus-server.upload.created', function (TusEvent $event) {
