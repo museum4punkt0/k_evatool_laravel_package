@@ -29,5 +29,5 @@ Route::prefix('api/evaluation-tool')
 
 Route::any('/tus/{any?}', function () {
     return app('tus-server')->serve();
-})->middleware('auth:api')->where('any', '.*');
+})->where('any', '.*');
 
