@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolAssetTransformer;
 
 class EvaluationToolAsset extends Model
@@ -21,6 +22,18 @@ class EvaluationToolAsset extends Model
     protected $fillable = [
         "filename",
         "hash",
-        "size"
+        "size",
+        "mime"
     ];
+
+    protected $casts = ["meta" => "object"];
+
+    protected $appends = ["urls"];
+
+    public function getUrlsAttribute(): array
+    {
+        $disk = Storage::disk("evaluation_tool_assets");
+        return ["url" => $disk->url($this->filename)];
+    }
+
 }
