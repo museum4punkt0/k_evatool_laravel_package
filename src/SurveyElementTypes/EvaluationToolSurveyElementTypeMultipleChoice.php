@@ -31,6 +31,9 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
                 "fr" => "Question",
             ],
             "options" => [
+                ["de" => "option 1", "en" => "option 1", "fr" => "option 1"],
+                ["de" => "option 2", "en" => "option 2", "fr" => "option 2"],
+                ["de" => "option 3", "en" => "option 3", "fr" => "option 3"],
 
             ],
             "minSelectable" => $minSelectable,
@@ -70,7 +73,9 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
             'params.options.*' => ['array'],
             'languageKeys.*' => ['required', 'exists:evaluation_tool_survey_languages,code'],
             'params.minSelectable' => ['integer', 'min:1', 'max:' . $maxCount],
-            'params.maxSelectable' => ['integer', 'min:1', 'max:' . $maxCount, 'gte:min_elements'],
+            // TODO: maxSelectable > = minSelectable
+            // 'params.maxSelectable' => ['integer', 'min:1', 'max:' . $maxCount, 'gte:params.min_selectable'],
+            'params.maxSelectable' => ['integer', 'min:1', 'max:' . $maxCount]
         ];
     }
 }
