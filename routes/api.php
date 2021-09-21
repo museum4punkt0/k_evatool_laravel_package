@@ -24,6 +24,8 @@ Route::prefix('api/evaluation-tool')
         Route::apiResource('survey-element-types', EvaluationToolSurveyElementTypeController::class);
         Route::apiResource('survey-step-results', EvaluationToolSurveyStepResultController::class);
         Route::apiResource('survey-step-result-assets', EvaluationToolSurveyStepResultAssetController::class);
+        Route::post('surveys/{survey}/survey-steps/{surveyStep}/set-next-step', [EvaluationToolSurveySurveyStepController::class, "setNextStep"]);
+        Route::post('surveys/{survey}/survey-steps/{surveyStep}/remove-next-step', [EvaluationToolSurveySurveyStepController::class, "removeNextStep"]);
         Route::apiResource('surveys.survey-steps', EvaluationToolSurveySurveyStepController::class);
     });
 
