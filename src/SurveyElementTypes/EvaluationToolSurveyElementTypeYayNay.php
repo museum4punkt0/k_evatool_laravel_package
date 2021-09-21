@@ -28,7 +28,9 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
         }
 
         return [
-            "question" => $question
+            "question" => $question,
+            "trueLabel" => ["de" => "ja", "en" => "yes", "fr" => "oui"],
+            "falseLabel" => ["de" => "nein", "en" => "no", "fr" => "non"]
         ];
     }
 
