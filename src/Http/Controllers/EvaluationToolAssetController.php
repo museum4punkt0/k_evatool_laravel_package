@@ -66,21 +66,23 @@ class EvaluationToolAssetController extends Controller
 
     public function createTusAsset($tusData)
     {
-//        touch("create.txt");
         $asset = new EvaluationToolAsset();
 
         $filename     = $tusData["name"];
         $filenameSlug = Str::slug(pathinfo($filename, 8), "_") . "." . strtolower(pathinfo($filename, 4));
 
+        touch("tus.json");
+
         $asset->filename = $filenameSlug;
         $asset->hash     = hash_file('md5', $this->uploadDisk->path($filename));
         $asset->size     = $this->uploadDisk->size($filename);
         $asset->mime     = mime_content_type($this->uploadDisk->path($filename));
-        $asset->mime     = $this->getFileMetaData($this->uploadDisk->path($filename));
 
         $this->disk->put($filenameSlug, $this->uploadDisk->get($filename));
 
         $this->uploadDisk->delete($filename);
+
+        $asset->meta = $this->getFileMetaData($this->disk->path($filename));
 
         $asset->save();
     }
@@ -90,15 +92,13 @@ class EvaluationToolAssetController extends Controller
         $getId3   = new getID3();
         $metaData = $getId3->analyze($path);
 
-//        print_r($metaData);
-
         $metaDataPrepared = [];
 
-        if($metaData["video"]) {
+        if (isset($metaData["video"])) {
             $metaDataPrepared["video"] = $metaData["video"];
         }
 
-        if($metaData["audio"]) {
+        if (isset($metaData["audio"])) {
             $metaDataPrepared["audio"] = $metaData["audio"];
         }
 

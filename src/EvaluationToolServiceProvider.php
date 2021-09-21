@@ -7,7 +7,6 @@ use TusPhp\Tus\Server as TusServer;
 use Illuminate\Support\ServiceProvider;
 use Twoavy\EvaluationTool\Console\Commands\TestCommand;
 use Twoavy\EvaluationTool\Console\Commands\TypesCommand;
-use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolAssetController;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Observers\EvaluationToolSurveyObserver;
@@ -39,11 +38,11 @@ class EvaluationToolServiceProvider extends ServiceProvider
 
         // add tus server
         $this->app->singleton('tus-server', function ($app) {
-            $server = new TusServer('redis');
+            $server = new TusServer('file');
 
             $server
-                ->setApiPath('/tus') // tus server endpoint.
-                ->setUploadDir(storage_path('app/evaluation-tool/uploads')); // uploads dir.
+                ->setApiPath('/tus')
+                ->setUploadDir(storage_path('app/evaluation-tool/uploads'));
 
             $server->event()->addListener('tus-server.upload.created', function (TusEvent $event) {
             });
