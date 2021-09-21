@@ -30,7 +30,9 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
         return [
             "question"   => $question,
             "trueValue"  => "accepted",
-            "falseValue" => "declined"
+            "falseValue" => "declined",
+            "trueLabel" => ["de" => "ja", "en" => "yes", "fr" => "oui"],
+            "falseLabel" => ["de" => "nein", "en" => "no", "fr" => "non"]
         ];
     }
 
