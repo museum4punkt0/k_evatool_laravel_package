@@ -22,8 +22,9 @@ class EvaluationToolServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->config["filesystems.disks.evaluation_tool_assets"] = [
-            'driver' => 'local',
-            'root'   => storage_path('app/evaluation-tool/assets'),
+            'driver'     => 'local',
+            'root'       => storage_path('app/evaluation-tool/assets'),
+            'url'        => env('APP_URL') . "/evaluation-tool",
         ];
 
         $this->app->config["filesystems.disks.evaluation_tool_uploads"] = [
