@@ -1,0 +1,25 @@
+version: v1.0
+name: First pipeline
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Yarn
+    dependencies: []
+    task:
+      jobs:
+        - name: Yarn
+          commands:
+            - checkout
+#            - cache restore
+#            - yarn
+#            - cache store
+#            - cache delete build
+#            - yarn build
+#            - cache store build dist/
+promotions:
+  - name: Staging
+    pipeline_file: staging.yml
+    auto_promote:
+      when: branch = 'develop' AND result = 'passed'

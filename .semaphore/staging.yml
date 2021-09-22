@@ -1,0 +1,22 @@
+version: v1.0
+name: Pipeline 2
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Staging
+    task:
+      jobs:
+        - name: Git Deploy
+          commands:
+            - checkout
+            - echo $EVATOOL_STAGING_SERVER_IP
+            - ssh-keyscan -H $EVATOOL_STAGING_SERVER_IP >> ~/.ssh/known_hosts
+            - chmod 600 ~/.ssh/semaphore_evatool_staging
+            - ssh-add ~/.ssh/semaphore_evatool_staging
+            - git remote add staging $EVATOOL_STAGING_PACKAGE_GIT_URL
+            - git push -f staging develop
+      secrets:
+        - name: eva_tool_staging
+        - name: semaphore_evatool_staging
