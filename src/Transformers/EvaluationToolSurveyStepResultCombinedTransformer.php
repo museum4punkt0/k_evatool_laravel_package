@@ -21,7 +21,7 @@ class EvaluationToolSurveyStepResultCombinedTransformer extends TransformerAbstr
             "surveyElementType"    => (string)$surveyStep->survey_element->survey_element_type->key,
             "params"               => $surveyStep->survey_element->params,
             "results"              => $surveyStep->survey_results,
-            "check"                => $surveyStep->check,
+            "sampleResultPayload"  => $surveyStep->sampleResultPayload,
             //            "name"                 => (string)$surveyStep->name,
             //            "surveyId"             => (int)$surveyStep->survey_id,
             //            "surveyElementId"      => (int)$surveyStep->survey_element_id,
