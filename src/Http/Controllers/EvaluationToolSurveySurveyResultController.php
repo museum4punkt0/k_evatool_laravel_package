@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use StdClass;
@@ -12,6 +13,7 @@ use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStepStoreRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepResultCombinedTransformer;
 
@@ -55,16 +57,30 @@ class EvaluationToolSurveySurveyResultController extends Controller
     public function store(EvaluationToolSurvey $survey, Request $request)
     {
         if (!$request->has("surveyStepId")) {
-            $this->errorResponse("no survey step id provided", 409);
+            return $this->errorResponse("no survey step id provided", 409);
         }
 
-        if ($survey->id !== $request->surveyStepId) {
-            $this->errorResponse("survey ids do not match", 409);
+        if(!$surveyStep = EvaluationToolSurveyStep::find($request->surveyStepId)){
+            return $this->errorResponse("survey step does not exist", 409);
+        }
+
+        if ($survey->id !== $surveyStep->survey_id) {
+            return $this->errorResponse("survey ids do not match", 409);
         }
 
         if (!$request->has("uuid")) {
-            $this->errorResponse("no uuid provided", 409);
+            return $this->errorResponse("no uuid provided", 409);
         }
+
+        $surveyStepResult = new EvaluationToolSurveyStepResult();
+        $surveyStepResult->survey_step_id = $request->surveyStepId;
+        $surveyStepResult->session_id = $request->uuid;
+        $surveyStepResult->result_value= $request->resultValue;
+        $surveyStepResult->result_language_id = $request->languageId;
+        $surveyStepResult->params = $surveyStep->survey_element->params;
+        $surveyStepResult->answered_at = Carbon::now();
+        $surveyStepResult->save();
+        return $this->showOne($surveyStepResult);
     }
 
     private function generateUuid(): UuidInterface

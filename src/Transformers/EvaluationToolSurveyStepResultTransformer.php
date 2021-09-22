@@ -18,8 +18,8 @@ class EvaluationToolSurveyStepResultTransformer extends TransformerAbstract
         return [
             "id"               => (int)$surveyStepResult->id,
             "surveyStepId"     => (int)$surveyStepResult->survey_step_id,
-            "presenetedAt"     => (bool)$surveyStepResult->presented_at,
-            "answeredAt"       => (bool)$surveyStepResult->answered_at,
+            "presentedAt"     =>  (string)$surveyStepResult->presented_at,
+            "answeredAt"       => (string)$surveyStepResult->answered_at,
             "changedAnswer"    => (int)$surveyStepResult->changed_answer,
             "sessionId"        => (string)$surveyStepResult->session_id,
             "resultLanguageId" => (int)$surveyStepResult->result_language_id,

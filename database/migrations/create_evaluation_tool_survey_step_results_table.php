@@ -22,7 +22,7 @@ class CreateEvaluationToolSurveyStepResultsTable extends Migration
             $table->uuid('session_id');
             $table->json('result_value');
             $table->unsignedBigInteger('result_language_id');
-            $table->boolean('is_skipped');
+            $table->boolean('is_skipped')->default(false);
             $table->string('time', 16)->nullable();
             $table->json('params');
             $table->timestamps();

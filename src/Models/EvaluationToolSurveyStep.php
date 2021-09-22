@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Http\Request;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepTransformer;
 
 class EvaluationToolSurveyStep extends Model
@@ -54,5 +55,10 @@ class EvaluationToolSurveyStep extends Model
     public function survey_results(): HasMany
     {
         return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id");
+    }
+
+    public function survey_results_by_uuid(): HasMany
+    {
+        return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id")->where('session_id', request()->uuid);
     }
 }
