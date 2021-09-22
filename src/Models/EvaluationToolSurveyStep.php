@@ -4,6 +4,7 @@ namespace Twoavy\EvaluationTool\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepTransformer;
@@ -48,5 +49,10 @@ class EvaluationToolSurveyStep extends Model
     public function survey_element(): HasOne
     {
         return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement", "id", "survey_element_id");
+    }
+
+    public function survey_results(): HasMany
+    {
+        return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id");
     }
 }

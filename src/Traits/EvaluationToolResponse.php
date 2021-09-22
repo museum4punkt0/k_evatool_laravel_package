@@ -64,7 +64,7 @@ trait EvaluationToolResponse
         return response()->json($data, $responseCode);
     }
 
-    protected function showAll(Collection $collection, $code = 200, $transformerOverride = false, $paginate = true): JsonResponse
+    protected function showAll(Collection $collection, $code = 200, $transformerOverride = false, $paginate = true, $emitResponse = true)
     {
         // handle empty collection
         if ($collection->isEmpty()) {
@@ -97,7 +97,11 @@ trait EvaluationToolResponse
             return $this->successResponse($collection, $code);
         }
 
-        return $this->successResponse($this->paginate($collection), $code);
+        if($emitResponse) {
+            return $this->successResponse($this->paginate($collection), $code);
+        }
+
+        return $collection;
     }
 
     protected function filterData($collection, $transformer)

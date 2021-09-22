@@ -10,7 +10,7 @@ class EvaluationToolSurveyStepResultAssetTransformer extends TransformerAbstract
     /**
      * Category transformer.
      *
-     * @param EvaluationToolSurveyStepResultAsset $surveLocalization
+     * @param EvaluationToolSurveyStepResultAsset $surveyStepResultAsset
      * @return array
      */
     public function transform(EvaluationToolSurveyStepResultAsset $surveyStepResultAsset): array

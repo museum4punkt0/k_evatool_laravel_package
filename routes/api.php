@@ -5,11 +5,11 @@ use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolAssetController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyLanguageController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyLocalizationController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyController;
-use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyStepController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyElementController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyElementTypeController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyStepResultController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyStepResultAssetController;
+use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyResultController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyStepController;
 
 Route::prefix('api/evaluation-tool')
@@ -27,6 +27,7 @@ Route::prefix('api/evaluation-tool')
         Route::post('surveys/{survey}/survey-steps/{surveyStep}/set-next-step', [EvaluationToolSurveySurveyStepController::class, "setNextStep"]);
         Route::post('surveys/{survey}/survey-steps/{surveyStep}/remove-next-step', [EvaluationToolSurveySurveyStepController::class, "removeNextStep"]);
         Route::apiResource('surveys.survey-steps', EvaluationToolSurveySurveyStepController::class);
+        Route::apiResource('surveys.survey-results', EvaluationToolSurveySurveyResultController::class);
     });
 
 Route::any('/tus/{any?}', function () {
