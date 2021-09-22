@@ -52,9 +52,13 @@ class EvaluationToolSurveySurveyResultController extends Controller
         return response()->json(["uuid" => $request->uuid, "steps" => $data]);
     }
 
-    public function store(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $surveyStep, Request $request)
+    public function store(EvaluationToolSurvey $survey, Request $request)
     {
-        if ($survey->id !== $surveyStep->survey_id) {
+        if (!$request->has("surveyStepId")) {
+            $this->errorResponse("no survey step id provided", 409);
+        }
+
+        if ($survey->id !== $request->surveyStepId) {
             $this->errorResponse("survey ids do not match", 409);
         }
 
@@ -83,7 +87,7 @@ class EvaluationToolSurveySurveyResultController extends Controller
 
     public function samplePayloadStarRating($params): StdClass
     {
-        $starRatingPayload                                  = new StdClass();
+        $starRatingPayload                                        = new StdClass();
         $starRatingPayload->{self::STAR_RATING_RESULT_RATING_KEY} = 0;
         return $starRatingPayload;
     }
@@ -117,4 +121,10 @@ class EvaluationToolSurveySurveyResultController extends Controller
     {
         return $params;
     }
+
+    public function rulesPayloadYayNay($params)
+    {
+        return $params;
+    }
+
 }
