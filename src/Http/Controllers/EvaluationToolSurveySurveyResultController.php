@@ -68,11 +68,7 @@ class EvaluationToolSurveySurveyResultController extends Controller
 
     public function store(EvaluationToolSurvey $survey, EvaluationToolSurveySurveyStepResultStoreRequest $request)
     {
-        if (!$request->has("surveyStepId")) {
-            return $this->errorResponse("no survey step id provided", 409);
-        }
-
-        if (!$surveyStep = EvaluationToolSurveyStep::find($request->surveyStepId)) {
+        if (!$surveyStep = EvaluationToolSurveyStep::find($request->survey_step_id)) {
             return $this->errorResponse("survey step does not exist", 409);
         }
 
@@ -80,15 +76,11 @@ class EvaluationToolSurveySurveyResultController extends Controller
             return $this->errorResponse("survey ids do not match", 409);
         }
 
-        if (!$request->has("uuid")) {
-            return $this->errorResponse("no uuid provided", 409);
-        }
-
         $surveyStepResult                     = new EvaluationToolSurveyStepResult();
-        $surveyStepResult->survey_step_id     = $request->surveyStepId;
-        $surveyStepResult->session_id         = $request->uuid;
-        $surveyStepResult->result_value       = $request->resultValue;
-        $surveyStepResult->result_language_id = $request->languageId;
+        $surveyStepResult->survey_step_id     = $request->survey_step_id;
+        $surveyStepResult->session_id         = $request->session_id;
+        $surveyStepResult->result_value       = $request->result_value;
+        $surveyStepResult->result_language_id = $request->result_language_id;
         $surveyStepResult->params             = $surveyStep->survey_element->params;
         $surveyStepResult->answered_at        = Carbon::now();
         $surveyStepResult->save();
