@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 
 class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElementTypeBase
 {
@@ -50,6 +51,18 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
             }
         }
         $request->request->add(['languageKeys' => $languageKeys]);
+    }
+
+    public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement)
+    {
+        // $emojis = $surveyElement->params['emojis'];
+        // $meanings = [];
+        // foreach ($emojis as $key => $value) {
+        // array_push($meanings, $value['meaning']);
+        // }
+        $rules = [
+        ];
+        return $rules;
     }
 
     /**

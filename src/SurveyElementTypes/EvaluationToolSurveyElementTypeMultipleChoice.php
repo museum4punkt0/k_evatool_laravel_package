@@ -62,6 +62,18 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
         $request->request->add(['languageKeys' => $languageKeys]);
     }
 
+    public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement)
+    {
+        // $emojis = $surveyElement->params['emojis'];
+        // $meanings = [];
+        // foreach ($emojis as $key => $value) {
+        // array_push($meanings, $value['meaning']);
+        // }
+        $rules = [
+        ];
+        return $rules;
+    }
+
     /**
      * @return array
      */
@@ -75,7 +87,7 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
             'languageKeys.*' => ['required', 'exists:evaluation_tool_survey_languages,code'],
             'params.minSelectable' => ['integer', 'min:1', 'max:' . $maxCount],
             'params.maxSelectable' => ['integer', 'between:1,params.min_selectable'],
-            'params.maxSelectable' => ['integer', 'min:1', 'max:' . $maxCount]
+            'params.maxSelectable' => ['integer', 'min:1', 'max:' . $maxCount],
         ];
     }
 }

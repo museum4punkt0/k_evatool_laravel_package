@@ -4,6 +4,7 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 
 use Illuminate\Http\Request;
 use StdClass;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 
 class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementTypeBase
 {
@@ -52,6 +53,17 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
             }
         }
         $request->request->add(['languageKeys' => $languageKeys]);
+    }
+    public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement)
+    {
+        // $emojis = $surveyElement->params['emojis'];
+        // $meanings = [];
+        // foreach ($emojis as $key => $value) {
+        // array_push($meanings, $value['meaning']);
+        // }
+        $rules = [
+        ];
+        return $rules;
     }
 
     /**

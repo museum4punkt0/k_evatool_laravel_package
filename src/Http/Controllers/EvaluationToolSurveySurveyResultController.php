@@ -15,6 +15,7 @@ use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepResultCombinedTransformer;
+use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveySurveyStepResultStoreRequest;
 
 class EvaluationToolSurveySurveyResultController extends Controller
 {
@@ -56,7 +57,7 @@ class EvaluationToolSurveySurveyResultController extends Controller
         return response()->json(["uuid" => $request->uuid, "steps" => $data]);
     }
 
-    public function store(EvaluationToolSurvey $survey, Request $request)
+    public function store(EvaluationToolSurvey $survey, EvaluationToolSurveySurveyStepResultStoreRequest $request)
     {
         if (!$request->has("surveyStepId")) {
             return $this->errorResponse("no survey step id provided", 409);

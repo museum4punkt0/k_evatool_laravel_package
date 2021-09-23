@@ -2,11 +2,9 @@
 
 namespace Twoavy\EvaluationTool\SurveyElementTypes;
 
-use Faker\Factory;
 use Illuminate\Http\Request;
 use StdClass;
-use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
-use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 
 class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTypeBase
 {
@@ -24,18 +22,18 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
         return [
             "emojis" => [
                 [
-                    "type"    => "😊",
+                    "type" => "😊",
                     "meaning" => "great",
                 ],
                 [
-                    "type"    => "😠",
+                    "type" => "😠",
                     "meaning" => "angry",
                 ],
                 [
-                    "type"    => "😎",
+                    "type" => "😎",
                     "meaning" => "cool",
-                ]
-            ]
+                ],
+            ],
         ];
     }
 
@@ -47,17 +45,30 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
     public static function prepareRequest(Request $request)
     {
         $meanings = [];
-        $types    = [];
+        $types = [];
         if ($request->has("params.emojis")) {
             foreach ($request->params["emojis"] as $emoji) {
                 $meanings[] = $emoji["meaning"];
-                $types[]    = $emoji["type"];
+                $types[] = $emoji["type"];
             }
         }
         $request->request->add([
             "meanings" => $meanings,
-            "types"    => $types
+            "types" => $types,
         ]);
+    }
+
+    public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement)
+    {
+        $emojis = $surveyElement->params['emojis'];
+        $meanings = [];
+        foreach ($emojis as $key => $value) {
+            array_push($meanings, $value['meaning']);
+        }
+        $rules = [
+            "resultValue.meaning" => ['required', 'in:' . implode(',', $meanings)],
+        ];
+        return $rules;
     }
 
     /**
@@ -70,10 +81,10 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
                 'required',
                 'array',
                 'min:1',
-                'max:10'
+                'max:10',
             ],
-            "meanings.*"    => "min:1|max:20",
-            "types.*"       => "min:1|max:1"
+            "meanings.*" => "min:1|max:20",
+            "types.*" => "min:1|max:1",
         ];
     }
 }
