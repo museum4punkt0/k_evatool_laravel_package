@@ -37,6 +37,11 @@ class EvaluationToolServiceProvider extends ServiceProvider
             'root'   => base_path('packages/twoavy/evaluation-tool/assets'),
         ];
 
+        $this->app->config["filesystems.disks.evaluation_tool_audio"] = [
+            'driver' => 'local',
+            'root'   => storage_path('app/evaluation-tool/audio'),
+        ];
+
         // add tus server
         $this->app->singleton('tus-server', function ($app) {
             $server = new TusServer('file');

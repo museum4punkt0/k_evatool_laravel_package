@@ -4,7 +4,9 @@ namespace Twoavy\EvaluationTool\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStepResultAssetStoreRequest;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResultAsset;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 
@@ -15,6 +17,7 @@ class EvaluationToolSurveyStepResultAssetController extends Controller
     public function __construct()
     {
         $this->middleware("auth:api")->except(["index", "show", "store", "update", "destroy"]);
+        $this->audioDisk = Storage::disk("evaluation_tool_audio");
     }
 
     /**
@@ -45,13 +48,26 @@ class EvaluationToolSurveyStepResultAssetController extends Controller
      * @param EvaluationToolSurveyStepResultAssetStoreRequest $request
      * @return JsonResponse
      */
-    public function store(EvaluationToolSurveyStepResultAssetStoreRequest $request): JsonResponse
+    public function store(EvaluationToolSurveyStepResultAssetStoreRequest $request)
     {
-        $surveyStepResultAsset = new EvaluationToolSurveyStepResultAsset();
-        $surveyStepResultAsset->fill($request->all());
-        $surveyStepResultAsset->save();
+        // Todo: Create Request
+        if (!$request->has("audio")) {
+            return $this->errorResponse("no audio provided", 409);
+        }
 
-        return $this->showOne($surveyStepResultAsset->refresh());
+        if (!$request->has("surveyStepResultId")) {
+            return $this->errorResponse("no survey step result id provided", 409);
+        }
+
+        /*if (!$surveyStepResult = EvaluationToolSurveyStepResult::find($request->surveyStepResultId)) {
+            return $this->errorResponse("survey step result not found", 409);
+        }*/
+
+        $fileContent = $request->audio;
+        $fileContent = str_replace('data:audio/*;base64,', '', $fileContent);
+        $hash        = substr(md5($fileContent),0,10);
+        $file        = $this->audioDisk->put("recording_" . date('ymdhis') . "_" . $hash . ".wav", base64_decode($fileContent));
+        return null;
     }
 
     /**

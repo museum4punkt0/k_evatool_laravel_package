@@ -16,6 +16,7 @@ use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepResultCombinedTransformer;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveySurveyStepResultStoreRequest;
+use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyTransformer;
 
 class EvaluationToolSurveySurveyResultController extends Controller
 {
@@ -42,6 +43,10 @@ class EvaluationToolSurveySurveyResultController extends Controller
     {
         $surveySteps = $survey->survey_steps;
 
+        if ($survey->published === false) {
+            return $this->errorResponse("survey not avaiable", 409);
+        }
+
         // set new uuid and apply to request if not supplied
         if (!$request->has("uuid")) {
             $uuid = $this->generateUuid();
@@ -54,7 +59,11 @@ class EvaluationToolSurveySurveyResultController extends Controller
 
         $data = $this->showAll($surveySteps, 200, EvaluationToolSurveyStepResultCombinedTransformer::class, false, false);
 
-        return response()->json(["uuid" => $request->uuid, "steps" => $data]);
+        return response()->json([
+            "uuid"   => $request->uuid,
+            "survey" => $this->transformData($survey, EvaluationToolSurveyTransformer::class, true),
+            "steps"  => $data,
+        ]);
     }
 
     public function store(EvaluationToolSurvey $survey, EvaluationToolSurveySurveyStepResultStoreRequest $request)
@@ -75,13 +84,13 @@ class EvaluationToolSurveySurveyResultController extends Controller
             return $this->errorResponse("no uuid provided", 409);
         }
 
-        $surveyStepResult = new EvaluationToolSurveyStepResult();
-        $surveyStepResult->survey_step_id = $request->surveyStepId;
-        $surveyStepResult->session_id = $request->uuid;
-        $surveyStepResult->result_value = $request->resultValue;
+        $surveyStepResult                     = new EvaluationToolSurveyStepResult();
+        $surveyStepResult->survey_step_id     = $request->surveyStepId;
+        $surveyStepResult->session_id         = $request->uuid;
+        $surveyStepResult->result_value       = $request->resultValue;
         $surveyStepResult->result_language_id = $request->languageId;
-        $surveyStepResult->params = $surveyStep->survey_element->params;
-        $surveyStepResult->answered_at = Carbon::now();
+        $surveyStepResult->params             = $surveyStep->survey_element->params;
+        $surveyStepResult->answered_at        = Carbon::now();
         $surveyStepResult->save();
         return $this->showOne($surveyStepResult);
     }
@@ -93,20 +102,20 @@ class EvaluationToolSurveySurveyResultController extends Controller
 
     public function getSampleResultPayload(EvaluationToolSurveyStep $surveyStep): StdClass
     {
-        $payload = new StdClass;
+        $payload              = new StdClass;
         $payload->elementType = $surveyStep->survey_element->survey_element_type->key;
 
-        $samplePayloadFunctionName = 'samplePayload' . ucfirst($payload->elementType);
-        $payload->resultData = new StdClass;
+        $samplePayloadFunctionName        = 'samplePayload' . ucfirst($payload->elementType);
+        $payload->resultData              = new StdClass;
         $payload->resultData->resultValue = $this->{$samplePayloadFunctionName}($surveyStep->survey_element->params);
-        $payload->resultData->languageId = $this->defaultLanguage->id;
+        $payload->resultData->languageId  = $this->defaultLanguage->id;
 
         return $payload;
     }
 
     public function samplePayloadStarRating($params): StdClass
     {
-        $starRatingPayload = new StdClass();
+        $starRatingPayload                                        = new StdClass();
         $starRatingPayload->{self::STAR_RATING_RESULT_RATING_KEY} = 0;
         return $starRatingPayload;
     }
@@ -119,7 +128,7 @@ class EvaluationToolSurveySurveyResultController extends Controller
 
     public function samplePayloadEmoji($params): StdClass
     {
-        $emojiPayload = new StdClass();
+        $emojiPayload                            = new StdClass();
         $emojiPayload->{self::EMOJI_MEANING_KEY} = "";
         return $emojiPayload;
     }
@@ -138,14 +147,14 @@ class EvaluationToolSurveySurveyResultController extends Controller
 
     public function samplePayloadBinary($params): StdClass
     {
-        $binaryPayload = new StdClass();
+        $binaryPayload                           = new StdClass();
         $binaryPayload->{self::BINARY_VALUE_KEY} = "";
         return $binaryPayload;
     }
 
     public function samplePayloadYayNay($params): StdClass
     {
-        $yayNayPayload = new StdClass();
+        $yayNayPayload                           = new StdClass();
         $yayNayPayload->{self::YAYNAY_VALUE_KEY} = "";
         return $yayNayPayload;
     }

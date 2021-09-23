@@ -14,7 +14,7 @@ class EvaluationToolSurveyElementController extends Controller
 
     public function __construct()
     {
-        $this->middleware("auth:api")->except(["index", "show"]);
+        $this->middleware("auth:api");
     }
 
     /**
