@@ -2,11 +2,9 @@
 
 namespace Tests\Feature;
 
-use Faker\Factory;
 use Tests\TestCase;
-use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
-use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
-use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeEmoji;
+
+use Twoavy\EvaluationTool\Helpers\TestHelper;
 
 class EvaluationToolSurveyElementEmojiTest extends TestCase
 {
@@ -36,52 +34,48 @@ class EvaluationToolSurveyElementEmojiTest extends TestCase
 
     public function test_create_survey_element_emoji_valid()
     {
+        $headers = TestHelper::getAuthHeader();
+
         $data = $this->validData();
 
-        $response = $this->post('/api/evaluation-tool/survey-elements', $data);
-        try {
-            $response->assertStatus(200);
-        } catch (\Exception $e) {
-            $this->fail($response->getContent());
-        }
+        $response = $this->post('/api/evaluation-tool/survey-elements', $data, $headers);
+        $response->assertStatus(200);
+
     }
 
     public function test_create_survey_element_emoji_no_emoji()
     {
+        $headers = TestHelper::getAuthHeader();
+
         $data = $this->validData();
         unset($data["params"]["emojis"]);
 
-        $response = $this->post('/api/evaluation-tool/survey-elements', $data);
-        try {
-            $response->assertStatus(422);
-        } catch (\Exception $e) {
-            $this->fail($response->getContent());
-        }
+        $response = $this->post('/api/evaluation-tool/survey-elements', $data, $headers);
+        $response->assertStatus(422);
+
     }
 
     public function test_create_survey_element_emoji_type_too_short()
     {
+        $headers = TestHelper::getAuthHeader();
+
         $data                                = $this->validData();
         $data["params"]["emojis"][0]["type"] = "";
 
-        $response = $this->post('/api/evaluation-tool/survey-elements', $data);
-        try {
-            $response->assertStatus(422);
-        } catch (\Exception $e) {
-            $this->fail($response->getContent());
-        }
+        $response = $this->post('/api/evaluation-tool/survey-elements', $data, $headers);
+        $response->assertStatus(422);
+
     }
 
     public function test_create_survey_element_emoji_type_too_long()
     {
+        $headers = TestHelper::getAuthHeader();
+
         $data                                = $this->validData();
         $data["params"]["emojis"][0]["type"] = "22";
 
-        $response = $this->post('/api/evaluation-tool/survey-elements', $data);
-        try {
-            $response->assertStatus(422);
-        } catch (\Exception $e) {
-            $this->fail($response->getContent());
-        }
+        $response = $this->post('/api/evaluation-tool/survey-elements', $data, $headers);
+        $response->assertStatus(422);
+
     }
 }

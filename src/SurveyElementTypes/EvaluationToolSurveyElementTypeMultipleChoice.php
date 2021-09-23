@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 use Faker\Factory;
 use Illuminate\Http\Request;
 use StdClass;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 
 class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurveyElementTypeBase
 {

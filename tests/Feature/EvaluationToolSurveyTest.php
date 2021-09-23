@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Faker\Factory;
 use Tests\TestCase;
 use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyFactory;
+use Twoavy\EvaluationTool\Helpers\TestHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 
@@ -13,97 +14,80 @@ class EvaluationToolSurveyTest extends TestCase
     public function test_get_surveys()
     {
         $response = $this->get('/api/evaluation-tool/surveys');
-        try {
-            $response->assertStatus(200);
-        } catch (\Exception $e) {
-            $this->fail($response->getContent());
-        }
+        $response->assertStatus(200);
     }
 
     public function test_get_survey()
     {
-        $survey = EvaluationToolSurvey::all()->random(1)[0];
+        $survey   = EvaluationToolSurvey::all()->random(1)[0];
         $response = $this->get('/api/evaluation-tool/surveys/' . $survey->id);
-        try {
-            $response->assertStatus(200);
-        } catch (\Exception $e) {
-            $this->fail($response->getContent());
-        }
+
+        $response->assertStatus(200);
+
     }
 
     public function test_create_survey()
     {
-        $data = [
+        $headers  = TestHelper::getAuthHeader();
+
+        $data     = [
             "name" => "Test",
         ];
-        $response = $this->post('/api/evaluation-tool/surveys', $data);
-        try {
-            $response->assertStatus(200);
-        } catch (\Exception $e) {
-            $this->fail($response->getContent());
-        }
+        $response = $this->post('/api/evaluation-tool/surveys', $data, $headers);
+
+        $response->assertStatus(200);
+
     }
 
     public function test_create_survey_without_name()
     {
-        $data = [];
+        $data     = [];
         $response = $this->post('/api/evaluation-tool/surveys', $data);
-        try {
-            $response->assertStatus(422);
-        } catch (\Exception $e) {
-            $this->fail($response->getContent());
-        }
+
+        $response->assertStatus(422);
     }
 
     public function test_create_survey_with_name_too_short()
     {
-        $data = [
+        $data     = [
             "name" => "A",
         ];
         $response = $this->post('/api/evaluation-tool/surveys', $data);
-        try {
-            $response->assertStatus(422);
-        } catch (\Exception $e) {
-            $this->fail($response->getContent());
-        }
+
+        $response->assertStatus(422);
+
     }
 
     public function test_create_survey_with_name_too_long()
     {
-        $faker = Factory::create();
-        $data = [
+        $faker    = Factory::create();
+        $data     = [
             "name" => $faker->words(100, true),
         ];
         $response = $this->post('/api/evaluation-tool/surveys', $data);
-        try {
-            $response->assertStatus(422);
-        } catch (\Exception $e) {
-            $this->fail($response->getContent());
-        }
+
+        $response->assertStatus(422);
+
     }
 
     public function test_update_survey()
     {
-        $survey = EvaluationToolSurvey::all()->random(1)[0];
-        $data = $survey->toArray();
+        $survey   = EvaluationToolSurvey::all()->random(1)[0];
+        $data     = $survey->toArray();
         $response = $this->put('/api/evaluation-tool/surveys/' . $survey->id, $data);
-        try {
-            $response->assertStatus(200);
-        } catch (\Exception $e) {
-            $this->fail($response->getContent());
-        }
+
+        $response->assertStatus(200);
+
     }
 
     public function test_delete_survey_without_steps()
     {
         EvaluationToolSurveyFactory::times(1)->create();
-        $survey = EvaluationToolSurvey::all()->last();
+        $survey   = EvaluationToolSurvey::all()->last();
         $response = $this->delete('/api/evaluation-tool/surveys/' . $survey->id);
-        try {
-            $response->assertStatus(200);
-        } catch (\Exception $e) {
-            $this->fail($response->getContent());
-        }
+
+        $response->assertStatus(200);
+
     }
 
     public function test_delete_survey_with_steps()
@@ -111,10 +95,8 @@ class EvaluationToolSurveyTest extends TestCase
         $surveyStep = EvaluationToolSurveyStep::all()->last();
         $survey     = EvaluationToolSurvey::find($surveyStep->survey_id);
         $response   = $this->delete('/api/evaluation-tool/surveys/' . $survey->id);
-        try {
-            $response->assertStatus(409);
-        } catch (\Exception $e) {
-            $this->fail($response->getContent());
-        }
+
+        $response->assertStatus(409);
+
     }
 }

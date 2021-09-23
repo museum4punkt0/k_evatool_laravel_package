@@ -110,39 +110,39 @@ class EvaluationToolSurveySurveyResultController extends Controller
         return $starRatingPayload;
     }
 
-    public function samplePayloadMultipleChoice($params)
+    public function samplePayloadMultipleChoice($params): StdClass
     {
         $multipleChoicePayload = new StdClass();
         return $multipleChoicePayload;
     }
 
-    public function samplePayloadEmoji($params)
+    public function samplePayloadEmoji($params): StdClass
     {
         $emojiPayload = new StdClass();
         $emojiPayload->{self::EMOJI_MEANING_KEY} = "";
         return $emojiPayload;
     }
 
-    public function samplePayloadSimpleText($params)
+    public function samplePayloadSimpleText($params): StdClass
     {
         $simpleTextPayload = new StdClass();
         return $simpleTextPayload;
     }
 
-    public function samplePayloadVideo($params)
+    public function samplePayloadVideo($params): StdClass
     {
         $videoPayload = new StdClass();
         return $videoPayload;
     }
 
-    public function samplePayloadBinary($params)
+    public function samplePayloadBinary($params): StdClass
     {
         $binaryPayload = new StdClass();
         $binaryPayload->{self::BINARY_VALUE_KEY} = "";
         return $binaryPayload;
     }
 
-    public function samplePayloadYayNay($params)
+    public function samplePayloadYayNay($params): StdClass
     {
         $yayNayPayload = new StdClass();
         $yayNayPayload->{self::YAYNAY_VALUE_KEY} = "";
