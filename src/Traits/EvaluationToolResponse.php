@@ -94,14 +94,19 @@ trait EvaluationToolResponse
                 $collection = $this->paginate($collection);
             }
             $collection = $this->transformData($collection, $transformer);
-            return $this->successResponse($collection, $code);
+
+            if($emitResponse) {
+                return $this->successResponse($collection, $code);
+            }
+
+            return $collection["data"];
         }
 
         if($emitResponse) {
             return $this->successResponse($this->paginate($collection), $code);
         }
 
-        return $collection;
+        return $collection["data"];
     }
 
     protected function filterData($collection, $transformer)
