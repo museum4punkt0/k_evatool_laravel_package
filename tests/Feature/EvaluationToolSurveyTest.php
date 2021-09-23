@@ -89,7 +89,7 @@ class EvaluationToolSurveyTest extends TestCase
         $headers  = TestHelper::getAuthHeader();
         EvaluationToolSurveyFactory::times(1)->create();
         $survey   = EvaluationToolSurvey::all()->last();
-        $response = $this->delete('/api/evaluation-tool/surveys/' . $survey->id, $headers);
+        $response = $this->delete('/api/evaluation-tool/surveys/' . $survey->id, [], $headers);
 
         $response->assertStatus(200);
 
@@ -100,7 +100,7 @@ class EvaluationToolSurveyTest extends TestCase
         $headers  = TestHelper::getAuthHeader();
         $surveyStep = EvaluationToolSurveyStep::all()->last();
         $survey     = EvaluationToolSurvey::find($surveyStep->survey_id);
-        $response   = $this->delete('/api/evaluation-tool/surveys/' . $survey->id, $headers);
+        $response   = $this->delete('/api/evaluation-tool/surveys/' . $survey->id, [], $headers);
 
         $response->assertStatus(409);
 

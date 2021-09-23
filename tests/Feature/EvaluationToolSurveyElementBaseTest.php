@@ -50,9 +50,7 @@ class EvaluationToolSurveyElementTypeTest extends TestCase
         $transformed = EvaluationToolHelper::transformModel($surveyElement);
         unset($transformed["name"]);
 
-        // dd($transformed);
-        // dd($headers);
-        $response = $this->put('/api/evaluation-tool/survey-elements/' . $surveyElement->id, array_merge($transformed, $headers));
+        $response = $this->put('/api/evaluation-tool/survey-elements/' . $surveyElement->id, $transformed, $headers);
         $response->assertStatus(422);
     }
 
@@ -74,7 +72,7 @@ class EvaluationToolSurveyElementTypeTest extends TestCase
         $transformed = EvaluationToolHelper::transformModel($surveyElement);
         $transformed["name"] = "";
 
-        $response = $this->put('/api/evaluation-tool/survey-elements/' . $surveyElement->id, array_merge($transformed, $headers));
+        $response = $this->put('/api/evaluation-tool/survey-elements/' . $surveyElement->id, $transformed, $headers);
         $response->assertStatus(422);
     }
 
@@ -96,7 +94,7 @@ class EvaluationToolSurveyElementTypeTest extends TestCase
         $transformed = EvaluationToolHelper::transformModel($surveyElement);
         unset($transformed["params"]);
 
-        $response = $this->put('/api/evaluation-tool/survey-elements/' . $surveyElement->id, array_merge($transformed, $headers));
+        $response = $this->put('/api/evaluation-tool/survey-elements/' . $surveyElement->id, $transformed, $headers);
         $response->assertStatus(422);
     }
 }
