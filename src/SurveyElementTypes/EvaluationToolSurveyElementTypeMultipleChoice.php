@@ -74,8 +74,7 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
             'params.options.*' => ['array'],
             'languageKeys.*' => ['required', 'exists:evaluation_tool_survey_languages,code'],
             'params.minSelectable' => ['integer', 'min:1', 'max:' . $maxCount],
-            // TODO: maxSelectable > = minSelectable
-            // 'params.maxSelectable' => ['integer', 'min:1', 'max:' . $maxCount, 'gte:params.min_selectable'],
+            'params.maxSelectable' => ['integer', 'between:1,params.min_selectable'],
             'params.maxSelectable' => ['integer', 'min:1', 'max:' . $maxCount]
         ];
     }
