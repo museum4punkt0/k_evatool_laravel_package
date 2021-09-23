@@ -56,12 +56,10 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
     }
     public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement)
     {
-        // $emojis = $surveyElement->params['emojis'];
-        // $meanings = [];
-        // foreach ($emojis as $key => $value) {
-        // array_push($meanings, $value['meaning']);
-        // }
+        $trueValue = $surveyElement->params['trueValue'];
+        $falseValue = $surveyElement->params['falseValue'];
         $rules = [
+            "result_value.value" => ['required', 'in:' . $trueValue . ',' . $falseValue],
         ];
         return $rules;
     }

@@ -59,7 +59,9 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
         // foreach ($emojis as $key => $value) {
         // array_push($meanings, $value['meaning']);
         // }
+        // TODO: between 0, max
         $rules = [
+            "result_value.rating" => ['required']
         ];
         return $rules;
     }

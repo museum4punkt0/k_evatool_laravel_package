@@ -66,7 +66,7 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
             array_push($meanings, $value['meaning']);
         }
         $rules = [
-            "resultValue.meaning" => ['required', 'in:' . implode(',', $meanings)],
+            "result_value.meaning" => ['required', 'in:' . implode(',', $meanings)],
         ];
         return $rules;
     }
