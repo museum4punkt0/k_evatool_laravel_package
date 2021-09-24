@@ -46,7 +46,7 @@ class EvaluationToolSurveyElementFactory extends Factory
         return [
             "name"                   => $surveyElementType->name,
             "survey_element_type_id" => $surveyElementType->id,
-            //            "description"            => $this->faker->boolean() ? ucfirst((string)$this->faker->words($this->faker->numberBetween(1, 10), true)) : null,
+            "description"            => $this->faker->boolean() ? ucfirst((string)$this->faker->words($this->faker->numberBetween(1, 10), true)) : null,
             "params"                 => $params,
             "published"              => $this->faker->boolean(80),
             "publish_up"             => $publishPeriod ? $publishUp : null,
@@ -60,7 +60,7 @@ class EvaluationToolSurveyElementFactory extends Factory
      * @param string $description
      * @return Factory
      */
-    public function multipleChoice($params = null, string $name = "Name", $description = ''): Factory
+    public function multipleChoice($params = null, string $name = "Name", string $description = ''): Factory
     {
         $publishedLanguages = EvaluationToolSurveyLanguage::where("published")->get();
 
@@ -80,10 +80,8 @@ class EvaluationToolSurveyElementFactory extends Factory
      * @param string $description
      * @return Factory
      */
-    public function simpleText($params = null, string $name = "Name", $description = ''): Factory
+    public function simpleText($params = null, string $name = "Name", string $description = ''): Factory
     {
-        $publishedLanguages = EvaluationToolSurveyLanguage::where("published")->get();
-
         return $this->state(function (array $attributes) use ($params, $name, $description) {
             return [
                 'survey_element_type_id' => 3,
@@ -100,13 +98,31 @@ class EvaluationToolSurveyElementFactory extends Factory
      * @param string $description
      * @return Factory
      */
-    public function starRating($params = null, string $name = "Name", $description = ''): Factory
+    public function starRating($params = null, string $name = "Name", string $description = ''): Factory
     {
         $publishedLanguages = EvaluationToolSurveyLanguage::where("published")->get();
 
         return $this->state(function (array $attributes) use ($params, $name, $description) {
             return [
                 'survey_element_type_id' => 4,
+                'name'                   => $name,
+                'description'            => $description,
+                'params'                 => $params
+            ];
+        });
+    }
+
+    /**
+     * @param null $params
+     * @param string $name
+     * @param string $description
+     * @return Factory
+     */
+    public function video($params = null, string $name = "Name", string $description = ''): Factory
+    {
+        return $this->state(function (array $attributes) use ($params, $name, $description) {
+            return [
+                'survey_element_type_id' => 7,
                 'name'                   => $name,
                 'description'            => $description,
                 'params'                 => $params

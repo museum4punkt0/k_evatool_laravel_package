@@ -9,8 +9,10 @@ use Twoavy\EvaluationTool\Console\Commands\TestCommand;
 use Twoavy\EvaluationTool\Console\Commands\TypesCommand;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Observers\EvaluationToolSurveyObserver;
 use Twoavy\EvaluationTool\Observers\EvaluationToolSurveyElementObserver;
+use Twoavy\EvaluationTool\Observers\EvaluationToolSurveyStepObserver;
 
 class EvaluationToolServiceProvider extends ServiceProvider
 {
@@ -43,7 +45,7 @@ class EvaluationToolServiceProvider extends ServiceProvider
         ];
 
         // add tus server
-        $this->app->singleton('tus-server', function ($app) {
+        $this->app->singleton('tus-server', function () {
             $server = new TusServer('file');
 
             $server
@@ -78,6 +80,7 @@ class EvaluationToolServiceProvider extends ServiceProvider
 
         // observers
         EvaluationToolSurvey::observe(EvaluationToolSurveyObserver::class);
+        EvaluationToolSurveyStep::observe(EvaluationToolSurveyStepObserver::class);
         EvaluationToolSurveyElement::observe(EvaluationToolSurveyElementObserver::class);
 
         if ($this->app->runningInConsole()) {

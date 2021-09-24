@@ -56,9 +56,9 @@ class EvaluationToolDemoSurveySimpleLinear extends Seeder
             "meaningHighestValue" => "very happy"
         ], "Sterne-Bewertung", "Von sehr unglücklich bis sehr glücklich")->create();
 
-        EvaluationToolSurveyFactory::times(1)->withName("Einfache Umfrage", "Lineare Abfolge, ohne konditionale Elemente")->create();
         $starRatingId = EvaluationToolSurveyElement::all()->last()->id;
 
+        EvaluationToolSurveyFactory::times(1)->withName("Einfache Umfrage", "Lineare Abfolge, ohne konditionale Elemente")->create();
         $surveyId = EvaluationToolSurvey::get()->last()->id;
 
         EvaluationToolSurveyStepFactory::times(1)->withData("Einleitung", $introId, $surveyId, $multipleChoiceId)->create();
