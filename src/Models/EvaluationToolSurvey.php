@@ -22,6 +22,7 @@ class EvaluationToolSurvey extends Model
     // fields that can be mass-assigned via create or fill methods
     protected $fillable = [
         "name",
+        "slug",
         "description",
         "published",
         "publish_up",

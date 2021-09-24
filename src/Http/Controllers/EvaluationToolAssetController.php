@@ -71,8 +71,6 @@ class EvaluationToolAssetController extends Controller
         $filename     = $tusData["name"];
         $filenameSlug = Str::slug(pathinfo($filename, 8), "_") . "." . strtolower(pathinfo($filename, 4));
 
-        touch("tus.json");
-
         $asset->filename = $filenameSlug;
         $asset->hash     = hash_file('md5', $this->uploadDisk->path($filename));
         $asset->size     = $this->uploadDisk->size($filename);
