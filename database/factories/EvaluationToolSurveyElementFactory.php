@@ -77,6 +77,7 @@ class EvaluationToolSurveyElementFactory extends Factory
     /**
      * @param null $params
      * @param string $name
+     * @param string $description
      * @return Factory
      */
     public function simpleText($params = null, string $name = "Name", $description = ''): Factory
@@ -88,6 +89,26 @@ class EvaluationToolSurveyElementFactory extends Factory
                 'survey_element_type_id' => 3,
                 "name"                   => $name,
                 "description"            => $description,
+                'params'                 => $params
+            ];
+        });
+    }
+
+    /**
+     * @param null $params
+     * @param string $name
+     * @param string $description
+     * @return Factory
+     */
+    public function starRating($params = null, string $name = "Name", $description = ''): Factory
+    {
+        $publishedLanguages = EvaluationToolSurveyLanguage::where("published")->get();
+
+        return $this->state(function (array $attributes) use ($params, $name, $description) {
+            return [
+                'survey_element_type_id' => 2,
+                'name'                   => $name,
+                'description'            => $description,
                 'params'                 => $params
             ];
         });

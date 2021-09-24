@@ -57,15 +57,17 @@ class EvaluationToolSurveyStepFactory extends Factory
      * @param string $name
      * @param $surveyElementId
      * @param $surveyId
+     * @param null $nextStepId
      * @return EvaluationToolSurveyStepFactory
      */
-    public function withData(string $name, $surveyElementId, $surveyId): EvaluationToolSurveyStepFactory
+    public function withData(string $name, $surveyElementId, $surveyId, $nextStepId = null): EvaluationToolSurveyStepFactory
     {
-        return $this->state(function (array $attributes) use ($name, $surveyElementId, $surveyId) {
+        return $this->state(function (array $attributes) use ($name, $surveyElementId, $surveyId, $nextStepId) {
             return [
                 'name'              => $name,
                 'survey_element_id' => $surveyElementId,
                 'survey_id'         => $surveyId,
+                'next_step_id'      => $nextStepId
             ];
         });
     }

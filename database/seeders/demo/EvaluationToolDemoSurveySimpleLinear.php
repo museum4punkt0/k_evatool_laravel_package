@@ -45,11 +45,25 @@ class EvaluationToolDemoSurveySimpleLinear extends Seeder
 
         $multipleChoiceId = EvaluationToolSurveyElement::all()->last()->id;
 
+        EvaluationToolSurveyElementFactory::times(1)->starRating([
+            "question"            => [
+                "de" => "Eine auf deutsch formulierte Frage",
+                "en" => "A question presented in English",
+            ],
+            "allowHalfSteps"      => false,
+            "numberOfStars"       => 5,
+            "meaningLowestValue"  => "very unhappy",
+            "meaningHighestValue" => "very happy"
+        ], "Sterne-Bewertung", "Von sehr unglücklich bis sehr glücklich")->create();
+
         EvaluationToolSurveyFactory::times(1)->withName("Einfache Umfrage", "Lineare Abfolge, ohne konditionale Elemente")->create();
+        $starRatingId = EvaluationToolSurveyElement::all()->last()->id;
+
         $surveyId = EvaluationToolSurvey::get()->last()->id;
 
-        EvaluationToolSurveyStepFactory::times(1)->withData("Einleitung", $introId, $surveyId)->create();
-        EvaluationToolSurveyStepFactory::times(1)->withData("Auswahl", $multipleChoiceId, $surveyId)->create();
+        EvaluationToolSurveyStepFactory::times(1)->withData("Einleitung", $introId, $surveyId, $multipleChoiceId)->create();
+        EvaluationToolSurveyStepFactory::times(1)->withData("Einfach-Auswahl", $multipleChoiceId, $surveyId, $starRatingId)->create();
+        EvaluationToolSurveyStepFactory::times(1)->withData("Bewertung", $starRatingId, $surveyId)->create();
 
 
     }
