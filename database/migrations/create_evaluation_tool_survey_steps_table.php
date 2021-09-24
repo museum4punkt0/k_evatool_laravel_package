@@ -23,6 +23,7 @@ class CreateEvaluationToolSurveyStepsTable extends Migration
             $table->json('result_based_next_steps')->nullable();
             $table->json('time_based_steps')->nullable();
             $table->boolean('allow_skip')->default(false);
+            $table->unsignedBigInteger('parent_step_id')->nullable();
             $table->boolean('published')->default(true);
             $table->timestamp('publish_up')->nullable();
             $table->timestamp('publish_down')->nullable();

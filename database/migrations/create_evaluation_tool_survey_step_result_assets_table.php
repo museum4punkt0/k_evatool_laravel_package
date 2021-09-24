@@ -15,8 +15,12 @@ class CreateEvaluationToolSurveyStepResultAssetsTable extends Migration
     {
         Schema::create('evaluation_tool_survey_step_result_assets', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 50)->nullable();
             $table->text('transcription')->nullable();
+            $table->string('filename', 50);
+            $table->string('hash', 100);
+            $table->string('mime', 50);
+            $table->json('meta')->nullable();
+            $table->integer('size');
             $table->unsignedBigInteger('survey_step_result_id');
             $table->timestamps();
             $table->softDeletes();
