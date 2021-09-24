@@ -16,6 +16,8 @@ class EvaluationToolSeeder extends Seeder
     {
         EvaluationToolSurveyElementTypeController::seedSurveyElementTypes();
 
+
+
         $this->call([
             EvaluationToolSurveyLanguageSeeder::class,
             EvaluationToolSurveySeeder::class,

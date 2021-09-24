@@ -2,6 +2,7 @@
 
 namespace Twoavy\EvaluationTool\Observers;
 
+use Cocur\Slugify\Slugify;
 use Illuminate\Support\Str;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 
@@ -26,8 +27,10 @@ class EvaluationToolSurveyObserver
 
     private function createUniqueSlug($survey): string
     {
+        $slugify = new Slugify();
+
         if (!$survey->slug) {
-            $slug = Str::slug($survey->name, "_");
+            $slug = $slugify->slugify($survey->name, "_");
         } else {
             $slug = $survey->slug;
         }
