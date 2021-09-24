@@ -52,4 +52,17 @@ class EvaluationToolSurveyElementFactory extends Factory
             "publish_down"           => $publishPeriod ? $publishDown : null,
         ];
     }
+
+    /**
+     * @param null $params
+     * @return Factory
+     */
+    public function multipleChoice($params = null): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'survey_element_type_id' => 2,
+            ];
+        });
+    }
 }
