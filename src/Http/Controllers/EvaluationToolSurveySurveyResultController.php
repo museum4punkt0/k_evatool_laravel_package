@@ -43,7 +43,7 @@ class EvaluationToolSurveySurveyResultController extends Controller
     {
         $surveySteps = $survey->survey_steps;
 
-        if ($survey->published === false) {
+        if (!$survey->published) {
             return $this->errorResponse("survey not avaiable", 409);
         }
 

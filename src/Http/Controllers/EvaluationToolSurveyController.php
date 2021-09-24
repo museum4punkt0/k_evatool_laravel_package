@@ -99,4 +99,16 @@ class EvaluationToolSurveyController extends Controller
         return $this->showOne($survey);
 
     }
+
+    /**
+     * @param EvaluationToolSurvey $survey
+     * @return JsonResponse
+     */
+    public function publishSurvey(EvaluationToolSurvey $survey): JsonResponse
+    {
+        $survey->published = !$survey->published;
+        $survey->save();
+
+        return $this->showOne($survey);
+    }
 }

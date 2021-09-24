@@ -36,7 +36,7 @@ class EvaluationToolSurveyLanguageSeeder extends Seeder
             'sub_code' => 'fr_FR',
             'title' => 'Français',
             'default' => false,
-            'published' => true,
+            'published' => false,
         ]);
 
     }
