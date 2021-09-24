@@ -27,7 +27,7 @@ class EvaluationToolSurveyStoreRequest extends FormRequest
     {
         return [
             "name"        => "required|min:2|max:100",
-            "slug"        => "min:3|max:100",
+            "slug"        => "max:100",
             "description" => "max:500",
             "published"   => "boolean",
         ];
