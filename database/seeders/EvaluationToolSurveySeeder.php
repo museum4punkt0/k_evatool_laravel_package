@@ -14,6 +14,10 @@ class EvaluationToolSurveySeeder extends Seeder
      */
     public function run()
     {
-        EvaluationToolSurveyFactory::times(10)->create();
+        $i = 0;
+        while ($i < 10) {
+            EvaluationToolSurveyFactory::times(1)->create();
+            $i++;
+        }
     }
 }

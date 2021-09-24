@@ -14,9 +14,9 @@ class CreateEvaluationToolSurveysTable extends Migration
     {
         Schema::create('evaluation_tool_surveys', function (Blueprint $table) {
             $table->id();
-            $table->string('slug', 200);
             $table->string('name', 100);
             $table->string('description', 500)->nullable();
+            $table->string('slug', 200);
             $table->boolean('published')->default(true);
             $table->timestamp('publish_up')->nullable();
             $table->timestamp('publish_down')->nullable();
@@ -32,9 +32,7 @@ class CreateEvaluationToolSurveysTable extends Migration
         });
 
         Schema::table('evaluation_tool_surveys', function (Blueprint $table) {
-            $table->unsignedBigInteger('created_by')->nullable()->after('created_at');
-            $table->unsignedBigInteger('updated_by')->nullable()->after('updated_at');
-            $table->unsignedBigInteger('deleted_by')->nullable()->after('deleted_at');
+            $table->unique('slug');
         });
     }
 
