@@ -20,8 +20,16 @@ class EvaluationToolSurveyStepResultAsset extends Model
 
     // fields that can be mass-assigned via create or fill methods
     protected $fillable = [
+        "mime",
+        "size",
+        "meta",
+        "hash",
         "filename",
         "transcription",
-        "survey_step_result_id",
+        "survey_step_result_id"
+    ];
+
+    protected $casts =[
+        "meta" => "object"
     ];
 }
