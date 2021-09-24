@@ -7,6 +7,7 @@ use Illuminate\Support\Carbon;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElementType;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 
 class EvaluationToolSurveyElementFactory extends Factory
 {
@@ -45,7 +46,7 @@ class EvaluationToolSurveyElementFactory extends Factory
         return [
             "name"                   => $surveyElementType->name,
             "survey_element_type_id" => $surveyElementType->id,
-            "description"            => $this->faker->boolean() ? ucfirst((string)$this->faker->words($this->faker->numberBetween(1, 10), true)) : null,
+            //            "description"            => $this->faker->boolean() ? ucfirst((string)$this->faker->words($this->faker->numberBetween(1, 10), true)) : null,
             "params"                 => $params,
             "published"              => $this->faker->boolean(80),
             "publish_up"             => $publishPeriod ? $publishUp : null,
@@ -55,13 +56,39 @@ class EvaluationToolSurveyElementFactory extends Factory
 
     /**
      * @param null $params
+     * @param string $name
+     * @param string $description
      * @return Factory
      */
-    public function multipleChoice($params = null): Factory
+    public function multipleChoice($params = null, string $name = "Name", $description = ''): Factory
     {
-        return $this->state(function (array $attributes) {
+        $publishedLanguages = EvaluationToolSurveyLanguage::where("published")->get();
+
+        return $this->state(function (array $attributes) use ($params, $name, $description) {
             return [
                 'survey_element_type_id' => 2,
+                'name'                   => $name,
+                'description'            => $description,
+                'params'                 => $params
+            ];
+        });
+    }
+
+    /**
+     * @param null $params
+     * @param string $name
+     * @return Factory
+     */
+    public function simpleText($params = null, string $name = "Name", $description = ''): Factory
+    {
+        $publishedLanguages = EvaluationToolSurveyLanguage::where("published")->get();
+
+        return $this->state(function (array $attributes) use ($params, $name, $description) {
+            return [
+                'survey_element_type_id' => 3,
+                "name"                   => $name,
+                "description"            => $description,
+                'params'                 => $params
             ];
         });
     }

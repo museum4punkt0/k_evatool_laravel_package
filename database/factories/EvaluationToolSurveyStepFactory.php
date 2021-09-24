@@ -52,4 +52,21 @@ class EvaluationToolSurveyStepFactory extends Factory
             "publish_down"      => $publishPeriod ? $publishDown : null,
         ];
     }
+
+    /**
+     * @param string $name
+     * @param $surveyElementId
+     * @param $surveyId
+     * @return EvaluationToolSurveyStepFactory
+     */
+    public function withData(string $name, $surveyElementId, $surveyId): EvaluationToolSurveyStepFactory
+    {
+        return $this->state(function (array $attributes) use ($name, $surveyElementId, $surveyId) {
+            return [
+                'name'              => $name,
+                'survey_element_id' => $surveyElementId,
+                'survey_id'         => $surveyId,
+            ];
+        });
+    }
 }
