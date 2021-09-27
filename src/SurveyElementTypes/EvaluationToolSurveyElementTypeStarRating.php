@@ -30,7 +30,7 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
 
         return [
             "question"       => $question,
-            "numberOfSteps"  => $this->faker->numberBetween(3, 10),
+            "numberOfStars"  => $this->faker->numberBetween(3, 10),
             "allowHalfSteps" => $this->faker->boolean(20),
         ];
     }
@@ -72,7 +72,7 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
     public static function rules(): array
     {
         return [
-            'params.numberOfSteps'  => [
+            'params.numberOfStars'  => [
                 'required',
                 'numeric',
                 'min:3',

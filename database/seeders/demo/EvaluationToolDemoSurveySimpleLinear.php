@@ -3,6 +3,7 @@
 namespace Twoavy\EvaluationTool\Seeders\demo;
 
 use Illuminate\Database\Seeder;
+use Ramsey\Uuid\Uuid;
 use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyElementFactory;
 use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyFactory;
 use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyStepFactory;
@@ -29,14 +30,26 @@ class EvaluationToolDemoSurveySimpleLinear extends Seeder
         $introId = EvaluationToolSurveyElement::all()->last()->id;
 
         EvaluationToolSurveyElementFactory::times(1)->multipleChoice([
+            "question"      => [
+                "de" => "Was ist die beste Option?",
+                "en" => "What's the best Option",
+            ],
             "options"       => [
                 [
-                    "de" => "Option 1",
-                    "en" => "Option 1",
+                    "uuid"        => Uuid::uuid4(),
+                    "systemValue" => "option1",
+                    "text"        => [
+                        "de" => "Option 1",
+                        "en" => "Option 1",
+                    ]
                 ],
                 [
-                    "de" => "Option 2",
-                    "en" => "Option 2",
+                    "uuid"        => Uuid::uuid4(),
+                    "systemValue" => "option2",
+                    "text"        => [
+                        "de" => "Option 2",
+                        "en" => "Option 2",
+                    ]
                 ]
             ],
             "minSelectable" => 1,
