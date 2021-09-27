@@ -52,18 +52,21 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
         }
         $request->request->add(['languageKeys' => $languageKeys]);
     }
-    public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement)
+
+    /**
+     * @param EvaluationToolSurveyElement $surveyElement
+     * @return array
+     */
+    public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement): array
     {
-        // $emojis = $surveyElement->params['emojis'];
-        // $meanings = [];
-        // foreach ($emojis as $key => $value) {
-        // array_push($meanings, $value['meaning']);
-        // }
-        // TODO: between 0, max
-        $rules = [
-            "result_value.rating" => ['required']
+        return [
+            "result_value.rating" => [
+                'required',
+                'numeric',
+                'min:1',
+                'max:' . $surveyElement->params["numberOfStars"]
+            ]
         ];
-        return $rules;
     }
 
     /**

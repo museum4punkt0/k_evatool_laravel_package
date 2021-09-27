@@ -16,7 +16,7 @@ class EvaluationToolSurveySurveyStepController extends Controller
 
     public function __construct()
     {
-        $this->middleware("auth:api")->except(["index", "show"]);
+        $this->middleware("auth:api");
     }
 
     /**
@@ -31,15 +31,15 @@ class EvaluationToolSurveySurveyStepController extends Controller
 
     /**
      * @param EvaluationToolSurvey $survey
-     * @param EvaluationToolSurveyStep $surveyStep
+     * @param EvaluationToolSurveyStep $step
      * @return JsonResponse
      */
-    public function show(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $surveyStep): JsonResponse
+    public function show(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $step): JsonResponse
     {
-        if ($surveyStep->survey_id !== $survey->id) {
+        if ($step->survey_id !== $survey->id) {
             return $this->errorResponse("step does not belong to survey", 409);
         }
-        return $this->showOne($surveyStep);
+        return $this->showOne($step);
     }
 
     /**
@@ -59,32 +59,32 @@ class EvaluationToolSurveySurveyStepController extends Controller
 
     /**
      * @param EvaluationToolSurvey $survey
-     * @param EvaluationToolSurveyStep $surveyStep
+     * @param EvaluationToolSurveyStep $step
      * @param EvaluationToolSurveyStepStoreRequest $request
      * @return JsonResponse
      */
-    public function update(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $surveyStep, EvaluationToolSurveyStepStoreRequest $request): JsonResponse
+    public function update(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $step, EvaluationToolSurveyStepStoreRequest $request): JsonResponse
     {
         // check if survey id and step id match
-        if ($surveyStep->survey_id !== $survey->id) {
+        if ($step->survey_id !== $survey->id) {
             return $this->errorResponse("survey id does not match step id", 409);
         }
-        $surveyStep->fill($request->all());
-        $surveyStep->save();
-        return $this->showOne($surveyStep);
+        $step->fill($request->all());
+        $step->save();
+        return $this->showOne($step);
     }
 
     /**
      * @param EvaluationToolSurvey $survey
-     * @param EvaluationToolSurveyStep $surveyStep
+     * @param EvaluationToolSurveyStep $step
      * @param EvaluationToolSurveyStepStoreRequest $request
      * @return JsonResponse
      */
-    public function setNextStep(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $surveyStep, Request $request):
+    public function setNextStep(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $step, Request $request):
     JsonResponse
     {
         // check if survey id and step id match
-        if ($surveyStep->survey_id !== $survey->id) {
+        if ($step->survey_id !== $survey->id) {
             return $this->errorResponse("survey id does not match step id", 409);
         }
 
@@ -93,13 +93,13 @@ class EvaluationToolSurveySurveyStepController extends Controller
             return $this->errorResponse("survey id does not match next step id", 409);
         }
 
-        if ($surveyStep->id === $request->nextStepId) {
+        if ($step->id === $request->nextStepId) {
             return $this->errorResponse("step ids are equal. must be different", 409);
         }
 
-        $surveyStep->next_step_id = $request->nextStepId;
-        $surveyStep->save();
-        return $this->showOne($surveyStep);
+        $step->next_step_id = $request->nextStepId;
+        $step->save();
+        return $this->showOne($step);
     }
 
     /**

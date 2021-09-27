@@ -21,17 +21,17 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
     public function sampleParams(): array
     {
 
-        $faker = Factory::create();
+        $faker         = Factory::create();
         $minSelectable = $this->faker->numberBetween(1, 3);
         $maxSelectable = $this->faker->numberBetween($minSelectable, $minSelectable + $faker->numberBetween(1, 3));
 
         return [
-            "question" => [
+            "question"      => [
                 "de" => "Frage",
                 "en" => "Question",
                 "fr" => "Question",
             ],
-            "options" => [
+            "options"       => [
                 ["value" => "option 1", "labels" => ["de" => "option 1", "en" => "option 1", "fr" => "option 1"]],
                 ["value" => "option 2", "labels" => ["de" => "option 2", "en" => "option 2", "fr" => "option 2"]],
                 ["value" => "option 3", "labels" => ["de" => "option 3", "en" => "option 3", "fr" => "option 3"]],
@@ -65,19 +65,31 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
         $request->request->add(['languageKeys' => $languageKeys]);
     }
 
-    public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement)
+    /**
+     * @param EvaluationToolSurveyElement $surveyElement
+     * @return array
+     */
+    public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement): array
     {
         $possibleOptions = [];
-        $options = $surveyElement->params['options'];
-        $minSelectable = $surveyElement->params['minSelectable'];
-        $maxSelectable = $surveyElement->params['maxSelectable'];
+        $options         = $surveyElement->params['options'];
+        $minSelectable   = $surveyElement->params['minSelectable'];
+        $maxSelectable   = $surveyElement->params['maxSelectable'];
         foreach ($options as $option) {
             array_push($possibleOptions, $option["value"]);
         }
-        $rules = [
-            'result_value.selected' => ['required', 'array', 'in:' . implode(',', $possibleOptions), 'between:'.$minSelectable.','.$maxSelectable],
+
+        return [
+            'result_value.selected'   => [
+                'required',
+                'array',
+                'min:' . $minSelectable,
+                'max:' . $maxSelectable,
+            ],
+            'result_value.selected.*' => [
+                'in:' . implode(',', $possibleOptions),
+            ]
         ];
-        return $rules;
     }
 
     /**
@@ -87,10 +99,10 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
     {
         $maxCount = 10;
         return [
-            'params.question' => ['required', 'array', 'min:1'],
-            'params.options' => ['required', 'array', 'min:1'],
-            'params.options.*' => ['array'],
-            'languageKeys.*' => ['required', 'exists:evaluation_tool_survey_languages,code'],
+            'params.question'      => ['required', 'array', 'min:1'],
+            'params.options'       => ['required', 'array', 'min:1'],
+            'params.options.*'     => ['array'],
+            'languageKeys.*'       => ['required', 'exists:evaluation_tool_survey_languages,code'],
             'params.minSelectable' => ['integer', 'min:1', 'max:' . $maxCount],
             'params.maxSelectable' => ['integer', 'between:1,params.min_selectable', 'max:' . $maxCount],
         ];

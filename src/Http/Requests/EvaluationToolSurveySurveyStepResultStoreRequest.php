@@ -57,6 +57,7 @@ class EvaluationToolSurveySurveyStepResultStoreRequest extends FormRequest
             $element = EvaluationToolSurveyElement::find($this->surveyStep->survey_element_id);
             $rules   = array_merge($rules, $this->className::prepareResultRules($element));
         }
+
         return $rules;
     }
 }

@@ -22,46 +22,58 @@ class EvaluationToolSurveySurveyStepSurveyStepResultController extends Controlle
 
     /**
      * @param EvaluationToolSurvey $survey
-     * @param EvaluationToolSurveyStep $surveyStep
+     * @param EvaluationToolSurveyStep $step
      * @return JsonResponse
      */
-    public function index(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $surveyStep): JsonResponse
+    public function index(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $step): JsonResponse
     {
-        $surveyStepResults = $surveyStep->survey_step_results;
-        return $this->showAll($surveyStepResults);
-    }
-
-    /**
-     * @param EvaluationToolSurvey $survey
-     * @param EvaluationToolSurveyStep $surveyStep
-     * @param EvaluationToolSurveyStepResult $surveyStepResult
-     * @return JsonResponse
-     */
-    public function show(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $surveyStep, EvaluationToolSurveyStepResult $surveyStepResult): JsonResponse
-    {
-        if ($surveyStep->survey_id !== $survey->id) {
+        if ($step->survey_id !== $survey->id) {
             return $this->errorResponse("step does not belong to survey", 409);
         }
 
-        return $this->showOne($surveyStepResult);
+        $stepResults = $step->survey_step_results;
+        return $this->showAll($stepResults);
     }
 
     /**
      * @param EvaluationToolSurvey $survey
-     * @param EvaluationToolSurveyStep $surveyStep
-     * @param EvaluationToolSurveyStepResult $surveyStepResult
+     * @param EvaluationToolSurveyStep $step
+     * @param EvaluationToolSurveyStepResult $stepResult
      * @return JsonResponse
      */
-    public function destroy(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $surveyStep, EvaluationToolSurveyStepResult $surveyStepResult):
+    public function show(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $step, EvaluationToolSurveyStepResult $stepResult): JsonResponse
+    {
+        if ($step->survey_id !== $survey->id) {
+            return $this->errorResponse("step does not belong to survey", 409);
+        }
+
+        if ($stepResult->survey_step_id !== $step->id) {
+            return $this->errorResponse("result does not belong to step", 409);
+        }
+
+        return $this->showOne($stepResult);
+    }
+
+    /**
+     * @param EvaluationToolSurvey $survey
+     * @param EvaluationToolSurveyStep $step
+     * @param EvaluationToolSurveyStepResult $stepResult
+     * @return JsonResponse
+     */
+    public function destroy(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $step, EvaluationToolSurveyStepResult $stepResult):
     JsonResponse
     {
-        if ($surveyStep->survey_id !== $survey->id) {
+        if ($step->survey_id !== $survey->id) {
             return $this->errorResponse("step does not belong to survey", 409);
         }
 
-        $surveyStepResult->delete();
+        if ($stepResult->survey_step_id !== $step->id) {
+            return $this->errorResponse("result does not belong to step", 409);
+        }
 
-        return $this->showOne($surveyStepResult);
+        $stepResult->delete();
+
+        return $this->showOne($stepResult);
     }
 
 

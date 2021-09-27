@@ -20,14 +20,14 @@ Route::prefix('api/evaluation-tool')
         Route::put('surveys/{survey}/admin-layout', [EvaluationToolSurveyController::class, "updateAdminLayout"]);
         Route::apiResource('survey-elements', EvaluationToolSurveyElementController::class);
         Route::apiResource('survey-element-types', EvaluationToolSurveyElementTypeController::class);
-        Route::post('surveys/{survey}/survey-steps/{surveyStep}/set-next-step', [EvaluationToolSurveySurveyStepController::class, "setNextStep"]);
-        Route::post('surveys/{survey}/survey-steps/{surveyStep}/remove-next-step', [EvaluationToolSurveySurveyStepController::class, "removeNextStep"]);
+        Route::post('surveys/{survey}/steps/{surveyStep}/set-next-step', [EvaluationToolSurveySurveyStepController::class, "setNextStep"]);
+        Route::post('surveys/{survey}/steps/{surveyStep}/remove-next-step', [EvaluationToolSurveySurveyStepController::class, "removeNextStep"]);
         Route::apiResource('surveys', EvaluationToolSurveyController::class);
         Route::get('surveys/{survey}/run', [EvaluationToolSurveySurveyRunController::class, "index"]);
         Route::post('surveys/{survey}/run', [EvaluationToolSurveySurveyRunController::class, "store"]);
-        Route::apiResource('surveys.survey-steps', EvaluationToolSurveySurveyStepController::class);
-        Route::apiResource('surveys.survey-steps.survey-step-results', EvaluationToolSurveySurveyStepSurveyStepResultController::class);
-        Route::apiResource('surveys.survey-steps.survey-step-results.survey-step-result-assets',
+        Route::apiResource('surveys.steps', EvaluationToolSurveySurveyStepController::class);
+        Route::apiResource('surveys.steps.results', EvaluationToolSurveySurveyStepSurveyStepResultController::class);
+        Route::apiResource('surveys.steps.results.assets',
             EvaluationToolSurveySurveyStepSurveyStepResultSurveyStepResultAssetController::class);
     });
 

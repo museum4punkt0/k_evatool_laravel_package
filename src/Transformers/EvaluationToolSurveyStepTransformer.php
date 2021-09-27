@@ -36,7 +36,7 @@ class EvaluationToolSurveyStepTransformer extends TransformerAbstract
             "links"                => [
                 [
                     "rel"  => "self",
-                    "href" => route("surveys.survey-steps.show", [$surveyStep->survey_id, $surveyStep->id])
+                    "href" => route("surveys.steps.show", [$surveyStep->survey_id, $surveyStep->id])
                 ],
                 [
                     "rel"  => "survey",
