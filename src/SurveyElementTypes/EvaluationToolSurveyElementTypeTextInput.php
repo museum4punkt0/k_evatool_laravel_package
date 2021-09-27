@@ -20,8 +20,11 @@ class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyEleme
     public function sampleParams(): array
     {
         return [
-            "text" => 1,
-            "languageId" => 1
+            "question" => [
+                "de" => "Frage",
+                "en" => "Question",
+                "fr" => "Question",
+            ]
         ];
     }
 
@@ -52,7 +55,7 @@ class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyEleme
     public static function rules(): array
     {
         return [
-            'params.videoAssetId' => 'required|exists:evaluation_tool_assets,id'
+            'params.question' => ['required', 'array', 'min:1'],
         ];
     }
 }
