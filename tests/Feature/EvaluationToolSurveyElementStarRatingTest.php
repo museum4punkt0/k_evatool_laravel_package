@@ -19,7 +19,7 @@ class EvaluationToolSurveyElementStarRatingTest extends TestCase
                     "de" => "Option 1 DE",
                     "en" => "Option 1 EN",
                 ],
-                "numberOfSteps" => 3,
+                "numberOfStars" => 3,
                 "allowHalfSteps" => true,
             ],
         ];
@@ -99,7 +99,7 @@ class EvaluationToolSurveyElementStarRatingTest extends TestCase
     {
         $headers = TestHelper::getAuthHeader();
         $data = $this->validData();
-        unset($data["params"]["numberOfSteps"]);
+        unset($data["params"]["numberOfStars"]);
 
         $response = $this->post('/api/evaluation-tool/survey-elements', $data, $headers);
         $response->assertStatus(422);
@@ -109,7 +109,7 @@ class EvaluationToolSurveyElementStarRatingTest extends TestCase
     {
         $headers = TestHelper::getAuthHeader();
         $data = $this->validData();
-        $data["params"]["numberOfSteps"] = "string";
+        $data["params"]["numberOfStars"] = "string";
 
         $response = $this->post('/api/evaluation-tool/survey-elements', $data, $headers);
         $response->assertStatus(422);
@@ -119,7 +119,7 @@ class EvaluationToolSurveyElementStarRatingTest extends TestCase
     {
         $headers = TestHelper::getAuthHeader();
         $data = $this->validData();
-        $data["params"]["numberOfSteps"] = 1;
+        $data["params"]["numberOfStars"] = 1;
 
         $response = $this->post('/api/evaluation-tool/survey-elements', $data, $headers);
         $response->assertStatus(422);
@@ -129,7 +129,7 @@ class EvaluationToolSurveyElementStarRatingTest extends TestCase
     {
         $headers = TestHelper::getAuthHeader();
         $data = $this->validData();
-        $data["params"]["numberOfSteps"] = 11;
+        $data["params"]["numberOfStars"] = 11;
 
         $response = $this->post('/api/evaluation-tool/survey-elements', $data, $headers);
         $response->assertStatus(422);
