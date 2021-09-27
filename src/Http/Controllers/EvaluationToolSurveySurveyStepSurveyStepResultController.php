@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStepStoreRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 
 class EvaluationToolSurveySurveyStepSurveyStepResultController extends Controller
@@ -16,17 +17,7 @@ class EvaluationToolSurveySurveyStepSurveyStepResultController extends Controlle
 
     public function __construct()
     {
-        $this->middleware("auth:api")->except(["index", "show"]);
-    }
-
-    /**
-     * @param EvaluationToolSurvey $survey
-     * @return JsonResponse
-     */
-    public function index(EvaluationToolSurvey $survey): JsonResponse
-    {
-        $surveySteps = $survey->survey_steps;
-        return $this->showAll($surveySteps);
+        $this->middleware("auth:api");
     }
 
     /**
@@ -34,89 +25,44 @@ class EvaluationToolSurveySurveyStepSurveyStepResultController extends Controlle
      * @param EvaluationToolSurveyStep $surveyStep
      * @return JsonResponse
      */
-    public function show(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $surveyStep): JsonResponse
+    public function index(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $surveyStep): JsonResponse
+    {
+        $surveyStepResults = $surveyStep->survey_step_results;
+        return $this->showAll($surveyStepResults);
+    }
+
+    /**
+     * @param EvaluationToolSurvey $survey
+     * @param EvaluationToolSurveyStep $surveyStep
+     * @param EvaluationToolSurveyStepResult $surveyStepResult
+     * @return JsonResponse
+     */
+    public function show(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $surveyStep, EvaluationToolSurveyStepResult $surveyStepResult): JsonResponse
     {
         if ($surveyStep->survey_id !== $survey->id) {
             return $this->errorResponse("step does not belong to survey", 409);
         }
-        return $this->showOne($surveyStep);
-    }
 
-    /**
-     * @param EvaluationToolSurvey $survey
-     * @param EvaluationToolSurveyStepStoreRequest $request
-     * @return JsonResponse
-     */
-    public function store(EvaluationToolSurvey $survey, EvaluationToolSurveyStepStoreRequest $request): JsonResponse
-    {
-
-        $surveyStep            = new EvaluationToolSurveyStep();
-        $surveyStep->survey_id = $survey->id;
-        $surveyStep->fill($request->all());
-        $surveyStep->save();
-        return $this->showOne($surveyStep);
+        return $this->showOne($surveyStepResult);
     }
 
     /**
      * @param EvaluationToolSurvey $survey
      * @param EvaluationToolSurveyStep $surveyStep
-     * @param EvaluationToolSurveyStepStoreRequest $request
+     * @param EvaluationToolSurveyStepResult $surveyStepResult
      * @return JsonResponse
      */
-    public function update(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $surveyStep, EvaluationToolSurveyStepStoreRequest $request): JsonResponse
-    {
-        // check if survey id and step id match
-        if ($surveyStep->survey_id !== $survey->id) {
-            return $this->errorResponse("survey id does not match step id", 409);
-        }
-        $surveyStep->fill($request->all());
-        $surveyStep->save();
-        return $this->showOne($surveyStep);
-    }
-
-    /**
-     * @param EvaluationToolSurvey $survey
-     * @param EvaluationToolSurveyStep $surveyStep
-     * @param EvaluationToolSurveyStepStoreRequest $request
-     * @return JsonResponse
-     */
-    public function setNextStep(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $surveyStep, Request $request):
+    public function destroy(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $surveyStep, EvaluationToolSurveyStepResult $surveyStepResult):
     JsonResponse
     {
-        // check if survey id and step id match
         if ($surveyStep->survey_id !== $survey->id) {
-            return $this->errorResponse("survey id does not match step id", 409);
+            return $this->errorResponse("step does not belong to survey", 409);
         }
 
-        $nextStep = EvaluationToolSurveyStep::find($request->nextStepId);
-        if ($nextStep->survey_id !== $survey->id) {
-            return $this->errorResponse("survey id does not match next step id", 409);
-        }
+        $surveyStepResult->delete();
 
-        if ($surveyStep->id === $request->nextStepId) {
-            return $this->errorResponse("step ids are equal. must be different", 409);
-        }
-
-        $surveyStep->next_step_id = $request->nextStepId;
-        $surveyStep->save();
-        return $this->showOne($surveyStep);
+        return $this->showOne($surveyStepResult);
     }
 
-    /**
-     * @param EvaluationToolSurvey $survey
-     * @param EvaluationToolSurveyStep $surveyStep
-     * @return JsonResponse
-     */
-    public function removeNextStep(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $surveyStep):
-    JsonResponse
-    {
-        // check if survey id and step id match
-        if ($surveyStep->survey_id !== $survey->id) {
-            return $this->errorResponse("survey id does not match step id", 409);
-        }
 
-        $surveyStep->next_step_id = null;
-        $surveyStep->save();
-        return $this->showOne($surveyStep);
-    }
 }

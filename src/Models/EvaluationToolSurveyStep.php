@@ -57,12 +57,12 @@ class EvaluationToolSurveyStep extends Model
         return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement", "id", "survey_element_id");
     }
 
-    public function survey_results(): HasMany
+    public function survey_step_results(): HasMany
     {
         return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id");
     }
 
-    public function survey_results_by_uuid(): HasMany
+    public function survey_step_results_by_uuid(): HasMany
     {
         return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id")->where('session_id', request()->uuid);
     }

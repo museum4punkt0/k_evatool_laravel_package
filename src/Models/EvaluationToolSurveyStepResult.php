@@ -36,6 +36,7 @@ class EvaluationToolSurveyStepResult extends Model
     protected $casts = [
         'params'       => 'json',
         'result_value' => 'json',
+        'demo'         => 'boolean'
     ];
 
     public function survey_step(): HasOne
