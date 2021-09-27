@@ -16,6 +16,7 @@ class CreateEvaluationToolSurveysTable extends Migration
             $table->id();
             $table->string('name', 100);
             $table->string('description', 500)->nullable();
+            $table->string('slug', 200);
             $table->boolean('published')->default(true);
             $table->timestamp('publish_up')->nullable();
             $table->timestamp('publish_down')->nullable();
@@ -28,6 +29,10 @@ class CreateEvaluationToolSurveysTable extends Migration
             $table->unsignedBigInteger('created_by')->nullable()->after('created_at');
             $table->unsignedBigInteger('updated_by')->nullable()->after('updated_at');
             $table->unsignedBigInteger('deleted_by')->nullable()->after('deleted_at');
+        });
+
+        Schema::table('evaluation_tool_surveys', function (Blueprint $table) {
+            $table->unique('slug');
         });
     }
 

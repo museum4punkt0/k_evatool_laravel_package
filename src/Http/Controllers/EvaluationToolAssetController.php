@@ -57,7 +57,7 @@ class EvaluationToolAssetController extends Controller
         $asset->hash     = hash_file('md5', $this->demoDisk->path($filename));
         $asset->size     = $this->demoDisk->size($filename);
         $asset->mime     = mime_content_type($this->demoDisk->path($filename));
-        $asset->meta     = $this->getFileMetaData($this->demoDisk->path($filename));
+        $asset->meta     = self::getFileMetaData($this->demoDisk->path($filename));
 
         $this->disk->put($filenameSlug, $this->demoDisk->get($filename));
 
@@ -71,8 +71,6 @@ class EvaluationToolAssetController extends Controller
         $filename     = $tusData["name"];
         $filenameSlug = Str::slug(pathinfo($filename, 8), "_") . "." . strtolower(pathinfo($filename, 4));
 
-        touch("tus.json");
-
         $asset->filename = $filenameSlug;
         $asset->hash     = hash_file('md5', $this->uploadDisk->path($filename));
         $asset->size     = $this->uploadDisk->size($filename);
@@ -82,12 +80,12 @@ class EvaluationToolAssetController extends Controller
 
         $this->uploadDisk->delete($filename);
 
-        $asset->meta = $this->getFileMetaData($this->disk->path($filename));
+        $asset->meta = self::getFileMetaData($this->disk->path($filename));
 
         $asset->save();
     }
 
-    public function getFileMetaData($path): array
+    public static function getFileMetaData($path): array
     {
         $getId3   = new getID3();
         $metaData = $getId3->analyze($path);

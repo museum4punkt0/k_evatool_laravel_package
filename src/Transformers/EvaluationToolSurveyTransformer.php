@@ -18,6 +18,7 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
         return [
             "id"               => (int)$survey->id,
             "name"             => (string)$survey->name,
+            "slug"             => (string)$survey->slug,
             "description"      => (string)$survey->description,
             "published"        => (bool)$survey->published,
             "publishUp"        => $survey->publish_up,
@@ -57,6 +58,7 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
         return [
             "id"          => "id",
             "name"        => "name",
+            "slug"        => "slug",
             "description" => "description",
             "published"   => "published",
             "publishUp"   => "publish_up",

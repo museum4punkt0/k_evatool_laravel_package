@@ -7,6 +7,7 @@ use Illuminate\Support\Carbon;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElementType;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 
 class EvaluationToolSurveyElementFactory extends Factory
 {
@@ -51,5 +52,81 @@ class EvaluationToolSurveyElementFactory extends Factory
             "publish_up"             => $publishPeriod ? $publishUp : null,
             "publish_down"           => $publishPeriod ? $publishDown : null,
         ];
+    }
+
+    /**
+     * @param null $params
+     * @param string $name
+     * @param string $description
+     * @return Factory
+     */
+    public function multipleChoice($params = null, string $name = "Name", string $description = ''): Factory
+    {
+        $publishedLanguages = EvaluationToolSurveyLanguage::where("published")->get();
+
+        return $this->state(function (array $attributes) use ($params, $name, $description) {
+            return [
+                'survey_element_type_id' => 2,
+                'name'                   => $name,
+                'description'            => $description,
+                'params'                 => $params
+            ];
+        });
+    }
+
+    /**
+     * @param null $params
+     * @param string $name
+     * @param string $description
+     * @return Factory
+     */
+    public function simpleText($params = null, string $name = "Name", string $description = ''): Factory
+    {
+        return $this->state(function (array $attributes) use ($params, $name, $description) {
+            return [
+                'survey_element_type_id' => 3,
+                "name"                   => $name,
+                "description"            => $description,
+                'params'                 => $params
+            ];
+        });
+    }
+
+    /**
+     * @param null $params
+     * @param string $name
+     * @param string $description
+     * @return Factory
+     */
+    public function starRating($params = null, string $name = "Name", string $description = ''): Factory
+    {
+        $publishedLanguages = EvaluationToolSurveyLanguage::where("published")->get();
+
+        return $this->state(function (array $attributes) use ($params, $name, $description) {
+            return [
+                'survey_element_type_id' => 4,
+                'name'                   => $name,
+                'description'            => $description,
+                'params'                 => $params
+            ];
+        });
+    }
+
+    /**
+     * @param null $params
+     * @param string $name
+     * @param string $description
+     * @return Factory
+     */
+    public function video($params = null, string $name = "Name", string $description = ''): Factory
+    {
+        return $this->state(function (array $attributes) use ($params, $name, $description) {
+            return [
+                'survey_element_type_id' => 7,
+                'name'                   => $name,
+                'description'            => $description,
+                'params'                 => $params
+            ];
+        });
     }
 }

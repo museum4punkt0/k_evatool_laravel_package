@@ -3,18 +3,19 @@
 namespace Twoavy\EvaluationTool\Seeders;
 
 use Illuminate\Database\Seeder;
+use Twoavy\EvaluationTool\Seeders\Demo\EvaluationToolDemoSurveySimpleLinear;
+use Twoavy\EvaluationTool\Seeders\demo\EvaluationToolDemoSurveySimpleVideo;
 
 class EvaluationToolDemoDataSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
-     *
      * @return void
      */
     public function run()
     {
         $this->call([
-        //     EvaluationToolSurveyElementTypeSeeder::class,
+            EvaluationToolDemoSurveySimpleLinear::class,
+            EvaluationToolDemoSurveySimpleVideo::class,
         ]);
     }
 }

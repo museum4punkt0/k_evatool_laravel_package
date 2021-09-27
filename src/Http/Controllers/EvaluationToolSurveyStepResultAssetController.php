@@ -63,11 +63,21 @@ class EvaluationToolSurveyStepResultAssetController extends Controller
             return $this->errorResponse("survey step result not found", 409);
         }*/
 
-        $fileContent = $request->audio;
-        $fileContent = str_replace('data:audio/*;base64,', '', $fileContent);
-        $hash        = substr(md5($fileContent),0,10);
-        $file        = $this->audioDisk->put("recording_" . date('ymdhis') . "_" . $hash . ".wav", base64_decode($fileContent));
-        return null;
+        $fileContent           = $request->audio;
+        $fileContent           = str_replace('data:audio/wav;base64,', '', $fileContent);
+        $hash                  = substr(md5($fileContent), 0, 6);
+        $filename              = "recording_" . date('ymd_His') . "_" . $hash . ".wav";
+        $file                  = $this->audioDisk->put($filename, base64_decode($fileContent));
+        $resultAsset           = new EvaluationToolSurveyStepResultAsset();
+        $resultAsset->filename = $filename;
+        $resultAsset->hash     = hash_file('md5', $this->audioDisk->path($filename));
+        $resultAsset->mime     = mime_content_type($this->audioDisk->path($filename));
+        $resultAsset->size     = $this->audioDisk->size($filename);
+        $resultAsset->meta     = EvaluationToolAssetController::getFileMetaData($this->audioDisk->path($filename));
+        $resultAsset->survey_step_result_id = $request->surveyStepResultId;
+        $resultAsset->save();
+
+        return $this->showOne($resultAsset);
     }
 
     /**

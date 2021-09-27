@@ -17,12 +17,13 @@ class EvaluationToolSeeder extends Seeder
         EvaluationToolSurveyElementTypeController::seedSurveyElementTypes();
 
         $this->call([
-            EvaluationToolSurveySeeder::class,
             EvaluationToolSurveyLanguageSeeder::class,
-            EvaluationToolSurveyElementSeeder::class,
-            EvaluationToolSurveyLocalizationSeeder::class,
-            EvaluationToolSurveyStepSeeder::class,
             EvaluationToolAssetSeeder::class,
+            EvaluationToolDemoDataSeeder::class
+            //            EvaluationToolSurveySeeder::class,
+            //            EvaluationToolSurveyElementSeeder::class,
+            //            EvaluationToolSurveyLocalizationSeeder::class,
+            //            EvaluationToolSurveyStepSeeder::class,
         ]);
     }
 }

@@ -23,8 +23,23 @@ class EvaluationToolSurveyFactory extends Factory
     {
         return [
             "name"        => "Umfrage",
-//            "description" => $this->faker->boolean() ? ucfirst((string)$this->faker->words($this->faker->numberBetween(1, 10), true)) : null
+            //            "description" => $this->faker->boolean() ? ucfirst((string)$this->faker->words($this->faker->numberBetween(1, 10), true)) : null
             "description" => $this->faker->boolean() ? "Kurze Textbeschreibung der Umfrage" : null
         ];
+    }
+
+    /**
+     * @param string $name
+     * @param string $description
+     * @return EvaluationToolSurveyFactory
+     */
+    public function withName(string $name, string $description = ''): EvaluationToolSurveyFactory
+    {
+        return $this->state(function (array $attributes) use ($name, $description) {
+            return [
+                'name'        => $name,
+                'description' => $description,
+            ];
+        });
     }
 }
