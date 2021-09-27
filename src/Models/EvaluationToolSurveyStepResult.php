@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepResultTransformer;
@@ -33,7 +34,12 @@ class EvaluationToolSurveyStepResult extends Model
         "params",
     ];
     protected $casts = [
-        'params' => 'json',
+        'params'       => 'json',
         'result_value' => 'json',
     ];
+
+    public function survey_step(): HasOne
+    {
+        return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep", "id", "survey_step_id");
+    }
 }

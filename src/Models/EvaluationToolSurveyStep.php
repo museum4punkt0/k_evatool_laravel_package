@@ -47,6 +47,11 @@ class EvaluationToolSurveyStep extends Model
 
     protected $with = ["survey_element"];
 
+    public function survey(): HasOne
+    {
+        return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurvey", "id", "survey_id");
+    }
+
     public function survey_element(): HasOne
     {
         return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement", "id", "survey_element_id");

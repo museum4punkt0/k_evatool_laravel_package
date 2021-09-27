@@ -10,7 +10,7 @@ use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResultAsset;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 
-class EvaluationToolSurveyStepResultAssetController extends Controller
+class EvaluationToolSurveySurveyStepSurveyStepResultSurveyStepResultAssetController extends Controller
 {
     use EvaluationToolResponse;
 

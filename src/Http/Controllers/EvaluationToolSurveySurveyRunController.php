@@ -18,7 +18,7 @@ use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepResultCombinedTra
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveySurveyStepResultStoreRequest;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyTransformer;
 
-class EvaluationToolSurveySurveyResultController extends Controller
+class EvaluationToolSurveySurveyRunController extends Controller
 {
     use EvaluationToolResponse;
 
@@ -66,7 +66,12 @@ class EvaluationToolSurveySurveyResultController extends Controller
         ]);
     }
 
-    public function store(EvaluationToolSurvey $survey, EvaluationToolSurveySurveyStepResultStoreRequest $request)
+    /**
+     * @param EvaluationToolSurvey $survey
+     * @param EvaluationToolSurveySurveyStepResultStoreRequest $request
+     * @return JsonResponse
+     */
+    public function store(EvaluationToolSurvey $survey, EvaluationToolSurveySurveyStepResultStoreRequest $request): JsonResponse
     {
         if (!$surveyStep = EvaluationToolSurveyStep::find($request->survey_step_id)) {
             return $this->errorResponse("survey step does not exist", 409);
@@ -84,6 +89,7 @@ class EvaluationToolSurveySurveyResultController extends Controller
         $surveyStepResult->params             = $surveyStep->survey_element->params;
         $surveyStepResult->answered_at        = Carbon::now();
         $surveyStepResult->save();
+
         return $this->showOne($surveyStepResult);
     }
 

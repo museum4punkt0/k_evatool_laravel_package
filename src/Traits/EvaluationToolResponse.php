@@ -51,6 +51,11 @@ trait EvaluationToolResponse
         abort($responseCode, $codes->{$code});
     }
 
+    protected function abortWithMessage($message, $code)
+    {
+        abort($code, $message);
+    }
+
     protected function errorWithCode($code, $responseCode, $additionalData = false): JsonResponse
     {
         $codes = json_decode(file_get_contents(app_path('evaluation_tool_response_codes.json')));
