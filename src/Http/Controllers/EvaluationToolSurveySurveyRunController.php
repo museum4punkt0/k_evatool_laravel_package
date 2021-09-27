@@ -29,7 +29,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
 
     public function __construct()
     {
-        $this->middleware("auth:api")->except(["index", "show", "store"]);
+        $this->middleware("auth:api");
 
         $this->defaultLanguage = EvaluationToolSurveyLanguage::where("default", true)->first();
     }
