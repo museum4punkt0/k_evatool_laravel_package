@@ -85,20 +85,20 @@ class EvaluationToolSurveyStepStoreRequest extends FormRequest
                 Rule::notIn([$request->id])
             ],
             "published"                        => "boolean",
-            "publish_up"                       => [
-                "sometimes",
-                "nullable",
-                "date",
-                "date_format:Y-m-d H:i:s",
-                "before:publish_down"
-            ],
-            "publish_down"                     => [
-                "sometimes",
-                "nullable",
-                "date",
-                "date_format:Y-m-d H:i:s",
-                "after:publish_up"
-            ],
+            // "publish_up"                       => [
+            //     "sometimes",
+            //     "nullable",
+            //     "date",
+            //     "date_format:Y-m-d H:i:s",
+            //     "before:publish_down"
+            // ],
+            // "publish_down"                     => [
+            //     "sometimes",
+            //     "nullable",
+            //     "date",
+            //     "date_format:Y-m-d H:i:s",
+            //     "after:publish_up"
+            // ],
             "name"                             => "min:2|max:50"
         ];
     }
