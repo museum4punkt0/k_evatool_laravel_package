@@ -28,6 +28,7 @@ class EvaluationToolSurveyStep extends Model
         "group",
         "next_step_id",
         "time_based_steps",
+        "result_based_next_steps",
         "allow_skip",
         "published",
         "publish_up",

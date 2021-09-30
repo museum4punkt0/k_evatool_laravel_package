@@ -41,26 +41,29 @@ class EvaluationToolSurveyStepStoreRequest extends FormRequest
     public function rules(): array
     {
 
+        // Todo: Validate result based next steps
+
         return [
-            "survey_element_id"   => "required|numeric|exists:evaluation_tool_survey_elements,id",
-            "next_step_id"        => "nullable|numeric|exists:evaluation_tool_survey_steps,id",
-            "next_step_survey_id" => "in:" . $this->surveyId,
-            "published"           => "boolean",
-            "publish_up"          => [
+            "survey_element_id"       => "required|numeric|exists:evaluation_tool_survey_elements,id",
+            "next_step_id"            => "nullable|numeric|exists:evaluation_tool_survey_steps,id",
+            "next_step_survey_id"     => "in:" . $this->surveyId,
+            "result_based_next_steps" => "array",
+            "published"               => "boolean",
+            "publish_up"              => [
                 "sometimes",
                 "nullable",
                 "date",
                 "date_format:Y-m-d H:i:s",
                 "before:publish_down"
             ],
-            "publish_down"        => [
+            "publish_down"            => [
                 "sometimes",
                 "nullable",
                 "date",
                 "date_format:Y-m-d H:i:s",
                 "after:publish_up"
             ],
-            "name"                => "min:2|max:50"
+            "name"                    => "min:2|max:50"
         ];
     }
 }
