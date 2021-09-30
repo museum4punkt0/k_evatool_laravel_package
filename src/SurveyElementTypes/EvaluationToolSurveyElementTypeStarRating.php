@@ -4,7 +4,9 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 
 use Illuminate\Http\Request;
 use StdClass;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 
 class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElementTypeBase
 {
@@ -86,5 +88,15 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
             'languageKeys.*'        => 'required|exists:evaluation_tool_survey_languages,code',
             'params.allowHalfSteps' => 'boolean',
         ];
+    }
+
+    /**
+     * @param Request $request
+     * @param EvaluationToolSurveyElement $surveyElement
+     * @return bool
+     */
+    public static function validateResultBasedNextSteps(Request $request, EvaluationToolSurveyElement $surveyElement): bool
+    {
+        return true;
     }
 }

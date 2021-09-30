@@ -54,4 +54,14 @@ class EvaluationToolSurveyElementTypeVideo extends EvaluationToolSurveyElementTy
             'params.videoAssetId' => 'required|exists:evaluation_tool_assets,id'
         ];
     }
+
+    /**
+     * @param Request $request
+     * @param EvaluationToolSurveyElement $surveyElement
+     * @return bool
+     */
+    public static function validateResultBasedNextSteps(Request $request, EvaluationToolSurveyElement $surveyElement): bool
+    {
+        return true;
+    }
 }

@@ -3,7 +3,9 @@
 namespace Twoavy\EvaluationTool\Helpers;
 
 use Illuminate\Http\Request;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 
 class EvaluationToolHelper
 {
@@ -41,5 +43,47 @@ class EvaluationToolHelper
     public static function getSecondaryLanguages()
     {
         return EvaluationToolSurveyLanguage::where("default", false)->get();
+    }
+
+    /**
+     * @param EvaluationToolSurvey $survey
+     * @param $excludeSurveyStepId
+     * @return array
+     */
+    public static function getUsedSteps(EvaluationToolSurvey $survey, $excludeSurveyStepId = null): array
+    {
+        $surveyStepsQuery = EvaluationToolSurveyStep::where("survey_id", $survey->id);
+        if ($excludeSurveyStepId) {
+            $surveyStepsQuery->where("id", "!=", $excludeSurveyStepId);
+        }
+        $surveySteps = $surveyStepsQuery->get();
+
+        $usedStepIds = [
+            "next"        => [],
+            "timeBased"   => [],
+            "resultBased" => []
+        ];
+        foreach ($surveySteps as $surveyStep) {
+            // check for next step
+            if ($surveyStep->next_step_id) {
+                $usedStepIds["next"][] = $surveyStep->next_step_id;
+            }
+
+            // check for time based steps
+            if ($surveyStep->time_based_steps && is_array($surveyStep->time_based_steps) && !empty($surveyStep->time_based_steps)) {
+                foreach ($surveyStep->time_based_steps as $timeBasedStep) {
+                    $usedStepIds["timeBased"][] = $timeBasedStep->stepId;
+                }
+            }
+
+            // check for result based next step
+            if ($surveyStep->result_based_next_steps && is_array($surveyStep->result_based_next_steps) && !empty($surveyStep->result_based_next_steps)) {
+                foreach ($surveyStep->result_based_next_steps as $resultBasedNextStep) {
+                    $usedStepIds["resultBased"][] = $resultBasedNextStep->stepId;
+                }
+            }
+        }
+
+        return $usedStepIds;
     }
 }

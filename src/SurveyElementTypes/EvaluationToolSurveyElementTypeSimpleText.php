@@ -2,11 +2,8 @@
 
 namespace Twoavy\EvaluationTool\SurveyElementTypes;
 
-use Faker\Factory;
 use Illuminate\Http\Request;
 use StdClass;
-use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
-use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 
 class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElementTypeBase
@@ -76,5 +73,21 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
             'params.text.*'  => ['min:1', "max:500"],
             'languageKeys.*' => ['required', 'exists:evaluation_tool_survey_languages,code'],
         ];
+    }
+
+    /**
+     * @param Request $request
+     * @param EvaluationToolSurveyElement $surveyElement
+     * @return bool
+     */
+    public static function validateResultBasedNextSteps(Request $request, EvaluationToolSurveyElement $surveyElement): bool
+    {
+        if ($request->has("result_based_next_steps")) {
+            $resultBasedNextSteps = $request->result_based_next_steps;
+            if (is_array($resultBasedNextSteps) && !empty($resultBasedNextSteps)) {
+                abort(409, "survey element type '" . $surveyElement->survey_element_type->key . "' does not support result based next steps");
+            }
+        }
+        return true;
     }
 }

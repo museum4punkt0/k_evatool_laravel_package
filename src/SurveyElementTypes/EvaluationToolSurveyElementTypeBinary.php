@@ -78,4 +78,14 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
             'params.falseValue' => 'min:1|max:20',
         ];
     }
+
+    /**
+     * @param Request $request
+     * @param EvaluationToolSurveyElement $surveyElement
+     * @return bool
+     */
+    public static function validateResultBasedNextSteps(Request $request, EvaluationToolSurveyElement $surveyElement): bool
+    {
+        return true;
+    }
 }

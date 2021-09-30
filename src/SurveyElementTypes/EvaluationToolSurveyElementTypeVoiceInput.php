@@ -58,4 +58,20 @@ class EvaluationToolSurveyElementTypeVoiceInput extends EvaluationToolSurveyElem
             'params.question' => ['required', 'array', 'min:1'],
         ];
     }
+
+    /**
+     * @param Request $request
+     * @param EvaluationToolSurveyElement $surveyElement
+     * @return bool
+     */
+    public static function validateResultBasedNextSteps(Request $request, EvaluationToolSurveyElement $surveyElement): bool
+    {
+        if ($request->has("result_based_next_steps")) {
+            $resultBasedNextSteps = $request->result_based_next_steps;
+            if (is_array($resultBasedNextSteps) && !empty($resultBasedNextSteps)) {
+                abort(409, "survey element type '" . $surveyElement->survey_element_type->key . "' does not support result based next steps");
+            }
+        }
+        return true;
+    }
 }

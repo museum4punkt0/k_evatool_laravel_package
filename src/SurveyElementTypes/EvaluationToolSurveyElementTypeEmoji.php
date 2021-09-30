@@ -87,4 +87,14 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
             "types.*" => "min:1|max:1",
         ];
     }
+
+    /**
+     * @param Request $request
+     * @param EvaluationToolSurveyElement $surveyElement
+     * @return bool
+     */
+    public static function validateResultBasedNextSteps(Request $request, EvaluationToolSurveyElement $surveyElement): bool
+    {
+        return true;
+    }
 }

@@ -4,8 +4,12 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 
 use Faker\Factory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use StdClass;
+use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 
 class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurveyElementTypeBase
 {
@@ -106,5 +110,15 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
             'params.minSelectable' => ['integer', 'min:1', 'max:' . $maxCount],
             'params.maxSelectable' => ['integer', 'between:1,params.min_selectable', 'max:' . $maxCount],
         ];
+    }
+
+    /**
+     * @param Request $request
+     * @param EvaluationToolSurveyElement $surveyElement
+     * @return bool
+     */
+    public static function validateResultBasedNextSteps(Request $request, EvaluationToolSurveyElement $surveyElement): bool
+    {
+        return true;
     }
 }

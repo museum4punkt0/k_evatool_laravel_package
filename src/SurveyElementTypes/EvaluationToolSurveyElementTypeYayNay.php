@@ -75,4 +75,14 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
             'languageKeys.*'    => 'required|exists:evaluation_tool_survey_languages,code',
         ];
     }
+
+    /**
+     * @param Request $request
+     * @param EvaluationToolSurveyElement $surveyElement
+     * @return bool
+     */
+    public static function validateResultBasedNextSteps(Request $request, EvaluationToolSurveyElement $surveyElement): bool
+    {
+        return true;
+    }
 }

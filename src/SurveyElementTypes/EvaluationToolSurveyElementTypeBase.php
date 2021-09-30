@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 use Faker\Factory;
 use Faker\Generator;
 use Illuminate\Http\Request;
+use Illuminate\Http\ResponseTrait;
 use StdClass;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 
@@ -16,6 +17,7 @@ use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 
 class EvaluationToolSurveyElementTypeBase
 {
+    use ResponseTrait;
 
     public function __construct()
     {
