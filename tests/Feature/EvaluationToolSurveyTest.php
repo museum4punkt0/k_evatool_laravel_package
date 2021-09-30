@@ -13,14 +13,16 @@ class EvaluationToolSurveyTest extends TestCase
 {
     public function test_get_surveys()
     {
-        $response = $this->get('/api/evaluation-tool/surveys');
+        $headers = TestHelper::getAuthHeader();
+        $response = $this->get('/api/evaluation-tool/surveys', $headers);
         $response->assertStatus(200);
     }
 
     public function test_get_survey()
     {
+        $headers = TestHelper::getAuthHeader();
         $survey   = EvaluationToolSurvey::all()->random(1)[0];
-        $response = $this->get('/api/evaluation-tool/surveys/' . $survey->id);
+        $response = $this->get('/api/evaluation-tool/surveys/' . $survey->id, $headers);
 
         $response->assertStatus(200);
 
