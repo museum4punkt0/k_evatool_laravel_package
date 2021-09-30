@@ -40,7 +40,17 @@ class EvaluationToolSurveyElementMultipleChoiceTest extends TestCase
         $response->assertStatus(422);
     }
 
-    public function test_update_survey_element_multiple_choice_max_less_than_min()
+    public function test_create_survey_element_multiple_choice_min_larger_than_max()
+    {
+        $headers = TestHelper::getAuthHeader();
+        $data = $this->validData();
+        $data["params"]["minSelectable"] = $data["params"]["maxSelectable"]++;
+
+        $response = $this->post('/api/evaluation-tool/survey-elements', $data, $headers);
+        $response->assertStatus(422);
+    }
+
+    /*public function test_update_survey_element_multiple_choice_max_less_than_min()
     {
         $headers = TestHelper::getAuthHeader();
         $surveyElement = EvaluationToolSurveyElement::where("survey_element_type_id", 2)->first();
@@ -50,5 +60,5 @@ class EvaluationToolSurveyElementMultipleChoiceTest extends TestCase
 
         $response = $this->put('/api/evaluation-tool/survey-elements/' . $surveyElement->id, $transformed, $headers);
         $response->assertStatus(422);
-    }
+    }*/
 }
