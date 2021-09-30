@@ -43,7 +43,8 @@ class EvaluationToolSurveyStep extends Model
     ];
 
     protected $casts = [
-        "time_based_steps" => "object"
+        "time_based_steps" => "object",
+        "result_based_next_steps" => "object",
     ];
 
     protected $with = ["survey_element"];
