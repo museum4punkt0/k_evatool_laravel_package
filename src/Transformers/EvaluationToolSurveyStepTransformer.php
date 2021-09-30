@@ -22,7 +22,7 @@ class EvaluationToolSurveyStepTransformer extends TransformerAbstract
             "surveyElementId"      => (int)$surveyStep->survey_element_id,
             "surveyElementType"    => (string)$surveyStep->survey_element->survey_element_type->key,
             "nextStepId"           => $surveyStep->next_step_id ? (int)$surveyStep->next_step_id : null,
-            "timeBasedSteps"       => (array)$surveyStep->time_based_steps,
+            "timeBasedSteps"       => $surveyStep->time_based_steps,
             "resultBasedNextSteps" => $surveyStep->result_based_next_steps,
             "parentStepId"         => $surveyStep->parent_step_id,
             "published"            => (bool)$surveyStep->published,
