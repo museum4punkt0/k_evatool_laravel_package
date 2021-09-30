@@ -39,7 +39,7 @@ class EvaluationToolSurveyElement extends Model
 
     // specially cast fields
     protected $casts = [
-        "params" => "json"
+        "params" => "object"
     ];
 
     protected $with = ["survey_element_type"];

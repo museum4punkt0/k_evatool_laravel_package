@@ -97,6 +97,30 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
      */
     public static function validateResultBasedNextSteps(Request $request, EvaluationToolSurveyElement $surveyElement): bool
     {
+        if ($request->result_based_next_steps && is_array($request->result_based_next_steps) && !empty($request->result_based_next_steps)) {
+
+            $usedRange = [];
+            foreach ($request->result_based_next_steps as $resultBasedNextStep) {
+                $range = $resultBasedNextStep["end"] - $resultBasedNextStep["start"];
+                $i     = 0;
+                while ($i < $range + 1) {
+                    $nextIndex = $resultBasedNextStep["start"] + $i;
+
+                    // check if value is allow in range (1 to numberOfStars)
+                    if ($nextIndex < 1 || $nextIndex > $surveyElement->params->numberOfStars) {
+                        abort(409, "value " . $nextIndex . " is out of range (1 to " . $surveyElement->params->numberOfStars . ")");
+                    }
+
+                    // check if value is already in range
+                    if (in_array($nextIndex, $usedRange)) {
+                        abort(409, "value " . $nextIndex . " already in range");
+                    }
+
+                    $usedRange[] = $nextIndex;
+                    $i++;
+                }
+            }
+        }
         return true;
     }
 }
