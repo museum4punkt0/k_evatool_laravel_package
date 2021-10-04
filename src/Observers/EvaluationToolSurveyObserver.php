@@ -35,7 +35,7 @@ class EvaluationToolSurveyObserver
             $slug = $survey->slug;
         }
 
-        if (EvaluationToolSurvey::where("slug", $slug)->where("id", "!=", $survey->id)->first()) {
+        if (EvaluationToolSurvey::withTrashed()->where("slug", $slug)->where("id", "!=", $survey->id)->first()) {
             return $slug . "_" . strtolower(Str::random(6));
         }
 

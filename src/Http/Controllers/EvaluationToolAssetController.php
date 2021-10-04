@@ -4,10 +4,11 @@ namespace Twoavy\EvaluationTool\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use getID3;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Spatie\Image\Exceptions\InvalidManipulation;
 use Spatie\Image\Image;
 use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
@@ -66,6 +67,10 @@ class EvaluationToolAssetController extends Controller
         $asset->save();
     }
 
+    /**
+     * @throws InvalidManipulation
+     * @throws FileNotFoundException
+     */
     public function createTusAsset($tusData)
     {
         $asset = new EvaluationToolAsset();
@@ -82,7 +87,7 @@ class EvaluationToolAssetController extends Controller
 
         $this->uploadDisk->delete($filename);
 
-        $filePath = $this->disk->path($filename);
+        $filePath    = $this->disk->path($filename);
         $asset->meta = self::getFileMetaData($filePath);
 
         $asset->save();
@@ -120,5 +125,11 @@ class EvaluationToolAssetController extends Controller
         }
 
         return $metaDataPrepared;
+    }
+
+    public function destroy(EvaluationToolAsset $asset)
+    {
+        $asset->delete();
+        return $this->showOne($asset);
     }
 }
