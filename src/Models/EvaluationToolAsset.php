@@ -34,11 +34,11 @@ class EvaluationToolAsset extends Model
     {
         $disk = Storage::disk("evaluation_tool_assets");
         $urls = ["url" => $disk->url($this->filename)];
-        if ($disk->exists("preview/". $this->filename)) {
-            $urls["preview"] = $disk->url("preview/". $this->filename);
+        if ($disk->exists("preview/" . $this->filename)) {
+            $urls["preview"] = $disk->url("preview/" . $this->filename);
         }
-        if ($disk->exists("thumbnail/". $this->filename)) {
-            $urls["thumbnail"] = $disk->url("thumbnail/". $this->filename);
+        if ($disk->exists("thumbnail/" . $this->filename)) {
+            $urls["thumbnail"] = $disk->url("thumbnail/" . $this->filename);
         }
         return $urls;
     }

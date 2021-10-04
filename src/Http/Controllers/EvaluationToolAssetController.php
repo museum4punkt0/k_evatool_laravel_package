@@ -87,7 +87,7 @@ class EvaluationToolAssetController extends Controller
 
         $this->uploadDisk->delete($filename);
 
-        $filePath    = $this->disk->path($filename);
+        $filePath    = $this->disk->path($filenameSlug);
         $asset->meta = self::getFileMetaData($filePath);
 
         $asset->save();
@@ -98,7 +98,7 @@ class EvaluationToolAssetController extends Controller
             ->width(800)
             ->optimize()
             ->quality(60)
-            ->save($this->disk->path("preview/" . $filename));
+            ->save($this->disk->path("preview/" . $filenameSlug));
 
         /* THUMBNAIL IMAGE */
         @mkdir($this->disk->path("thumbnail"));
@@ -106,7 +106,7 @@ class EvaluationToolAssetController extends Controller
             ->width(200)
             ->optimize()
             ->quality(60)
-            ->save($this->disk->path("thumbnail/" . $filename));
+            ->save($this->disk->path("thumbnail/" . $filenameSlug));
     }
 
     public static function getFileMetaData($path): array
