@@ -2,6 +2,7 @@
 
 namespace Twoavy\EvaluationTool\Observers;
 
+use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 
 class EvaluationToolSurveyStepObserver
@@ -16,6 +17,22 @@ class EvaluationToolSurveyStepObserver
         if ($surveyStep->survey_element->survey_element_type->key === "video") {
             $this->setParentStepIds($surveyStep);
         }
+    }
+
+    /**
+     * @return void
+     */
+    public function deleted(EvaluationToolSurveyStep $surveyStep)
+    {
+        $survey = EvaluationToolSurvey::find($surveyStep->survey_id);
+        if (isset($survey->admin_layout) && is_array($survey->admin_layout)) {
+            foreach ($survey->admin_layout as $s => $step) {
+                if ($step->id == $surveyStep->id) {
+                    array_splice($survey->admin_layout, $s, 1);
+                }
+            }
+        }
+        $survey->save();
     }
 
     /**
