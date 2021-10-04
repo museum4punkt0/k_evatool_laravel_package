@@ -107,16 +107,16 @@ class EvaluationToolSurveySurveyStepController extends Controller
      * @param EvaluationToolSurveyStep $surveyStep
      * @return JsonResponse
      */
-    public function removeNextStep(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $surveyStep):
+    public function removeNextStep(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $step):
     JsonResponse
     {
         // check if survey id and step id match
-        if ($surveyStep->survey_id !== $survey->id) {
+        if ($step->survey_id !== $survey->id) {
             return $this->errorResponse("survey id does not match step id", 409);
         }
 
-        $surveyStep->next_step_id = null;
-        $surveyStep->save();
-        return $this->showOne($surveyStep);
+        $step->next_step_id = null;
+        $step->save();
+        return $this->showOne($step);
     }
 }
