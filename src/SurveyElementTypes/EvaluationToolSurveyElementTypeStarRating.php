@@ -66,7 +66,7 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
                 'required',
                 'numeric',
                 'min:1',
-                'max:' . $surveyElement->params["numberOfStars"]
+                'max:' . $surveyElement->params->numberOfStars
             ]
         ];
     }

@@ -76,11 +76,11 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
     public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement): array
     {
         $possibleOptions = [];
-        $options         = $surveyElement->params['options'];
-        $minSelectable   = $surveyElement->params['minSelectable'];
-        $maxSelectable   = $surveyElement->params['maxSelectable'];
+        $options         = $surveyElement->params->options;
+        $minSelectable   = $surveyElement->params->minSelectable;
+        $maxSelectable   = $surveyElement->params->maxSelectable;
         foreach ($options as $option) {
-            array_push($possibleOptions, $option["value"]);
+            array_push($possibleOptions, $option->value);
         }
 
         return [
