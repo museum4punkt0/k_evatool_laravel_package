@@ -36,7 +36,7 @@ class EvaluationToolSurveyStoreAdminLayoutRequest extends FormRequest
     {
         // Todo: Full validation including check of id in survey steps of survey
         return [
-            "admin_layout" => "required|array"
+            "admin_layout" => "sometimes|array"
         ];
     }
 }

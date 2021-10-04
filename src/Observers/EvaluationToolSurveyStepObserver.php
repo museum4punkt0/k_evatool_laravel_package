@@ -26,13 +26,21 @@ class EvaluationToolSurveyStepObserver
     {
         $survey = EvaluationToolSurvey::find($surveyStep->survey_id);
         if (isset($survey->admin_layout) && is_array($survey->admin_layout)) {
-            foreach ($survey->admin_layout as $s => $step) {
+            $adminLayout = $survey->admin_layout;
+            foreach ($adminLayout as $s => $step) {
                 if ($step->id == $surveyStep->id) {
-                    array_splice($survey->admin_layout, $s, 1);
+                    array_splice($adminLayout, $s, 1);
                 }
             }
         }
+        $surveyStep->admin_layout = $adminLayout;
         $survey->save();
+
+        if ($previousStep = EvaluationToolSurveyStep::where("next_step_id", $surveyStep->id)->first()) {
+            $previousStep->next_step_id = null;
+            $previousStep->save();
+        }
+
     }
 
     /**
