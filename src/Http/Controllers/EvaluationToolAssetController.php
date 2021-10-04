@@ -5,8 +5,10 @@ namespace Twoavy\EvaluationTool\Http\Controllers;
 use App\Http\Controllers\Controller;
 use getID3;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Spatie\Image\Image;
 use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 
@@ -80,9 +82,26 @@ class EvaluationToolAssetController extends Controller
 
         $this->uploadDisk->delete($filename);
 
-        $asset->meta = self::getFileMetaData($this->disk->path($filename));
+        $filePath = $this->disk->path($filename);
+        $asset->meta = self::getFileMetaData($filePath);
 
         $asset->save();
+
+        /* PREVIEW IMAGE  */
+        @mkdir($this->disk->path("preview"));
+        Image::load($filePath)
+            ->width(800)
+            ->optimize()
+            ->quality(60)
+            ->save($this->disk->path("preview/" . $filename));
+
+        /* THUMBNAIL IMAGE */
+        @mkdir($this->disk->path("thumbnail"));
+        Image::load($filePath)
+            ->width(200)
+            ->optimize()
+            ->quality(60)
+            ->save($this->disk->path("thumbnail/" . $filename));
     }
 
     public static function getFileMetaData($path): array

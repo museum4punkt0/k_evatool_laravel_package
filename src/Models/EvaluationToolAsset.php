@@ -33,7 +33,14 @@ class EvaluationToolAsset extends Model
     public function getUrlsAttribute(): array
     {
         $disk = Storage::disk("evaluation_tool_assets");
-        return ["url" => $disk->url($this->filename)];
+        $urls = ["url" => $disk->url($this->filename)];
+        if ($disk->exists("preview/". $this->filename)) {
+            $urls["preview"] = $disk->url("preview/". $this->filename);
+        }
+        if ($disk->exists("thumbnail/". $this->filename)) {
+            $urls["thumbnail"] = $disk->url("thumbnail/". $this->filename);
+        }
+        return $urls;
     }
 
 }
