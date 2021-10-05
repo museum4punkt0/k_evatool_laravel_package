@@ -21,7 +21,7 @@ class EvaluationToolSurveyElementTransformer extends TransformerAbstract
             "description"       => (string)$surveyElement->description,
             "surveyElementType" => (string)$surveyElement->survey_element_type->key,
             "surveyStepsCount"  => (int)$surveyElement->survey_steps_count,
-            "surveysCount"      => (int)$surveyElement->surveys_count,
+            "surveysCount"      => $surveyElement->surveys->count(),
             "params"            => $surveyElement->params,
             "createdAt"         => $surveyElement->created_at,
             "updatedAt"         => $surveyElement->updated_at,
