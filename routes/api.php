@@ -20,7 +20,7 @@ Route::prefix('api/evaluation-tool')
         Route::post('surveys/{survey}/publish', [EvaluationToolSurveyController::class, "publishSurvey"]);
         Route::put('surveys/{survey}/admin-layout', [EvaluationToolSurveyController::class, "updateAdminLayout"]);
         Route::apiResource('survey-elements', EvaluationToolSurveyElementController::class);
-        Route::apiResource('survey-elements.surveys', EvaluationToolSurveyElementSurveyController::class);
+        Route::apiResource('survey-elements.surveys', EvaluationToolSurveyElementSurveyController::class)->only("index");
         Route::apiResource('survey-element-types', EvaluationToolSurveyElementTypeController::class);
         Route::post('surveys/{survey}/steps/{step}/set-next-step', [EvaluationToolSurveySurveyStepController::class, "setNextStep"]);
         Route::post('surveys/{survey}/steps/{step}/remove-next-step', [EvaluationToolSurveySurveyStepController::class, "removeNextStep"]);
