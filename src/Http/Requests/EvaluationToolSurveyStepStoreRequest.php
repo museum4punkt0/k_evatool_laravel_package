@@ -77,7 +77,7 @@ class EvaluationToolSurveyStepStoreRequest extends FormRequest
             "survey_element_id"                => "required|numeric|exists:evaluation_tool_survey_elements,id",
             "next_step_id"                     => "nullable|numeric|exists:evaluation_tool_survey_steps,id",
             "next_step_survey_id"              => "in:" . $this->surveyId,
-            "result_based_next_steps"          => "array",
+            "result_based_next_steps"          => "nullable|array",
             "result_based_next_steps.*.stepId" => [
                 "required",
                 "numeric",
