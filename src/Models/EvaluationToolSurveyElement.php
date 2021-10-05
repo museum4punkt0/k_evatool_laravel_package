@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyElementTransformer;
@@ -43,7 +44,7 @@ class EvaluationToolSurveyElement extends Model
     ];
 
     protected $with = ["survey_element_type"];
-    protected $withCount = ["survey_steps"];
+    protected $withCount = ["survey_steps", "surveys"];
 
     public function survey_element_type(): HasOne
     {
@@ -53,5 +54,16 @@ class EvaluationToolSurveyElement extends Model
     public function survey_steps(): HasMany
     {
         return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep", "survey_element_id", "id");
+    }
+
+    public function surveys(): HasManyThrough
+    {
+        return $this->hasManyThrough("Twoavy\EvaluationTool\Models\EvaluationToolSurvey",
+            "Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep",
+            "survey_id",
+            "id",
+            "id",
+            "survey_element_id"
+        );
     }
 }
