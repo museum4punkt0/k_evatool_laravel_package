@@ -48,9 +48,9 @@ class EvaluationToolSurveySurveyStepResultStoreRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            "survey_step_id"     => ['required', 'exists:evaluation_tool_survey_steps,id'],
-            "session_id"         => ['required'],
-            "result_language_id" => ['required', 'exists:evaluation_tool_survey_languages,id']
+            "survey_step_id"  => ['required', 'exists:evaluation_tool_survey_steps,id'],
+            "session_id"      => ['required'],
+            "result_language" => ['required', 'min:2', 'max:2', 'exists:evaluation_tool_survey_languages,code']
         ];
 
         if (class_exists($this->className)) {

@@ -33,6 +33,7 @@ class EvaluationToolSurveyStepResult extends Model
         "time",
         "params",
     ];
+
     protected $casts = [
         'params'       => 'json',
         'result_value' => 'json',
@@ -42,5 +43,10 @@ class EvaluationToolSurveyStepResult extends Model
     public function survey_step(): HasOne
     {
         return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep", "id", "survey_step_id");
+    }
+
+    public function language(): HasOne
+    {
+        return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage", "id","result_language_id");
     }
 }

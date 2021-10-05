@@ -81,11 +81,13 @@ class EvaluationToolSurveySurveyRunController extends Controller
             return $this->errorResponse("survey ids do not match", 409);
         }
 
+        $language = EvaluationToolSurveyLanguage::where("code", $request->result_language)->first();
+
         $surveyStepResult                     = new EvaluationToolSurveyStepResult();
         $surveyStepResult->survey_step_id     = $request->survey_step_id;
         $surveyStepResult->session_id         = $request->session_id;
         $surveyStepResult->result_value       = $request->result_value;
-        $surveyStepResult->result_language_id = $request->result_language_id;
+        $surveyStepResult->result_language_id = $language->id;
         $surveyStepResult->params             = $surveyStep->survey_element->params;
         $surveyStepResult->answered_at        = Carbon::now();
         $surveyStepResult->save();
@@ -103,10 +105,10 @@ class EvaluationToolSurveySurveyRunController extends Controller
         $payload              = new StdClass;
         $payload->elementType = $surveyStep->survey_element->survey_element_type->key;
 
-        $samplePayloadFunctionName        = 'samplePayload' . ucfirst($payload->elementType);
-        $payload->resultData              = new StdClass;
-        $payload->resultData->resultValue = $this->{$samplePayloadFunctionName}($surveyStep->survey_element->params);
-        $payload->resultData->resultLanguageId  = $this->defaultLanguage->id;
+        $samplePayloadFunctionName             = 'samplePayload' . ucfirst($payload->elementType);
+        $payload->resultData                   = new StdClass;
+        $payload->resultData->resultValue      = $this->{$samplePayloadFunctionName}($surveyStep->survey_element->params);
+        $payload->resultData->resultLanguageId = $this->defaultLanguage->id;
 
         return $payload;
     }

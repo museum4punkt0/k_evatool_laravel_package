@@ -49,6 +49,11 @@ class EvaluationToolSurveyStep extends Model
 
     protected $with = ["survey_element"];
 
+    protected $withCount = [
+        "survey_step_results",
+        "survey_step_demo_results",
+    ];
+
     public function survey(): HasOne
     {
         return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurvey", "id", "survey_id");
@@ -61,7 +66,12 @@ class EvaluationToolSurveyStep extends Model
 
     public function survey_step_results(): HasMany
     {
-        return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id");
+        return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id")->where("demo", false);
+    }
+
+    public function survey_step_demo_results(): HasMany
+    {
+        return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id")->where("demo", true);
     }
 
     public function survey_step_results_by_uuid(): HasMany

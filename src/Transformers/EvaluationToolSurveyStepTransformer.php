@@ -25,6 +25,8 @@ class EvaluationToolSurveyStepTransformer extends TransformerAbstract
             "timeBasedSteps"       => $surveyStep->time_based_steps,
             "resultBasedNextSteps" => $surveyStep->result_based_next_steps,
             "parentStepId"         => $surveyStep->parent_step_id,
+            "resultCount"          => (int)$surveyStep->survey_step_results_count,
+            "demoResultCount"      => (int)$surveyStep->survey_step_demo_results_count,
             "published"            => (bool)$surveyStep->published,
             "publishUp"            => $surveyStep->publish_up,
             "publishDown"          => $surveyStep->publish_down,
