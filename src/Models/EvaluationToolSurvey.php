@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Validation\Rule;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyTransformer;
@@ -43,7 +44,8 @@ class EvaluationToolSurvey extends Model
 
     // relations that are included with their element count
     protected $withCount = [
-        "survey_steps"
+        "survey_steps",
+        "survey_results"
     ];
 
     /**
@@ -54,14 +56,16 @@ class EvaluationToolSurvey extends Model
         return $this->hasMany(EvaluationToolSurveyStep::class, "survey_id");
     }
 
-    public static function rules(): array
+    /**
+     * @return HasManyThrough
+     */
+    public function survey_results(): HasManyThrough
     {
-        return [
-            "name"                   => "required|min:2|max:100",
-            "survey_element_type_id" => [
-                "required",
-                Rule::exists("evaluation_tool_survey_element_types", "id")
-            ]
-        ];
+        return $this->hasManyThrough(EvaluationToolSurveyStepResult::class,
+            EvaluationToolSurveyStep::class,
+            "survey_id",
+            "survey_step_id",
+            "id",
+            "id");
     }
 }
