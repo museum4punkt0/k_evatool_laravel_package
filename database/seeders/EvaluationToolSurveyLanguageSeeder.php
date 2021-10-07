@@ -31,13 +31,13 @@ class EvaluationToolSurveyLanguageSeeder extends Seeder
             'published' => true,
         ]);
 
-        EvaluationToolSurveyLanguage::create([
-            'code' => 'fr',
-            'sub_code' => 'fr_FR',
-            'title' => 'Français',
-            'default' => false,
-            'published' => false,
-        ]);
+        // EvaluationToolSurveyLanguage::create([
+        //     'code' => 'fr',
+        //     'sub_code' => 'fr_FR',
+        //     'title' => 'Français',
+        //     'default' => false,
+        //     'published' => false,
+        // ]);
 
     }
 }

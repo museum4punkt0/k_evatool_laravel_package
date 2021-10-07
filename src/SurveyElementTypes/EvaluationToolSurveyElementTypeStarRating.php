@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
-use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 
 class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElementTypeBase
 {
@@ -22,7 +21,7 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
     public function sampleParams(): array
     {
 
-        $question                               = [];
+        $question = [];
         $question[$this->primaryLanguage->code] = $this->faker->words($this->faker->numberBetween(3, 20), true);
         foreach ($this->secondaryLanguages as $secondaryLanguage) {
             if ($this->faker->boolean(60)) {
@@ -31,9 +30,12 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
         }
 
         return [
-            "question"       => $question,
-            "numberOfStars"  => $this->faker->numberBetween(3, 10),
-            "allowHalfSteps" => $this->faker->boolean(20),
+            "question" => $question,
+            "numberOfStars" => $this->faker->numberBetween(3, 10),
+            "allowHalfSteps" => false,
+            "lowestValueLabel" => ["de" => "niedrig", "en" => "low"],
+            "middleValueLabel" => ["de" => "mittel", "en" => "middle"],
+            "highestValueLabel" => ["de" => "hoch", "en" => "high"],
         ];
     }
 
@@ -66,8 +68,8 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
                 'required',
                 'numeric',
                 'min:1',
-                'max:' . $surveyElement->params->numberOfStars
-            ]
+                'max:' . $surveyElement->params->numberOfStars,
+            ],
         ];
     }
 
@@ -77,15 +79,15 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
     public static function rules(): array
     {
         return [
-            'params.numberOfStars'  => [
+            'params.numberOfStars' => [
                 'required',
                 'numeric',
                 'min:3',
-                'max:10'
+                'max:10',
             ],
-            'params.question'       => 'required|array',
-            'params.question.*'     => 'min:1|max:200',
-            'languageKeys.*'        => 'required|exists:evaluation_tool_survey_languages,code',
+            'params.question' => 'required|array',
+            'params.question.*' => 'min:1|max:200',
+            'languageKeys.*' => 'required|exists:evaluation_tool_survey_languages,code',
             'params.allowHalfSteps' => 'boolean',
         ];
     }
@@ -102,7 +104,7 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
             $usedRange = [];
             foreach ($request->result_based_next_steps as $resultBasedNextStep) {
                 $range = $resultBasedNextStep["end"] - $resultBasedNextStep["start"];
-                $i     = 0;
+                $i = 0;
                 while ($i < $range + 1) {
                     $nextIndex = $resultBasedNextStep["start"] + $i;
 
