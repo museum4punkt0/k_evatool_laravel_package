@@ -15,6 +15,9 @@ class EvaluationToolSurveyObserver
     public function creating(EvaluationToolSurvey $survey)
     {
         $survey->slug = $this->createUniqueSlug($survey);
+        if (isset(request()->user()->id)) {
+            $survey->created_by = request()->user()->id;
+        }
     }
 
     /**
@@ -23,6 +26,20 @@ class EvaluationToolSurveyObserver
     public function updating(EvaluationToolSurvey $survey)
     {
         $survey->slug = $this->createUniqueSlug($survey);
+        if (isset(request()->user()->id)) {
+            $survey->updated_by = request()->user()->id;
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function deleting(EvaluationToolSurvey $survey)
+    {
+        $survey->slug = $this->createUniqueSlug($survey);
+        if (isset(request()->user()->id)) {
+            $survey->deleted_by = request()->user()->id;
+        }
     }
 
     private function createUniqueSlug($survey): string

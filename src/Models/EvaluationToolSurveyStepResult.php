@@ -2,6 +2,7 @@
 
 namespace Twoavy\EvaluationTool\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -48,5 +49,15 @@ class EvaluationToolSurveyStepResult extends Model
     public function language(): HasOne
     {
         return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage", "id","result_language_id");
+    }
+
+    public function created_by_user(): HasOne
+    {
+        return $this->hasOne(User::class, "id", "created_by");
+    }
+
+    public function updated_by_user(): HasOne
+    {
+        return $this->hasOne(User::class, "id", "updated_by");
     }
 }

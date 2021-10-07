@@ -27,8 +27,11 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
             "surveyStepsCount"   => $survey->survey_steps_count,
             "surveyResultsCount" => $survey->survey_results_count,
             "createdAt"          => $survey->created_at,
+            "createdBy"          => $survey->created_by_user ? $survey->created_by_user->name : null,
             "updatedAt"          => $survey->updated_at,
+            "updatedBy"          => $survey->updated_by_user ? $survey->updated_by_user->name : null,
             "deletedAt"          => (string)$survey->deleted_at,
+            "deletedBy"          => $survey->deleted_by_user ? $survey->deleted_by_user->name : null,
             "links"              => [
                 [
                     "rel"  => "self",

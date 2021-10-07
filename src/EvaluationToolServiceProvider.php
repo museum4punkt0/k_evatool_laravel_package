@@ -24,9 +24,9 @@ class EvaluationToolServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->config["filesystems.disks.evaluation_tool_assets"] = [
-            'driver'     => 'local',
-            'root'       => storage_path('app/evaluation-tool/assets'),
-            'url'        => env('APP_URL') . "/evaluation-tool",
+            'driver' => 'local',
+            'root'   => storage_path('app/evaluation-tool/assets'),
+            'url'    => env('APP_URL') . "/evaluation-tool",
         ];
 
         $this->app->config["filesystems.disks.evaluation_tool_uploads"] = [
@@ -77,6 +77,8 @@ class EvaluationToolServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
+
+//        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
         // observers
         EvaluationToolSurvey::observe(EvaluationToolSurveyObserver::class);

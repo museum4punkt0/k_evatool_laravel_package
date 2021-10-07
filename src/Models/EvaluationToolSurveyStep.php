@@ -2,6 +2,7 @@
 
 namespace Twoavy\EvaluationTool\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -77,5 +78,15 @@ class EvaluationToolSurveyStep extends Model
     public function survey_step_results_by_uuid(): HasMany
     {
         return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id")->where('session_id', request()->uuid);
+    }
+
+    public function created_by_user(): HasOne
+    {
+        return $this->hasOne(User::class, "id", "created_by");
+    }
+
+    public function updated_by_user(): HasOne
+    {
+        return $this->hasOne(User::class, "id", "updated_by");
     }
 }
