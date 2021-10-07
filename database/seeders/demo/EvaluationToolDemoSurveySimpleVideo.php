@@ -29,7 +29,10 @@ class EvaluationToolDemoSurveySimpleVideo extends Seeder
                 "allowHalfSteps"      => false,
                 "numberOfStars"       => 5,
                 "meaningLowestValue"  => "very unhappy",
-                "meaningHighestValue" => "very happy"
+                "meaningHighestValue" => "very happy",
+                "lowestValueLabel" => ["de" => "sehr unglücklich", "en" => "very unhappy"],
+                "middleValueLabel" => ["de" => "neutral", "en" => "neutral"],
+                "highestValueLabel" => ["de" => "sehr glücklich", "en" => "very happy"],
             ], "Sterne-Bewertung", "Von sehr unglücklich bis sehr glücklich")->create();
             $i++;
             $subElementIds[] = EvaluationToolSurveyElement::all()->last()->id;
