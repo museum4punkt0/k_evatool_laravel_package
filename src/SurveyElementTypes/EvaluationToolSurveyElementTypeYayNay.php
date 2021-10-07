@@ -33,7 +33,8 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
             "trueValue" => "accepted",
             "falseValue" => "declined",
             "trueLabel" => ["de" => "ja", "en" => "yes", "fr" => "oui"],
-            "falseLabel" => ["de" => "nein", "en" => "no", "fr" => "non"]
+            "falseLabel" => ["de" => "nein", "en" => "no", "fr" => "non"],
+            "assets" => [1,2,4]
         ];
     }
 
@@ -71,6 +72,8 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
     {
         return [
             'params.question'   => 'required|array',
+            // TODO: assets length > 0
+            'params.assets'   => 'required|array',
             'params.question.*' => 'min:1|max:200',
             'languageKeys.*'    => 'required|exists:evaluation_tool_survey_languages,code',
         ];
