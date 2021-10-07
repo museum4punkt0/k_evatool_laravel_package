@@ -44,7 +44,7 @@ class EvaluationToolSurveyElement extends Model
     ];
 
     protected $with = ["survey_element_type"];
-    protected $withCount = ["survey_steps", "surveys"];
+    protected $withCount = ["survey_steps"];
 
     public function survey_element_type(): HasOne
     {
@@ -60,10 +60,10 @@ class EvaluationToolSurveyElement extends Model
     {
         return $this->hasManyThrough("Twoavy\EvaluationTool\Models\EvaluationToolSurvey",
             "Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep",
-            "survey_id",
+            "survey_element_id",
             "id",
             "id",
-            "survey_element_id"
-        );
+            "survey_id"
+        )->distinct();
     }
 }
