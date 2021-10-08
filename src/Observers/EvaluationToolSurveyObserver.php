@@ -17,6 +17,7 @@ class EvaluationToolSurveyObserver
         $survey->slug = $this->createUniqueSlug($survey);
         if (isset(request()->user()->id)) {
             $survey->created_by = request()->user()->id;
+            $survey->updated_by = request()->user()->id;
         }
     }
 
@@ -39,10 +40,11 @@ class EvaluationToolSurveyObserver
         $survey->slug = $this->createUniqueSlug($survey);
         if (isset(request()->user()->id)) {
             $survey->deleted_by = request()->user()->id;
+            $survey->save();
         }
     }
 
-    private function createUniqueSlug($survey): string
+    private function createUniqueSlug(EvaluationToolSurvey $survey): string
     {
         $slugify = new Slugify();
 

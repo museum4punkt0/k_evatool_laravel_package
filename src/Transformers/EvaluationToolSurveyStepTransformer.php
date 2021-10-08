@@ -33,8 +33,11 @@ class EvaluationToolSurveyStepTransformer extends TransformerAbstract
             "group"                => (string)$surveyStep->group,
             "allowSkip"            => (bool)$surveyStep->allow_skip,
             "createdAt"            => $surveyStep->created_at,
+            "createdBy"            => $surveyStep->created_by_user ? $surveyStep->created_by_user->name : null,
             "updatedAt"            => $surveyStep->updated_at,
+            "updatedBy"            => $surveyStep->updated_by_user ? $surveyStep->updated_by_user->name : null,
             "deletedAt"            => (string)$surveyStep->deleted_at,
+            "deletedBy"            => $surveyStep->deleted_by_user ? $surveyStep->deleted_by_user->name : null,
             "links"                => [
                 [
                     "rel"  => "self",

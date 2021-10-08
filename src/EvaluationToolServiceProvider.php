@@ -2,17 +2,24 @@
 
 namespace Twoavy\EvaluationTool;
 
+use Illuminate\Auth\Events\Authenticated;
 use TusPhp\Events\TusEvent;
 use TusPhp\Tus\Server as TusServer;
 use Illuminate\Support\ServiceProvider;
 use Twoavy\EvaluationTool\Console\Commands\TestCommand;
 use Twoavy\EvaluationTool\Console\Commands\TypesCommand;
+use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
+use Twoavy\EvaluationTool\Observers\EvaluationToolAssetObserver;
+use Twoavy\EvaluationTool\Observers\EvaluationToolSurveyLanguageObserver;
 use Twoavy\EvaluationTool\Observers\EvaluationToolSurveyObserver;
 use Twoavy\EvaluationTool\Observers\EvaluationToolSurveyElementObserver;
 use Twoavy\EvaluationTool\Observers\EvaluationToolSurveyStepObserver;
+use Twoavy\EvaluationTool\Observers\EvaluationToolSurveyStepResultObserver;
 
 class EvaluationToolServiceProvider extends ServiceProvider
 {
@@ -81,9 +88,12 @@ class EvaluationToolServiceProvider extends ServiceProvider
 //        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
         // observers
+        EvaluationToolAsset::observe(EvaluationToolAssetObserver::class);
         EvaluationToolSurvey::observe(EvaluationToolSurveyObserver::class);
         EvaluationToolSurveyStep::observe(EvaluationToolSurveyStepObserver::class);
         EvaluationToolSurveyElement::observe(EvaluationToolSurveyElementObserver::class);
+        EvaluationToolSurveyLanguage::observe(EvaluationToolSurveyLanguageObserver::class);
+        EvaluationToolSurveyStepResult::observe(EvaluationToolSurveyStepResultObserver::class);
 
         if ($this->app->runningInConsole()) {
             $this->commands([

@@ -24,8 +24,11 @@ class EvaluationToolSurveyElementTransformer extends TransformerAbstract
             "surveysCount"      => $surveyElement->surveys->count(),
             "params"            => $surveyElement->params,
             "createdAt"         => $surveyElement->created_at,
+            "createdBy"         => $surveyElement->created_by_user ? $surveyElement->created_by_user->name : null,
             "updatedAt"         => $surveyElement->updated_at,
+            "updatedBy"         => $surveyElement->updated_by_user ? $surveyElement->updated_by_user->name : null,
             "deletedAt"         => (string)$surveyElement->deleted_at,
+            "deletedBy"         => $surveyElement->deleted_by_user ? $surveyElement->deleted_by_user->name : null,
         ];
     }
 

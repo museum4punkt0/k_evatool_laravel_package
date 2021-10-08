@@ -10,12 +10,51 @@ class EvaluationToolSurveyStepObserver
 
     /**
      * @param EvaluationToolSurveyStep $surveyStep
+     */
+    public function creating(EvaluationToolSurveyStep $surveyStep)
+    {
+        if (isset(request()->user()->id)) {
+            $surveyStep->created_by = request()->user()->id;
+            $surveyStep->updated_by = request()->user()->id;
+        }
+    }
+
+    /**
+     * @param EvaluationToolSurveyStep $surveyStep
      * @return void
      */
     public function created(EvaluationToolSurveyStep $surveyStep)
     {
         if ($surveyStep->survey_element->survey_element_type->key === "video") {
             $this->setParentStepIds($surveyStep);
+        }
+    }
+
+    public function updating(EvaluationToolSurveyStep $surveyStep)
+    {
+        if (isset(request()->user()->id)) {
+            $surveyStep->updated_by = request()->user()->id;
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function updated(EvaluationToolSurveyStep $surveyStep)
+    {
+        if ($surveyStep->survey_element->survey_element_type === "video") {
+            $this->setParentStepIds($surveyStep);
+        }
+    }
+
+    /**
+     * @param EvaluationToolSurveyStep $surveyStep
+     */
+    public function deleting(EvaluationToolSurveyStep $surveyStep)
+    {
+        if (isset(request()->user()->id)) {
+            $surveyStep->deleted_by = request()->user()->id;
+            $surveyStep->save();
         }
     }
 
@@ -41,16 +80,6 @@ class EvaluationToolSurveyStepObserver
             $previousStep->save();
         }
 
-    }
-
-    /**
-     * @return void
-     */
-    public function updated(EvaluationToolSurveyStep $surveyStep)
-    {
-        if ($surveyStep->survey_element->survey_element_type === "video") {
-            $this->setParentStepIds($surveyStep);
-        }
     }
 
     private function setParentStepIds($surveyStep)

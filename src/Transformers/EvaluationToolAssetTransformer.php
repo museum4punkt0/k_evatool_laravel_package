@@ -11,28 +11,31 @@ class EvaluationToolAssetTransformer extends TransformerAbstract
     /**
      * Category transformer.
      *
-     * @param EvaluationToolAsset $asset
+     * @param EvaluationToolAsset $surveyAsset
      * @return array
      */
-    public function transform(EvaluationToolAsset $asset): array
+    public function transform(EvaluationToolAsset $surveyAsset): array
     {
 
         return [
-            "id"        => (int)$asset->id,
-            "filename"  => (string)$asset->filename,
-            "hash"      => (string)$asset->hash,
-            "mime"      => (string)$asset->mime,
-            "size"      => (int)$asset->size,
-            "sizeHuman" => HumanReadableFileSize::getHumanSize($asset->size),
-            "urls"      => (array)$asset->urls,
-            "meta"      => $asset->meta,
-            "createdAt" => $asset->created_at,
-            "updatedAt" => $asset->updated_at,
-            "deletedAt" => (string)$asset->deleted_at,
+            "id"        => (int)$surveyAsset->id,
+            "filename"  => (string)$surveyAsset->filename,
+            "hash"      => (string)$surveyAsset->hash,
+            "mime"      => (string)$surveyAsset->mime,
+            "size"      => (int)$surveyAsset->size,
+            "sizeHuman" => HumanReadableFileSize::getHumanSize($surveyAsset->size),
+            "urls"      => (array)$surveyAsset->urls,
+            "meta"      => $surveyAsset->meta,
+            "createdAt" => $surveyAsset->created_at,
+            "createdBy" => $surveyAsset->created_by_user ? $surveyAsset->created_by_user->name : null,
+            "updatedAt" => $surveyAsset->updated_at,
+            "updatedBy" => $surveyAsset->updated_by_user ? $surveyAsset->updated_by_user->name : null,
+            "deletedAt" => $surveyAsset->deleted_at,
+            "deletedBy" => $surveyAsset->deleted_by_user ? $surveyAsset->deleted_by_user->name : null,
             "links"     => [
                 [
                     "rel"  => "self",
-                    "href" => route("assets.show", $asset->id)
+                    "href" => route("assets.show", $surveyAsset->id)
                 ]
             ]
         ];
