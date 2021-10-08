@@ -51,20 +51,29 @@ class EvaluationToolAssetController extends Controller
 
     public function createSampleAssets()
     {
-        $asset = new EvaluationToolAsset();
+        $demoFiles = $this->demoDisk->files();
 
-        $filename     = "demo_video.mp4";
-        $filenameSlug = Str::slug(pathinfo($filename, 8), "_") . "." . strtolower(pathinfo($filename, 4));
+        foreach ($demoFiles as $demoFile) {
 
-        $asset->filename = $filenameSlug;
-        $asset->hash     = hash_file('md5', $this->demoDisk->path($filename));
-        $asset->size     = $this->demoDisk->size($filename);
-        $asset->mime     = mime_content_type($this->demoDisk->path($filename));
-        $asset->meta     = self::getFileMetaData($this->demoDisk->path($filename));
+            if (substr(basename($demoFile), 0, 1) !== ".") {
+                $asset = new EvaluationToolAsset();
 
-        $this->disk->put($filenameSlug, $this->demoDisk->get($filename));
+                $filename     = $demoFile;
+                $filenameSlug = Str::slug(pathinfo($filename, 8), "_") . "." . strtolower(pathinfo($filename, 4));
 
-        $asset->save();
+                $asset->filename = $filenameSlug;
+                $asset->hash     = hash_file('md5', $this->demoDisk->path($filename));
+                $asset->size     = $this->demoDisk->size($filename);
+                $asset->mime     = mime_content_type($this->demoDisk->path($filename));
+                $asset->meta     = self::getFileMetaData($this->demoDisk->path($filename));
+
+                $this->disk->put($filenameSlug, $this->demoDisk->get($filename));
+
+                $asset->save();
+
+                $this->createPreview($asset);
+            }
+        }
     }
 
     /**
@@ -93,20 +102,30 @@ class EvaluationToolAssetController extends Controller
         $asset->save();
 
         /* PREVIEW IMAGE  */
-        @mkdir($this->disk->path("preview"));
-        Image::load($filePath)
-            ->width(800)
-            ->optimize()
-            ->quality(60)
-            ->save($this->disk->path("preview/" . $filenameSlug));
+        $this->createPreview($asset);
+    }
 
-        /* THUMBNAIL IMAGE */
-        @mkdir($this->disk->path("thumbnail"));
-        Image::load($filePath)
-            ->width(200)
-            ->optimize()
-            ->quality(60)
-            ->save($this->disk->path("thumbnail/" . $filenameSlug));
+    public function createPreview(EvaluationToolAsset $asset)
+    {
+        $filepath = $this->disk->path($asset->filename);
+        $filename = $asset->filename;
+
+        if (strpos($asset->mime, "image") !== false) {
+            @mkdir($this->disk->path("preview"));
+            Image::load($filepath)
+                ->width(800)
+                ->optimize()
+                ->quality(60)
+                ->save($this->disk->path("preview/" . $filename));
+
+            /* THUMBNAIL IMAGE */
+            @mkdir($this->disk->path("thumbnail"));
+            Image::load($filepath)
+                ->width(200)
+                ->optimize()
+                ->quality(60)
+                ->save($this->disk->path("thumbnail/" . $filename));
+        }
     }
 
     public static function getFileMetaData($path): array
