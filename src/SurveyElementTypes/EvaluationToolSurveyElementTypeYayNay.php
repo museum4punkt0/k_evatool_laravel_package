@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Rules\DuplicatesInArray;
 
 class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementTypeBase
 {
@@ -29,12 +30,12 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
         }
 
         return [
-            "question" => $question,
-            "trueValue" => "accepted",
+            "question"   => $question,
+            "trueValue"  => "accepted",
             "falseValue" => "declined",
-            "trueLabel" => ["de" => "ja", "en" => "yes", "fr" => "oui"],
+            "trueLabel"  => ["de" => "ja", "en" => "yes", "fr" => "oui"],
             "falseLabel" => ["de" => "nein", "en" => "no", "fr" => "non"],
-            "assets" => [1,2,4]
+            "assets"     => [1, 2, 4]
         ];
     }
 
@@ -55,14 +56,30 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
         }
         $request->request->add(['languageKeys' => $languageKeys]);
     }
-    public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement)
+
+    public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement): array
     {
-        $trueValue = $surveyElement->params['trueValue'];
-        $falseValue = $surveyElement->params['falseValue'];
+        $trueValue  = $surveyElement->params->trueValue;
+        $falseValue = $surveyElement->params->falseValue;
+
         $rules = [
-            "result_value.value" => ['required', 'in:' . $trueValue . ',' . $falseValue],
+            "result_value.images"         => ['required', 'array'],
+            "result_value.images.*.asset" => ['required', 'in:' . implode(",", $surveyElement->params->assets)],
+            "result_value.images.*.value" => ['required', 'in:' . $trueValue . ',' . $falseValue],
+            "asset_ids"                   => ['required', new DuplicatesInArray],
         ];
         return $rules;
+    }
+
+    public static function prepareResultRequest(EvaluationToolSurveyElement $surveyElement)
+    {
+        $imageIds = [];
+        if (request()->has("result_value") && isset(request()->result_value["images"]) && is_array(request()->result_value["images"])) {
+            foreach (request()->result_value["images"] as $image) {
+                $imageIds[] = $image["asset"];
+            }
+        }
+        request()->request->add(["asset_ids" => $imageIds]);
     }
 
     /**
@@ -73,7 +90,7 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
         return [
             'params.question'   => 'required|array',
             // TODO: assets length > 0
-            'params.assets'   => 'required|array',
+            'params.assets'     => 'required|array',
             'params.question.*' => 'min:1|max:200',
             'languageKeys.*'    => 'required|exists:evaluation_tool_survey_languages,code',
         ];

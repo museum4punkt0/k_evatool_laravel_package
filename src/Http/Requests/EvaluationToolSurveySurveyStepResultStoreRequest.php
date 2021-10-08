@@ -27,7 +27,13 @@ class EvaluationToolSurveySurveyStepResultStoreRequest extends FormRequest
         if ($this->elementType == "SimpleText") {
             $this->abortWithMessage("simple text cannot hold results", 409);
         }
+
         $this->className = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . ucfirst($this->surveyStep->survey_element->survey_element_type->key);
+
+        if (class_exists($this->className)) {
+            $this->className::prepareResultRequest($this->surveyStep->survey_element);
+        }
+
     }
 
     /**

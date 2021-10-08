@@ -3,6 +3,7 @@
 namespace Twoavy\EvaluationTool\Seeders;
 
 use Illuminate\Database\Seeder;
+use Twoavy\EvaluationTool\Seeders\demo\EvaluationToolDemoSurveyAllElementTypes;
 use Twoavy\EvaluationTool\Seeders\Demo\EvaluationToolDemoSurveySimpleLinear;
 use Twoavy\EvaluationTool\Seeders\demo\EvaluationToolDemoSurveySimpleVideo;
 
@@ -16,6 +17,7 @@ class EvaluationToolDemoDataSeeder extends Seeder
         $this->call([
             EvaluationToolDemoSurveySimpleLinear::class,
             EvaluationToolDemoSurveySimpleVideo::class,
+            EvaluationToolDemoSurveyAllElementTypes::class,
         ]);
     }
 }
