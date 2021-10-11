@@ -18,6 +18,7 @@ Route::prefix('api/evaluation-tool')
     ->group(function () {
         Route::apiResource('survey-languages', EvaluationToolSurveyLanguageController::class);
         Route::apiResource('assets', EvaluationToolAssetController::class);
+        Route::post('surveys/{survey}/duplicate', [EvaluationToolSurveyController::class, "duplicateSurvey"]);
         Route::post('surveys/{survey}/publish', [EvaluationToolSurveyController::class, "publishSurvey"]);
         Route::put('surveys/{survey}/admin-layout', [EvaluationToolSurveyController::class, "updateAdminLayout"]);
         Route::apiResource('survey-elements', EvaluationToolSurveyElementController::class);
