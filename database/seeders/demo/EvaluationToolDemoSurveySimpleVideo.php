@@ -10,6 +10,7 @@ use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyStepFactory;
 use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Seeders\EvaluationToolSeeder;
 
 class EvaluationToolDemoSurveySimpleVideo extends Seeder
 {
@@ -49,9 +50,10 @@ class EvaluationToolDemoSurveySimpleVideo extends Seeder
         $timebasedSteps = [];
         foreach ($subElementIds as $s => $subElementId) {
             EvaluationToolSurveyStepFactory::times(1)->withData("Bewertung " . ($s + 1), $subElementId, $surveyId)->create();
+            $subStep = EvaluationToolSeeder::getLatestStep();
             $timebasedSteps[] = [
                 "uuid"                => Uuid::uuid4(),
-                "stepId"              => $subElementId,
+                "stepId"              => $subStep->id,
                 "timecode"            => "00:00:" . sprintf('%02d', (($s + 1) * 3 + pow($s, 2))) . ":00",
                 "stopsVideo"          => true,
                 "description"         => "Beschreibung " . ($s + 1),
