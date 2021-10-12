@@ -83,8 +83,8 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
             ],
             "trueValue"  => "yes",
             "falseValue" => "no",
-            "trueLabel"  => ["de" => "Ja", "en" => "Nein"],
-            "falseLabel" => ["de" => "Yes", "en" => "No"],
+            "trueLabel"  => ["de" => "Ja", "en" => "Yes"],
+            "falseLabel" => ["de" => "Nein", "en" => "No"],
             "assets"     => EvaluationToolAsset::where("mime", "LIKE", 'image/%')->get()->take(3)->pluck("id")
 
         ], "Pyramiden", "Pyramiden auf Bildern finden")->create();
