@@ -175,7 +175,7 @@ class EvaluationToolSurveyElementFactory extends Factory
     {
         return $this->state(function (array $attributes) use ($params, $name, $description) {
             return [
-                'survey_element_type_id' => 9,
+                'survey_element_type_id' => 8,
                 'name' => $name,
                 'description' => $description,
                 'params' => $params,
