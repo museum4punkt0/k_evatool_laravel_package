@@ -78,8 +78,8 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
 
         EvaluationToolSurveyElementFactory::times(1)->yayNay([
             "question"   => [
-                "de" => "Sind da Pyramiden drauf?",
-                "en" => "Can you spot a pyramid on this image",
+                "de" => "Gefällt Dir dieses Bild?",
+                "en" => "Do you like this image",
             ],
             "trueValue"  => "yes",
             "falseValue" => "no",
