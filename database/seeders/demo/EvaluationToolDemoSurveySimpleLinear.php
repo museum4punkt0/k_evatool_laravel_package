@@ -9,6 +9,8 @@ use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyFactory;
 use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyStepFactory;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
+use Twoavy\EvaluationTool\Seeders\EvaluationToolSeeder;
 
 class EvaluationToolDemoSurveySimpleLinear extends Seeder
 {
@@ -29,15 +31,15 @@ class EvaluationToolDemoSurveySimpleLinear extends Seeder
         $introId = EvaluationToolSurveyElement::all()->last()->id;
 
         EvaluationToolSurveyElementFactory::times(1)->multipleChoice([
-            "question" => [
+            "question"      => [
                 "de" => "Eine auf deutsch formulierte Frage",
                 "en" => "A question presented in English",
                 "fr" => "une question en francais",
             ],
-            "options" => [
+            "options"       => [
                 [
 
-                    'value' => 'option 1',
+                    'value'  => 'option 1',
                     'labels' => [
                         "de" => "Option 1",
                         "en" => "Option 1",
@@ -45,7 +47,7 @@ class EvaluationToolDemoSurveySimpleLinear extends Seeder
                     ],
                 ],
                 [
-                    'value' => 'option 2',
+                    'value'  => 'option 2',
                     'labels' => [
                         "de" => "Option 2",
                         "en" => "Option 2",
@@ -60,17 +62,17 @@ class EvaluationToolDemoSurveySimpleLinear extends Seeder
         $multipleChoiceId = EvaluationToolSurveyElement::all()->last()->id;
 
         EvaluationToolSurveyElementFactory::times(1)->starRating([
-            "question" => [
+            "question"            => [
                 "de" => "Eine auf deutsch formulierte Frage",
                 "en" => "A question presented in English",
             ],
-            "allowHalfSteps" => false,
-            "numberOfStars" => 5,
-            "meaningLowestValue" => "very unhappy",
+            "allowHalfSteps"      => false,
+            "numberOfStars"       => 5,
+            "meaningLowestValue"  => "very unhappy",
             "meaningHighestValue" => "very happy",
-            "lowestValueLabel" => ["de" => "sehr unglücklich", "en" => "very unhappy"],
-            "middleValueLabel" => ["de" => "neutral", "en" => "neutral"],
-            "highestValueLabel" => ["de" => "sehr glücklich", "en" => "very happy"],
+            "lowestValueLabel"    => ["de" => "sehr unglücklich", "en" => "very unhappy"],
+            "middleValueLabel"    => ["de" => "neutral", "en" => "neutral"],
+            "highestValueLabel"   => ["de" => "sehr glücklich", "en" => "very happy"],
         ], "Sterne-Bewertung", "Von sehr unglücklich bis sehr glücklich")->create();
 
         $starRatingId = EvaluationToolSurveyElement::all()->last()->id;
@@ -78,9 +80,16 @@ class EvaluationToolDemoSurveySimpleLinear extends Seeder
         EvaluationToolSurveyFactory::times(1)->withName("Einfache Umfrage", "Lineare Abfolge, ohne konditionale Elemente")->create();
         $surveyId = EvaluationToolSurvey::get()->last()->id;
 
-        EvaluationToolSurveyStepFactory::times(1)->withData("Einleitung", $introId, $surveyId, $multipleChoiceId)->create();
-        EvaluationToolSurveyStepFactory::times(1)->withData("Einfach-Auswahl", $multipleChoiceId, $surveyId, $starRatingId)->create();
-        EvaluationToolSurveyStepFactory::times(1)->withData("Bewertung", $starRatingId, $surveyId)->create();
+        EvaluationToolSurveyStepFactory::times(1)->withData("Einleitung", $introId, $surveyId)->create();
+        $introStep = EvaluationToolSeeder::getLatestStep();
 
+        EvaluationToolSurveyStepFactory::times(1)->withData("Einfach-Auswahl", $multipleChoiceId, $surveyId, $starRatingId)->create();
+        $introStep->next_step_id = EvaluationToolSeeder::getLatestStep()->id;
+        $introStep->save();
+        $multipleChoiceStep = EvaluationToolSeeder::getLatestStep();
+
+        EvaluationToolSurveyStepFactory::times(1)->withData("Bewertung", $starRatingId, $surveyId)->create();
+        $multipleChoiceStep->next_step_id = EvaluationToolSeeder::getLatestStep()->id;
+        $multipleChoiceStep->save();
     }
 }

@@ -4,6 +4,7 @@ namespace Twoavy\EvaluationTool\Seeders;
 
 use Illuminate\Database\Seeder;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyElementTypeController;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 
 class EvaluationToolSeeder extends Seeder
 {
@@ -25,5 +26,9 @@ class EvaluationToolSeeder extends Seeder
             //            EvaluationToolSurveyLocalizationSeeder::class,
             //            EvaluationToolSurveyStepSeeder::class,
         ]);
+    }
+
+    public static function getLatestStep() {
+        return EvaluationToolSurveyStep::all()->last();
     }
 }

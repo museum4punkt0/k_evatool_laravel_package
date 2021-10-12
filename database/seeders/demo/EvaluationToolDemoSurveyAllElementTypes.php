@@ -3,6 +3,7 @@
 namespace Twoavy\EvaluationTool\Seeders\demo;
 
 use Illuminate\Database\Seeder;
+use Ramsey\Uuid\Uuid;
 use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyElementFactory;
 use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyFactory;
 use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyStepFactory;
@@ -29,21 +30,21 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
         $introId = EvaluationToolSurveyElement::all()->last()->id;
 
         EvaluationToolSurveyElementFactory::times(1)->multipleChoice([
-            "question" => [
+            "question"      => [
                 "de" => "Wie bist Du auf dieses Tool aufmerksam geworden?",
                 "en" => "How did you get to know this tool?",
             ],
-            "options" => [
+            "options"       => [
                 [
 
-                    'value' => 'Newsletter',
+                    'value'  => 'Newsletter',
                     'labels' => [
                         "de" => "Newsletter",
                         "en" => "newsletter",
                     ],
                 ],
                 [
-                    'value' => 'Empfehlung',
+                    'value'  => 'Empfehlung',
                     'labels' => [
                         "de" => "Empfehlung",
                         "en" => "recommendation",
@@ -57,31 +58,31 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
         $multipleChoiceId = EvaluationToolSurveyElement::all()->last()->id;
 
         EvaluationToolSurveyElementFactory::times(1)->starRating([
-            "question" => [
+            "question"            => [
                 "de" => "Wie zufrieden bist Du mit dem Registrierungsprozess?",
                 "en" => "How satiesfied are you with the registration process?",
             ],
-            "allowHalfSteps" => false,
-            "numberOfStars" => 7,
-            "meaningLowestValue" => "sehr unzufrieden",
+            "allowHalfSteps"      => false,
+            "numberOfStars"       => 7,
+            "meaningLowestValue"  => "sehr unzufrieden",
             "meaningHighestValue" => "sehr zufrieden",
-            "lowestValueLabel" => ["de" => "sehr unzufrieden", "en" => "very unsatisfied"],
-            "middleValueLabel" => ["de" => "neutral", "en" => "neutral"],
-            "highestValueLabel" => ["de" => "sehr zufrieden", "en" => "very satisfied"],
+            "lowestValueLabel"    => ["de" => "sehr unzufrieden", "en" => "very unsatisfied"],
+            "middleValueLabel"    => ["de" => "neutral", "en" => "neutral"],
+            "highestValueLabel"   => ["de" => "sehr zufrieden", "en" => "very satisfied"],
         ], "Sterne-Bewertung", "Von sehr unzufrieden bis sehr zufrieden")->create();
 
         $starRatingId = EvaluationToolSurveyElement::all()->last()->id;
 
         EvaluationToolSurveyElementFactory::times(1)->yayNay([
-            "question" => [
+            "question"   => [
                 "de" => "Gefällt Dir dieses Bild?",
                 "en" => "Do you like this image",
             ],
-            "trueValue" => "ja",
+            "trueValue"  => "ja",
             "falseValue" => "nein",
-            "trueLabel" => ["de" => "Ja", "en" => "Yes"],
+            "trueLabel"  => ["de" => "Ja", "en" => "Yes"],
             "falseLabel" => ["de" => "Nein", "en" => "No"],
-            "assets" => EvaluationToolAsset::where("mime", "LIKE", 'image/%')->get()->take(3)->pluck("id"),
+            "assets"     => EvaluationToolAsset::where("mime", "LIKE", 'image/%')->get()->take(3)->pluck("id"),
 
         ], "Bildbewertung", "Bewertung von Bildern")->create();
 
@@ -92,7 +93,7 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
                 "de" => "Wie zufrieden bist Du mit der barrierefreien Nutzung des Tools?",
                 "en" => "How happy are you with the accessibility of this tool?",
             ],
-            "emojis" => [
+            "emojis"   => [
                 ["type" => "😁", "meaning" => "satisfied"],
                 ["type" => "🤔", "meaning" => "neutral"],
                 ["type" => "😥", "meaning" => "not satisfied"],
@@ -101,47 +102,46 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
 
         $emojiId = EvaluationToolSurveyElement::all()->last()->id;
 
-        // $subElementIds = [];
-        // $i = 0;
-        // while ($i < 3) {
-        //     EvaluationToolSurveyElementFactory::times(1)->starRating([
-        //         "question" => [
-        //             "de" => "Eine auf deutsch formulierte Frage",
-        //             "en" => "A question presented in English",
-        //         ],
-        //         "allowHalfSteps" => false,
-        //         "numberOfStars" => 5,
-        //         "meaningLowestValue" => "very unhappy",
-        //         "meaningHighestValue" => "very happy",
-        //         "lowestValueLabel" => ["de" => "sehr unglücklich", "en" => "very unhappy"],
-        //         "middleValueLabel" => ["de" => "neutral", "en" => "neutral"],
-        //         "highestValueLabel" => ["de" => "sehr glücklich", "en" => "very happy"],
-        //     ], "Sterne-Bewertung", "Von sehr unglücklich bis sehr glücklich")->create();
-        //     $i++;
-        //     $subElementIds[] = EvaluationToolSurveyElement::all()->last()->id;
-        // }
-        // EvaluationToolSurveyElementFactory::times(1)->video([
-        //     "videoAssetId" => EvaluationToolAsset::find(1)->id
-        // ], "Syncing Video")->create();
-        // $videoId = EvaluationToolSurveyElement::all()->last()->id;
+        $subElementIds = [];
+        $i             = 0;
+        while ($i < 3) {
+            EvaluationToolSurveyElementFactory::times(1)->starRating([
+                "question"            => [
+                    "de" => "Eine auf deutsch formulierte Frage",
+                    "en" => "A question presented in English",
+                ],
+                "allowHalfSteps"      => false,
+                "numberOfStars"       => 5,
+                "meaningLowestValue"  => "very unhappy",
+                "meaningHighestValue" => "very happy",
+                "lowestValueLabel"    => ["de" => "sehr unglücklich", "en" => "very unhappy"],
+                "middleValueLabel"    => ["de" => "neutral", "en" => "neutral"],
+                "highestValueLabel"   => ["de" => "sehr glücklich", "en" => "very happy"],
+            ], "Sterne-Bewertung", "Von sehr unglücklich bis sehr glücklich")->create();
+            $i++;
+            $subElementIds[] = EvaluationToolSurveyElement::all()->last()->id;
+        }
+        EvaluationToolSurveyElementFactory::times(1)->video([
+            "videoAssetId" => EvaluationToolAsset::find(1)->id
+        ], "Syncing Video")->create();
+        $videoId = EvaluationToolSurveyElement::all()->last()->id;
 
-        // EvaluationToolSurveyFactory::times(1)->withName("Einfaches Video", "Video mit zeitbasierten Unterschritten")->create();
-        // $surveyId = EvaluationToolSurvey::get()->last()->id;
+        EvaluationToolSurveyFactory::times(1)->withName("Einfaches Video", "Video mit zeitbasierten Unterschritten")->create();
+        $surveyId = EvaluationToolSurvey::get()->last()->id;
 
-        // $timebasedSteps = [];
-        // foreach ($subElementIds as $s => $subElementId) {
-        //     EvaluationToolSurveyStepFactory::times(1)->withData("Bewertung " . ($s + 1), $subElementId, $surveyId)->create();
-        //     $timebasedSteps[] = [
-        //         "uuid"                => Uuid::uuid4(),
-        //         "stepId"              => $subElementId,
-        //         "timecode"            => "00:00:" . sprintf('%02d', (($s + 1) * 3 + pow($s, 2))) . ":00",
-        //         "stopsVideo"          => true,
-        //         "description"         => "Beschreibung " . ($s + 1),
-        //         "displayTime"         => 2,
-        //         "allowChangingAnswer" => false
-        //     ];
-        // }
-
+        $timebasedSteps = [];
+        foreach ($subElementIds as $s => $subElementId) {
+            EvaluationToolSurveyStepFactory::times(1)->withData("Bewertung " . ($s + 1), $subElementId, $surveyId)->create();
+            $timebasedSteps[] = [
+                "uuid"                => Uuid::uuid4(),
+                "stepId"              => $subElementId,
+                "timecode"            => "00:00:" . sprintf('%02d', (($s + 1) * 3 + pow($s, 2))) . ":00",
+                "stopsVideo"          => true,
+                "description"         => "Beschreibung " . ($s + 1),
+                "displayTime"         => 2,
+                "allowChangingAnswer" => false
+            ];
+        }
 
         EvaluationToolSurveyElementFactory::times(1)->textInput([
             "question" => [
@@ -170,7 +170,7 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
         EvaluationToolSurveyStepFactory::times(1)->withData("Registrierungsprozess", $starRatingId, $surveyId, $yayNayId)->create();
         EvaluationToolSurveyStepFactory::times(1)->withData("Bildbewertung", $yayNayId, $surveyId, $emojiId)->create();
         EvaluationToolSurveyStepFactory::times(1)->withData("Barrierefreiheit", $emojiId, $surveyId, $textInputId)->create();
-        // EvaluationToolSurveyStepFactory::times(1)->withData("Video", $videoId, $surveyId, $textInputId, $timebasedSteps)->create();
+        EvaluationToolSurveyStepFactory::times(1)->withData("Video", $videoId, $surveyId, $textInputId, $timebasedSteps)->create();
         EvaluationToolSurveyStepFactory::times(1)->withData("Lieblingsfeature", $textInputId, $surveyId, $voiceInputId)->create();
         EvaluationToolSurveyStepFactory::times(1)->withData("Verbesserungsvorschläge", $voiceInputId, $surveyId)->create();
 
