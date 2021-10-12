@@ -125,6 +125,23 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
         // ], "Syncing Video")->create();
         // $videoId = EvaluationToolSurveyElement::all()->last()->id;
 
+        // EvaluationToolSurveyFactory::times(1)->withName("Einfaches Video", "Video mit zeitbasierten Unterschritten")->create();
+        // $surveyId = EvaluationToolSurvey::get()->last()->id;
+
+        // $timebasedSteps = [];
+        // foreach ($subElementIds as $s => $subElementId) {
+        //     EvaluationToolSurveyStepFactory::times(1)->withData("Bewertung " . ($s + 1), $subElementId, $surveyId)->create();
+        //     $timebasedSteps[] = [
+        //         "uuid"                => Uuid::uuid4(),
+        //         "stepId"              => $subElementId,
+        //         "timecode"            => "00:00:" . sprintf('%02d', (($s + 1) * 3 + pow($s, 2))) . ":00",
+        //         "stopsVideo"          => true,
+        //         "description"         => "Beschreibung " . ($s + 1),
+        //         "displayTime"         => 2,
+        //         "allowChangingAnswer" => false
+        //     ];
+        // }
+
 
         EvaluationToolSurveyElementFactory::times(1)->textInput([
             "question" => [
