@@ -152,6 +152,83 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
 
         $textInputId = EvaluationToolSurveyElement::all()->last()->id;
 
+        EvaluationToolSurveyElementFactory::times(1)->multipleChoice([
+            "question" => [
+                "de" => "Welche Umfragetypen sind deiner Meinung nach am nützlichsten?",
+                "en" => "Which element types are the most useful in your opinion?",
+            ],
+            "options" => [
+                [
+                    'value' => 'SimpleText',
+                    'labels' => [
+                        "de" => "SimpleText",
+                        "en" => "SimpleText",
+                    ],
+                ],
+                [
+                    'value' => 'Binary',
+                    'labels' => [
+                        "de" => "Binary",
+                        "en" => "Binary",
+                    ],
+                ],
+                [
+                    'value' => 'MultipleChoice',
+                    'labels' => [
+                        "de" => "MultipleChoice",
+                        "en" => "MultipleChoice",
+                    ],
+                ],
+                [
+                    'value' => 'YayNay',
+                    'labels' => [
+                        "de" => "YayNay",
+                        "en" => "YayNay",
+                    ],
+                ],
+                [
+                    'value' => 'Video',
+                    'labels' => [
+                        "de" => "Video",
+                        "en" => "Video",
+                    ],
+                ],
+                [
+                    'value' => 'StarRating',
+                    'labels' => [
+                        "de" => "StarRating",
+                        "en" => "StarRating",
+                    ],
+                ],
+                [
+                    'value' => 'Emoji',
+                    'labels' => [
+                        "de" => "Emoji",
+                        "en" => "Emoji",
+                    ],
+                ],
+                [
+                    'value' => 'TextInput',
+                    'labels' => [
+                        "de" => "TextInput",
+                        "en" => "TextInput",
+                    ],
+                ],
+                [
+                    'value' => 'VoiceInput',
+                    'labels' => [
+                        "de" => "VoiceInput",
+                        "en" => "VoiceInput",
+                    ],
+                ],
+
+            ],
+            "minSelectable" => 2,
+            "maxSelectable" => 4,
+        ], "Elementtypen", "zwei bis vier Antworten möglich")->create();
+
+        // $elementTypesMultipleChoiceId = EvaluationToolSurveyElement::all()->last()->id;
+
         EvaluationToolSurveyElementFactory::times(1)->voiceInput([
             "question" => [
                 "de" => "Hast Du noch Verbesserungsvorschläge?",
@@ -170,6 +247,7 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
         EvaluationToolSurveyStepFactory::times(1)->withData("Registrierungsprozess", $starRatingId, $surveyId, $yayNayId)->create();
         EvaluationToolSurveyStepFactory::times(1)->withData("Bildbewertung", $yayNayId, $surveyId, $emojiId)->create();
         EvaluationToolSurveyStepFactory::times(1)->withData("Barrierefreiheit", $emojiId, $surveyId, $textInputId)->create();
+        // EvaluationToolSurveyStepFactory::times(1)->withData("ElementTypen", $elementTypesMultipleChoiceId, $surveyId, $textInputId)->create();
         // EvaluationToolSurveyStepFactory::times(1)->withData("Video", $videoId, $surveyId, $textInputId, $timebasedSteps)->create();
         EvaluationToolSurveyStepFactory::times(1)->withData("Lieblingsfeature", $textInputId, $surveyId, $voiceInputId)->create();
         EvaluationToolSurveyStepFactory::times(1)->withData("Verbesserungsvorschläge", $voiceInputId, $surveyId)->create();
