@@ -83,7 +83,7 @@ class EvaluationToolDemoSurveySimpleLinear extends Seeder
         EvaluationToolSurveyStepFactory::times(1)->withData("Einleitung", $introId, $surveyId)->create();
         $introStep = EvaluationToolSeeder::getLatestStep();
 
-        EvaluationToolSurveyStepFactory::times(1)->withData("Einfach-Auswahl", $multipleChoiceId, $surveyId, $starRatingId)->create();
+        EvaluationToolSurveyStepFactory::times(1)->withData("Einfach-Auswahl", $multipleChoiceId, $surveyId)->create();
         $introStep->next_step_id = EvaluationToolSeeder::getLatestStep()->id;
         $introStep->save();
         $multipleChoiceStep = EvaluationToolSeeder::getLatestStep();
