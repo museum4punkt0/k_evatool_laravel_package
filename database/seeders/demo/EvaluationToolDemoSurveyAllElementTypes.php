@@ -3,13 +3,13 @@
 namespace Twoavy\EvaluationTool\Seeders\demo;
 
 use Illuminate\Database\Seeder;
-use Ramsey\Uuid\Uuid;
 use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyElementFactory;
 use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyFactory;
 use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyStepFactory;
 use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Ramsey\Uuid\Uuid;
 
 class EvaluationToolDemoSurveyAllElementTypes extends Seeder
 {
@@ -30,27 +30,24 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
         $introId = EvaluationToolSurveyElement::all()->last()->id;
 
         EvaluationToolSurveyElementFactory::times(1)->multipleChoice([
-            "question"      => [
-                "de" => "Eine auf deutsch formulierte Frage",
-                "en" => "A question presented in English",
-                "fr" => "une question en francais",
+            "question" => [
+                "de" => "Wie bist Du auf dieses Tool aufmerksam geworden?",
+                "en" => "How did you get to know this tool?",
             ],
-            "options"       => [
+            "options" => [
                 [
 
-                    'value'  => 'option 1',
+                    'value' => 'Newsletter',
                     'labels' => [
-                        "de" => "Option 1",
-                        "en" => "Option 1",
-                        "fr" => "Option 1",
+                        "de" => "Newsletter",
+                        "en" => "newsletter",
                     ],
                 ],
                 [
-                    'value'  => 'option 2',
+                    'value' => 'Empfehlung',
                     'labels' => [
-                        "de" => "Option 2",
-                        "en" => "Option 2",
-                        "fr" => "Option 2",
+                        "de" => "Empfehlung",
+                        "en" => "recommendation",
                     ],
                 ],
             ],
@@ -61,35 +58,68 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
         $multipleChoiceId = EvaluationToolSurveyElement::all()->last()->id;
 
         EvaluationToolSurveyElementFactory::times(1)->starRating([
-            "question"            => [
-                "de" => "Eine auf deutsch formulierte Frage",
-                "en" => "A question presented in English",
+            "question" => [
+                "de" => "Wie zufrieden bist Du mit dem Registrierungsprozess?",
+                "en" => "How satiesfied are you with the registration process?",
             ],
-            "allowHalfSteps"      => false,
-            "numberOfStars"       => 7,
-            "meaningLowestValue"  => "very unhappy",
-            "meaningHighestValue" => "very happy",
-            "lowestValueLabel"    => ["de" => "sehr unglücklich", "en" => "very unhappy"],
-            "middleValueLabel"    => ["de" => "neutral", "en" => "neutral"],
-            "highestValueLabel"   => ["de" => "sehr glücklich", "en" => "very happy"],
-        ], "Sterne-Bewertung", "Von sehr unglücklich bis sehr glücklich")->create();
+            "allowHalfSteps" => false,
+            "numberOfStars" => 7,
+            "meaningLowestValue" => "sehr unzufrieden",
+            "meaningHighestValue" => "sehr zufrieden",
+            "lowestValueLabel" => ["de" => "sehr unzufrieden", "en" => "very unsatisfied"],
+            "middleValueLabel" => ["de" => "neutral", "en" => "neutral"],
+            "highestValueLabel" => ["de" => "sehr zufrieden", "en" => "very satisfied"],
+        ], "Sterne-Bewertung", "Von sehr unzufrieden bis sehr zufrieden")->create();
 
         $starRatingId = EvaluationToolSurveyElement::all()->last()->id;
 
         EvaluationToolSurveyElementFactory::times(1)->yayNay([
-            "question"   => [
+            "question" => [
                 "de" => "Gefällt Dir dieses Bild?",
                 "en" => "Do you like this image",
             ],
-            "trueValue"  => "yes",
-            "falseValue" => "no",
-            "trueLabel"  => ["de" => "Ja", "en" => "Nein"],
+            "trueValue" => "ja",
+            "falseValue" => "nein",
+            "trueLabel" => ["de" => "Ja", "en" => "Nein"],
             "falseLabel" => ["de" => "Yes", "en" => "No"],
-            "assets"     => EvaluationToolAsset::where("mime", "LIKE", 'image/%')->get()->take(3)->pluck("id")
+            "assets" => EvaluationToolAsset::where("mime", "LIKE", 'image/%')->get()->take(3)->pluck("id"),
 
-        ], "Pyramiden", "Pyramiden auf Bildern finden")->create();
+        ], "Bildbewertung", "Bewertung von Bildern")->create();
 
         $yayNayId = EvaluationToolSurveyElement::all()->last()->id;
+
+        EvaluationToolSurveyElementFactory::times(1)->emoji([
+            "question" => [
+                "de" => "Wie zufrieden bist Du mit der barrierefreien Nutzung des Tools?",
+                "en" => "How happy are you with the accessibility of this tool?",
+            ],
+            "emojis" => [
+                ["type" => "😁", "meaning" => "satisfied"],
+                ["type" => "🤔", "meaning" => "neutral"],
+                ["type" => "😥", "meaning" => "not satisfied"],
+            ],
+        ], "Öffnungszeiten", "Zufriedenheit Öffnungszeiten")->create();
+
+        $emojiId = EvaluationToolSurveyElement::all()->last()->id;
+
+
+        EvaluationToolSurveyElementFactory::times(1)->textInput([
+            "question" => [
+                "de" => "Welches Feature hat Dir am besten gefallen?",
+                "en" => "What feature did you like the most?",
+            ],
+        ], "Lieblingsfeature", "offene Frage zum Lieblingsfeature")->create();
+
+        $textInputId = EvaluationToolSurveyElement::all()->last()->id;
+
+        EvaluationToolSurveyElementFactory::times(1)->voiceInput([
+            "question" => [
+                "de" => "Hast Du noch Verbesserungsvorschläge?",
+                "en" => "Do you have any suggestions for improvement?",
+            ],
+        ], "Verbesserungsvorschläge", "Verbesserungsvorschläge in Sprachform")->create();
+
+        $voiceInputId = EvaluationToolSurveyElement::all()->last()->id;
 
         EvaluationToolSurveyFactory::times(1)->withName("Umfrage mit allen Elementtypen", "Umfrage mit allen Elementtypen in verschiedenen Konfigurationen")
             ->create();
@@ -97,8 +127,11 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
 
         EvaluationToolSurveyStepFactory::times(1)->withData("Einleitung", $introId, $surveyId, $multipleChoiceId)->create();
         EvaluationToolSurveyStepFactory::times(1)->withData("Einfach-Auswahl", $multipleChoiceId, $surveyId, $starRatingId)->create();
-        EvaluationToolSurveyStepFactory::times(1)->withData("Bewertung", $starRatingId, $surveyId, $yayNayId)->create();
-        EvaluationToolSurveyStepFactory::times(1)->withData("Pyramids", $yayNayId, $surveyId)->create();
+        EvaluationToolSurveyStepFactory::times(1)->withData("Registrierungsprozess", $starRatingId, $surveyId, $yayNayId)->create();
+        EvaluationToolSurveyStepFactory::times(1)->withData("Bildbewertung", $yayNayId, $surveyId, $emojiId)->create();
+        EvaluationToolSurveyStepFactory::times(1)->withData("Barrierefreiheit", $emojiId, $surveyId, $textInputId)->create();
+        EvaluationToolSurveyStepFactory::times(1)->withData("Lieblingsfeature", $textInputId, $surveyId, $voiceInputId)->create();
+        EvaluationToolSurveyStepFactory::times(1)->withData("Verbesserungsvorschläge", $voiceInputId, $surveyId)->create();
 
     }
 }
