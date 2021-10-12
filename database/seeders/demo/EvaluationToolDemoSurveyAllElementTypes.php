@@ -37,6 +37,19 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
 
         $introId = EvaluationToolSurveyElement::all()->last()->id;
 
+        EvaluationToolSurveyElementFactory::times(1)->binary([
+            "question" => [
+                "de" => "Gefällt Dir das Tool?",
+                "en" => "Do you like the tool?",
+            ],
+            "trueValue" => "ja",
+            "falseValue" => "nein",
+            "trueLabel" => ["de" => "ja", "en" => "yes"],
+            "falseLabel" => ["de" => "nein", "en" => "no"],
+        ], "Binary Frage", "ja oder nein")->create();
+
+        $binaryId = EvaluationToolSurveyElement::all()->last()->id;
+
         EvaluationToolSurveyElementFactory::times(1)->multipleChoice([
             "question" => [
                 "de" => "Wie bist Du auf dieses Tool aufmerksam geworden?",
@@ -236,6 +249,8 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
         // create steps
         EvaluationToolSurveyStepFactory::times(1)->withData("Einleitung", $introId, $surveyId)->create();
         $introStep = EvaluationToolSeeder::getLatestStep();
+        EvaluationToolSurveyStepFactory::times(1)->withData("Binary Frage", $binaryId, $surveyId)->create();
+        $binaryStep = EvaluationToolSeeder::getLatestStep();
         EvaluationToolSurveyStepFactory::times(1)->withData("Einfach-Auswahl", $multipleChoiceId, $surveyId)->create();
         $multipleChoiceStep = EvaluationToolSeeder::getLatestStep();
         EvaluationToolSurveyStepFactory::times(1)->withData("Registrierungsprozess", $starRatingId, $surveyId)->create();
@@ -270,8 +285,11 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
         $voiceInputStep = EvaluationToolSeeder::getLatestStep();
 
         // connect steps
-        $introStep->next_step_id = $multipleChoiceStep->id;
+        $introStep->next_step_id = $binaryStep->id;
         $introStep->save();
+
+        $binaryStep->next_step_id = $multipleChoiceStep->id;
+        $binaryStep->save();
 
         $multipleChoiceStep->next_step_id = $starRatingStep->id;
         $multipleChoiceStep->save();

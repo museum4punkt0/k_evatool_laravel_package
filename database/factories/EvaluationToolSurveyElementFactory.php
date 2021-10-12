@@ -59,6 +59,26 @@ class EvaluationToolSurveyElementFactory extends Factory
      * @param string $description
      * @return Factory
      */
+    public function binary($params = null, string $name = "Name", string $description = ''): Factory
+    {
+        $publishedLanguages = EvaluationToolSurveyLanguage::where("published")->get();
+
+        return $this->state(function (array $attributes) use ($params, $name, $description) {
+            return [
+                'survey_element_type_id' => 1,
+                'name' => $name,
+                'description' => $description,
+                'params' => $params,
+            ];
+        });
+    }
+
+    /**
+     * @param null $params
+     * @param string $name
+     * @param string $description
+     * @return Factory
+     */
     public function multipleChoice($params = null, string $name = "Name", string $description = ''): Factory
     {
         $publishedLanguages = EvaluationToolSurveyLanguage::where("published")->get();
