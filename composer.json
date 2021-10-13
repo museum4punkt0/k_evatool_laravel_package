@@ -1,5 +1,6 @@
 {
     "name": "twoavy/evaluation-tool",
+    "version": "1.0.226",
     "description": "A laravel package for creating evaluations and surveys",
     "require": {
         "php": "^7.3|^8.0",
@@ -14,11 +15,13 @@
         "illuminate/pipeline": "^8.0",
         "illuminate/support": "^8.0",
         "james-heinrich/getid3": "^1.9",
+        "phlak/semver-cli": "^1.0",
         "ramsey/uuid": "^4.2",
         "spatie/image": "1.10.5",
         "spatie/laravel-fractal": "^5.8"
     },
     "require-dev": {
+        "brainmaestro/composer-git-hooks": "^2.8",
         "orchestra/testbench": "^6.0",
         "phpunit/phpunit": "^9.5"
     },
@@ -41,7 +44,18 @@
             "providers": [
                 "Twoavy\\EvaluationTool\\EvaluationToolServiceProvider"
             ]
+        },
+        "hooks": {
+            "pre-commit": [
+                "echo committing as $(git config user.name)",
+                "./vendor/bin/semver increment:patch",
+                "git add ./composer.json",
+                "echo pre commit done"
+            ]
         }
+    },
+    "scripts": {
+        "cghooks": "vendor/bin/cghooks"
     },
     "config": {
         "sort-packages": true
