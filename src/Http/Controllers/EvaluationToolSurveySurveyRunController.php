@@ -35,7 +35,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
     public function __construct()
     {
         $this->defaultLanguage = EvaluationToolSurveyLanguage::where("default", true)->first();
-        $this->audioDisk = Storage::disk("evaluation_tool_audio");
+        $this->audioDisk       = Storage::disk("evaluation_tool_audio");
     }
 
     /**
@@ -85,9 +85,22 @@ class EvaluationToolSurveySurveyRunController extends Controller
             return $this->errorResponse("survey ids do not match", 409);
         }
 
+        if(!$request->has("session_id")) {
+            return $this->errorResponse("no session id (uuid) provided", 409);
+        }
+
+        if (!$this->checkPreviousStepAnswer($surveyStep, $request->session_id)) {
+            return $this->errorResponse("survey result cannot be stored", 409);
+        }
+
         $language = EvaluationToolSurveyLanguage::where("code", $request->result_language)->first();
 
-        $surveyStepResult                     = new EvaluationToolSurveyStepResult();
+        if (!$surveyStepResult = EvaluationToolSurveyStepResult::where("session_id", $request->session_id)
+            ->where("survey_step_id", $request->survey_step_id)
+            ->first()) {
+            $surveyStepResult = new EvaluationToolSurveyStepResult();
+        }
+
         $surveyStepResult->survey_step_id     = $request->survey_step_id;
         $surveyStepResult->session_id         = $request->session_id;
         $surveyStepResult->result_value       = $request->result_value;
@@ -100,11 +113,32 @@ class EvaluationToolSurveySurveyRunController extends Controller
     }
 
     /**
+     * @param EvaluationToolSurveyStep $surveyStep
+     * @param $sessionId
+     * @return bool
+     */
+    function checkPreviousStepAnswer(EvaluationToolSurveyStep $surveyStep, $sessionId): bool
+    {
+        if (!$previousStep = EvaluationToolSurveyStep::where("next_step_id", $surveyStep->id)
+            ->first()) {
+            return true;
+        }
+
+        if (!$previousStep->allow_skip && !EvaluationToolSurveyStepResult::where([
+                "survey_step_id" => $previousStep->id,
+                "session_id"     => $sessionId
+            ])->first()) {
+            return false;
+        }
+
+
+        return true;
+    }
+
+    /**
      * Stores a survey step result asset record
      *
      * @param EvaluationToolSurvey $survey
-     * @param EvaluationToolSurveyStep $step
-     * @param EvaluationToolSurveyStepResult $result
      * @param EvaluationToolSurveyStepResultAssetStoreRequest $request
      * @return JsonResponse
      */
@@ -204,16 +238,18 @@ class EvaluationToolSurveySurveyRunController extends Controller
         $yayNayPayload->{self::YAYNAY_VALUE_KEY} = "";
         return $yayNayPayload;
     }
+
     public function samplePayloadTextInput($params): StdClass
     {
-        $textInputPayload                           = new StdClass();
+        $textInputPayload                              = new StdClass();
         $textInputPayload->{self::TEXTINPUT_VALUE_KEY} = "";
         return $textInputPayload;
     }
+
     public function samplePayloadVoiceInput($params): StdClass
     {
         // TODO
-        $voiceInputPayload                           = new StdClass();
+        $voiceInputPayload                               = new StdClass();
         $voiceInputPayload->{self::VOICEINPUT_VALUE_KEY} = "";
         return $voiceInputPayload;
     }

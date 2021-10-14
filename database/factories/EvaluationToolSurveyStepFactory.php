@@ -47,6 +47,7 @@ class EvaluationToolSurveyStepFactory extends Factory
             "survey_element_id" => $surveyElement->id,
             "survey_id"         => $surveyId,
             "next_step_id"      => $nextStepId,
+            "allow_skip"        => true,
             "published"         => $this->faker->boolean(80),
             "publish_up"        => $publishPeriod ? $publishUp : null,
             "publish_down"      => $publishPeriod ? $publishDown : null,

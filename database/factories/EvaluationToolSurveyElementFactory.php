@@ -29,27 +29,27 @@ class EvaluationToolSurveyElementFactory extends Factory
         // set publish period
         $publishPeriod = $this->faker->boolean(20);
         if ($publishPeriod) {
-            $publishUp = Carbon::now()->addDays($this->faker->numberBetween(-10, 5))->roundHour();
+            $publishUp   = Carbon::now()->addDays($this->faker->numberBetween(-10, 5))->roundHour();
             $publishDown = Carbon::now()->addDays($this->faker->numberBetween(6, 25))->roundHour();
         }
 
         $params = new StdClass();
 
-        $surveyElementType = EvaluationToolSurveyElementType::all()->random(1)[0];
+        $surveyElementType            = EvaluationToolSurveyElementType::all()->random(1)[0];
         $surveyElementParamsClassName = "Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType" . ucfirst($surveyElementType->key);
         if (class_exists($surveyElementParamsClassName)) {
             $surveyElementParamsClass = new $surveyElementParamsClassName;
-            $params = $surveyElementParamsClass->sampleParams();
+            $params                   = $surveyElementParamsClass->sampleParams();
         }
 
         return [
-            "name" => $surveyElementType->name,
+            "name"                   => $surveyElementType->name,
             "survey_element_type_id" => $surveyElementType->id,
-            "description" => $this->faker->boolean() ? ucfirst((string) $this->faker->words($this->faker->numberBetween(1, 10), true)) : null,
-            "params" => $params,
-            "published" => $this->faker->boolean(80),
-            "publish_up" => $publishPeriod ? $publishUp : null,
-            "publish_down" => $publishPeriod ? $publishDown : null,
+            "description"            => $this->faker->boolean() ? ucfirst((string)$this->faker->words($this->faker->numberBetween(1, 10), true)) : null,
+            "params"                 => $params,
+            "published"              => $this->faker->boolean(80),
+            "publish_up"             => $publishPeriod ? $publishUp : null,
+            "publish_down"           => $publishPeriod ? $publishDown : null,
         ];
     }
 
@@ -66,9 +66,9 @@ class EvaluationToolSurveyElementFactory extends Factory
         return $this->state(function (array $attributes) use ($params, $name, $description) {
             return [
                 'survey_element_type_id' => 1,
-                'name' => $name,
-                'description' => $description,
-                'params' => $params,
+                'name'                   => $name,
+                'description'            => $description,
+                'params'                 => $params,
             ];
         });
     }
@@ -86,9 +86,9 @@ class EvaluationToolSurveyElementFactory extends Factory
         return $this->state(function (array $attributes) use ($params, $name, $description) {
             return [
                 'survey_element_type_id' => 2,
-                'name' => $name,
-                'description' => $description,
-                'params' => $params,
+                'name'                   => $name,
+                'description'            => $description,
+                'params'                 => $params,
             ];
         });
     }
@@ -104,9 +104,9 @@ class EvaluationToolSurveyElementFactory extends Factory
         return $this->state(function (array $attributes) use ($params, $name, $description) {
             return [
                 'survey_element_type_id' => 3,
-                "name" => $name,
-                "description" => $description,
-                'params' => $params,
+                "name"                   => $name,
+                "description"            => $description,
+                'params'                 => $params,
             ];
         });
     }
@@ -124,9 +124,9 @@ class EvaluationToolSurveyElementFactory extends Factory
         return $this->state(function (array $attributes) use ($params, $name, $description) {
             return [
                 'survey_element_type_id' => 4,
-                'name' => $name,
-                'description' => $description,
-                'params' => $params,
+                'name'                   => $name,
+                'description'            => $description,
+                'params'                 => $params,
             ];
         });
     }
@@ -142,9 +142,9 @@ class EvaluationToolSurveyElementFactory extends Factory
         return $this->state(function (array $attributes) use ($params, $name, $description) {
             return [
                 'survey_element_type_id' => 7,
-                'name' => $name,
-                'description' => $description,
-                'params' => $params,
+                'name'                   => $name,
+                'description'            => $description,
+                'params'                 => $params,
             ];
         });
     }
@@ -160,9 +160,9 @@ class EvaluationToolSurveyElementFactory extends Factory
         return $this->state(function (array $attributes) use ($params, $name, $description) {
             return [
                 'survey_element_type_id' => 5,
-                'name' => $name,
-                'description' => $description,
-                'params' => $params,
+                'name'                   => $name,
+                'description'            => $description,
+                'params'                 => $params,
             ];
         });
     }
@@ -178,9 +178,9 @@ class EvaluationToolSurveyElementFactory extends Factory
         return $this->state(function (array $attributes) use ($params, $name, $description) {
             return [
                 'survey_element_type_id' => 6,
-                'name' => $name,
-                'description' => $description,
-                'params' => $params,
+                'name'                   => $name,
+                'description'            => $description,
+                'params'                 => $params,
             ];
         });
     }
@@ -196,9 +196,9 @@ class EvaluationToolSurveyElementFactory extends Factory
         return $this->state(function (array $attributes) use ($params, $name, $description) {
             return [
                 'survey_element_type_id' => 8,
-                'name' => $name,
-                'description' => $description,
-                'params' => $params,
+                'name'                   => $name,
+                'description'            => $description,
+                'params'                 => $params,
             ];
         });
     }
@@ -214,9 +214,9 @@ class EvaluationToolSurveyElementFactory extends Factory
         return $this->state(function (array $attributes) use ($params, $name, $description) {
             return [
                 'survey_element_type_id' => 9,
-                'name' => $name,
-                'description' => $description,
-                'params' => $params,
+                'name'                   => $name,
+                'description'            => $description,
+                'params'                 => $params,
             ];
         });
     }
