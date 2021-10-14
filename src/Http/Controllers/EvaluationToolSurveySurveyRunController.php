@@ -28,6 +28,8 @@ class EvaluationToolSurveySurveyRunController extends Controller
     const STAR_RATING_RESULT_RATING_KEY = 'rating';
     const BINARY_VALUE_KEY = 'value';
     const YAYNAY_VALUE_KEY = 'value';
+    const TEXTINPUT_VALUE_KEY = 'value';
+    const VOICEINPUT_VALUE_KEY = 'value';
     const EMOJI_MEANING_KEY = 'meaning';
 
     public function __construct()
@@ -201,6 +203,19 @@ class EvaluationToolSurveySurveyRunController extends Controller
         $yayNayPayload                           = new StdClass();
         $yayNayPayload->{self::YAYNAY_VALUE_KEY} = "";
         return $yayNayPayload;
+    }
+    public function samplePayloadTextInput($params): StdClass
+    {
+        $textInputPayload                           = new StdClass();
+        $textInputPayload->{self::TEXTINPUT_VALUE_KEY} = "";
+        return $textInputPayload;
+    }
+    public function samplePayloadVoiceInput($params): StdClass
+    {
+        // TODO
+        $voiceInputPayload                           = new StdClass();
+        $voiceInputPayload->{self::VOICEINPUT_VALUE_KEY} = "";
+        return $voiceInputPayload;
     }
 
     public function rulesPayloadYayNay($params)
