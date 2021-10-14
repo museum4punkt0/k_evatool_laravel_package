@@ -85,8 +85,8 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
             ],
             "allowHalfSteps" => false,
             "numberOfStars" => 7,
-            "meaningLowestValue" => "sehr unzufrieden",
-            "meaningHighestValue" => "sehr zufrieden",
+            "meaningLowestValue" => "sehr_unzufrieden",
+            "meaningHighestValue" => "sehr_zufrieden",
             "lowestValueLabel" => ["de" => "sehr unzufrieden", "en" => "very unsatisfied"],
             "middleValueLabel" => ["de" => "neutral", "en" => "neutral"],
             "highestValueLabel" => ["de" => "sehr zufrieden", "en" => "very satisfied"],
@@ -117,7 +117,7 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
             "emojis" => [
                 ["type" => "😁", "meaning" => "satisfied"],
                 ["type" => "🤔", "meaning" => "neutral"],
-                ["type" => "😥", "meaning" => "not satisfied"],
+                ["type" => "😥", "meaning" => "not_satisfied"],
             ],
         ], "Öffnungszeiten", "Zufriedenheit Öffnungszeiten")->create();
 
@@ -133,8 +133,8 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
                 ],
                 "allowHalfSteps" => false,
                 "numberOfStars" => 5,
-                "meaningLowestValue" => "very unhappy",
-                "meaningHighestValue" => "very happy",
+                "meaningLowestValue" => "very_unhappy",
+                "meaningHighestValue" => "very_happy",
                 "lowestValueLabel" => ["de" => "sehr unglücklich", "en" => "very unhappy"],
                 "middleValueLabel" => ["de" => "neutral", "en" => "neutral"],
                 "highestValueLabel" => ["de" => "sehr glücklich", "en" => "very happy"],
