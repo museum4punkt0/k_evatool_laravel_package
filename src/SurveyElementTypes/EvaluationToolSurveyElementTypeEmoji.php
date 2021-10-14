@@ -58,17 +58,22 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
         ]);
     }
 
-    public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement)
+    public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement): array
     {
-        $emojis = $surveyElement->params['emojis'];
+        $emojis = $surveyElement->params->emojis;
         $meanings = [];
-        foreach ($emojis as $key => $value) {
-            array_push($meanings, $value['meaning']);
+        foreach ($emojis as $value) {
+            array_push($meanings, $value->meaning);
         }
-        $rules = [
+
+        return [
             "result_value.meaning" => ['required', 'in:' . implode(',', $meanings)],
         ];
-        return $rules;
+    }
+
+    public static function prepareResultRequest(): bool
+    {
+        return true;
     }
 
     /**

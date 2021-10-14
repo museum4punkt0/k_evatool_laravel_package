@@ -117,7 +117,7 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
             "emojis" => [
                 ["type" => "😁", "meaning" => "satisfied"],
                 ["type" => "🤔", "meaning" => "neutral"],
-                ["type" => "😥", "meaning" => "not satisfied"],
+                ["type" => "😥", "meaning" => "not_satisfied"],
             ],
         ], "Öffnungszeiten", "Zufriedenheit Öffnungszeiten")->create();
 

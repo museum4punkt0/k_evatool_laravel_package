@@ -33,7 +33,7 @@ class EvaluationToolSurveyElementTypeVideo extends EvaluationToolSurveyElementTy
     {
 
     }
-    public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement)
+    public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement): array
     {
         // $emojis = $surveyElement->params['emojis'];
         // $meanings = [];
