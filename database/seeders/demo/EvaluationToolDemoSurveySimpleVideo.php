@@ -31,16 +31,16 @@ class EvaluationToolDemoSurveySimpleVideo extends Seeder
                 "numberOfStars"       => 5,
                 "meaningLowestValue"  => "very unhappy",
                 "meaningHighestValue" => "very happy",
-                "lowestValueLabel" => ["de" => "sehr unglücklich", "en" => "very unhappy"],
-                "middleValueLabel" => ["de" => "neutral", "en" => "neutral"],
-                "highestValueLabel" => ["de" => "sehr glücklich", "en" => "very happy"],
+                "lowestValueLabel"    => ["de" => "sehr unglücklich", "en" => "very unhappy"],
+                "middleValueLabel"    => ["de" => "neutral", "en" => "neutral"],
+                "highestValueLabel"   => ["de" => "sehr glücklich", "en" => "very happy"],
             ], "Sterne-Bewertung", "Von sehr unglücklich bis sehr glücklich")->create();
             $i++;
             $subElementIds[] = EvaluationToolSurveyElement::all()->last()->id;
         }
 
         EvaluationToolSurveyElementFactory::times(1)->video([
-            "videoAssetId" => EvaluationToolAsset::find(1)->id
+            "videoAssetId" => EvaluationToolAsset::where("filename", "eva_tool_demo_video.mp4")->first()->id
         ], "Syncing Video")->create();
         $videoId = EvaluationToolSurveyElement::all()->last()->id;
 
@@ -50,7 +50,7 @@ class EvaluationToolDemoSurveySimpleVideo extends Seeder
         $timebasedSteps = [];
         foreach ($subElementIds as $s => $subElementId) {
             EvaluationToolSurveyStepFactory::times(1)->withData("Bewertung " . ($s + 1), $subElementId, $surveyId)->create();
-            $subStep = EvaluationToolSeeder::getLatestStep();
+            $subStep          = EvaluationToolSeeder::getLatestStep();
             $timebasedSteps[] = [
                 "uuid"                => Uuid::uuid4(),
                 "stepId"              => $subStep->id,
