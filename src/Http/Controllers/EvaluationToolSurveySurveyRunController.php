@@ -77,6 +77,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
      */
     public function store(EvaluationToolSurvey $survey, EvaluationToolSurveySurveyStepResultStoreRequest $request): JsonResponse
     {
+        // Todo: Add resubmit counter (observer)
         if (!$surveyStep = EvaluationToolSurveyStep::find($request->survey_step_id)) {
             return $this->errorResponse("survey step does not exist", 409);
         }
@@ -85,7 +86,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
             return $this->errorResponse("survey ids do not match", 409);
         }
 
-        if(!$request->has("session_id")) {
+        if (!$request->has("session_id")) {
             return $this->errorResponse("no session id (uuid) provided", 409);
         }
 
@@ -99,6 +100,8 @@ class EvaluationToolSurveySurveyRunController extends Controller
             ->where("survey_step_id", $request->survey_step_id)
             ->first()) {
             $surveyStepResult = new EvaluationToolSurveyStepResult();
+        } else {
+            $surveyStep->changed_answer++;
         }
 
         $surveyStepResult->survey_step_id     = $request->survey_step_id;

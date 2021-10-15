@@ -77,4 +77,15 @@ class EvaluationToolSurveyElement extends Model
     {
         return $this->hasOne(User::class, "id", "updated_by");
     }
+
+    public function getAssetsAttribute()
+    {
+        if ($this->survey_element_type->key == "video" && isset($this->params->videoAssetId)) {
+            if ($videoAsset = EvaluationToolAsset::find($this->params->videoAssetId)) {
+                return $videoAsset->only("id", "urls");
+            }
+            return null;
+        }
+        return null;
+    }
 }

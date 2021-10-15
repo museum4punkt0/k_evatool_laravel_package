@@ -8,7 +8,7 @@ use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 class EvaluationToolSurveyStepResultCombinedTransformer extends TransformerAbstract
 {
     /**
-     * Category transformer.
+     * Survey Step Result Combined transformer.
      *
      * @param EvaluationToolSurveyStep $surveyStep
      * @return array
@@ -20,6 +20,7 @@ class EvaluationToolSurveyStepResultCombinedTransformer extends TransformerAbstr
             "uuid"                 => request()->uuid,
             "surveyElementType"    => (string)$surveyStep->survey_element->survey_element_type->key,
             "params"               => $surveyStep->survey_element->params,
+            "assets"               => $surveyStep->survey_element->assets,
             "results"              => $surveyStep->survey_step_results,
             "resultsByUuid"        => $surveyStep->survey_step_results_by_uuid,
             "sampleResultPayload"  => $surveyStep->sampleResultPayload,
