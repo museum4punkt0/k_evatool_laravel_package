@@ -3,6 +3,8 @@
 namespace Twoavy\EvaluationTool\Transformers;
 
 use League\Fractal\TransformerAbstract;
+use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 
 class EvaluationToolSurveyStepResultCombinedTransformer extends TransformerAbstract
@@ -19,8 +21,8 @@ class EvaluationToolSurveyStepResultCombinedTransformer extends TransformerAbstr
             "id"                   => (int)$surveyStep->id,
             "uuid"                 => request()->uuid,
             "surveyElementType"    => (string)$surveyStep->survey_element->survey_element_type->key,
-            "params"               => $surveyStep->survey_element->params,
-            "assets"               => $surveyStep->survey_element->assets,
+//            "params"               => $surveyStep->survey_element->params,
+            "params"               => $this->loadAssets($surveyStep->survey_element->params, $surveyStep->survey_element->survey_element_type->key),
             "results"              => $surveyStep->survey_step_results,
             "resultsByUuid"        => $surveyStep->survey_step_results_by_uuid,
             "sampleResultPayload"  => $surveyStep->sampleResultPayload,
@@ -80,5 +82,32 @@ class EvaluationToolSurveyStepResultCombinedTransformer extends TransformerAbstr
             "publishUp"            => "publish_up",
             "publishDown"          => "publish_down",
         ];
+    }
+
+    public function loadAssets($params, $type)
+    {
+        // Video
+        if ($type == "video" && isset($params->videoAssetId)) {
+            if ($videoAsset = EvaluationToolAsset::find($params->videoAssetId)) {
+                $params->videoAsset = $videoAsset->only("id", "urls");
+            }
+        }
+
+        // Yay nay
+        if ($type == "yayNay" && isset($params->assets) && is_array($params->assets) && !empty($params->assets)) {
+
+            $assets = [];
+
+            foreach ($params->assets as $assetId) {
+                if ($asset = EvaluationToolAsset::find($assetId)) {
+                    $assets[] = $asset->only("id", "urls");
+                }
+            }
+
+            $params->assets = $assets;
+
+        }
+
+        return $params;
     }
 }

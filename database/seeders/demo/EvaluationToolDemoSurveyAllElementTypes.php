@@ -103,7 +103,7 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
             "falseValue" => "nein",
             "trueLabel"  => ["de" => "Ja", "en" => "Yes"],
             "falseLabel" => ["de" => "Nein", "en" => "No"],
-            "assets"     => EvaluationToolAsset::where("mime", "LIKE", 'image/%')->get()->take(3)->pluck("id"),
+            "assetIds"     => EvaluationToolAsset::where("mime", "LIKE", 'image/%')->get()->take(3)->pluck("id"),
 
         ], "Bildbewertung", "Bewertung von Bildern")->create();
 
