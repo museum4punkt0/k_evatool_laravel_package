@@ -94,11 +94,11 @@ class EvaluationToolSurveyStepResultCombinedTransformer extends TransformerAbstr
         }
 
         // Yay nay
-        if ($type == "yayNay" && isset($params->assets) && is_array($params->assets) && !empty($params->assets)) {
+        if ($type == "yayNay" && isset($params->assetIds) && is_array($params->assetIds) && !empty($params->assetIds)) {
 
             $assets = [];
 
-            foreach ($params->assets as $assetId) {
+            foreach ($params->assetIds as $assetId) {
                 if ($asset = EvaluationToolAsset::find($assetId)) {
                     $assets[] = $asset->only("id", "urls");
                 }
