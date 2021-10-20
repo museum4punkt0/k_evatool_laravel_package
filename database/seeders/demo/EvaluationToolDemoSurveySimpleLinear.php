@@ -39,7 +39,7 @@ class EvaluationToolDemoSurveySimpleLinear extends Seeder
             "options"       => [
                 [
 
-                    'value'  => 'option 1',
+                    'value'  => 'option_1',
                     'labels' => [
                         "de" => "Option 1",
                         "en" => "Option 1",
@@ -47,7 +47,7 @@ class EvaluationToolDemoSurveySimpleLinear extends Seeder
                     ],
                 ],
                 [
-                    'value'  => 'option 2',
+                    'value'  => 'option2',
                     'labels' => [
                         "de" => "Option 2",
                         "en" => "Option 2",

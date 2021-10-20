@@ -73,6 +73,11 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
         ];
     }
 
+    public static function prepareResultRequest(): bool
+    {
+        return true;
+    }
+
     /**
      * @return array
      */

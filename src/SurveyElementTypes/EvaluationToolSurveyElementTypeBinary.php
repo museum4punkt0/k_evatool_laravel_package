@@ -20,7 +20,7 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
     public function sampleParams(): array
     {
 
-        $question = [];
+        $question                               = [];
         $question[$this->primaryLanguage->code] = $this->faker->words($this->faker->numberBetween(3, 20), true);
         foreach ($this->secondaryLanguages as $secondaryLanguage) {
             if ($this->faker->boolean(60)) {
@@ -29,10 +29,10 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
         }
 
         return [
-            "question" => $question,
-            "trueValue" => "accepted",
+            "question"   => $question,
+            "trueValue"  => "accepted",
             "falseValue" => "declined",
-            "trueLabel" => ["de" => "ja", "en" => "yes", "fr" => "oui"],
+            "trueLabel"  => ["de" => "ja", "en" => "yes", "fr" => "oui"],
             "falseLabel" => ["de" => "nein", "en" => "no", "fr" => "non"],
         ];
     }
@@ -55,14 +55,13 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
         $request->request->add(['languageKeys' => $languageKeys]);
     }
 
-    public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement)
+    public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement): array
     {
-        $trueValue = $surveyElement->params['trueValue'];
-        $falseValue = $surveyElement->params['falseValue'];
-        $rules = [
+        $trueValue  = $surveyElement->params->trueValue;
+        $falseValue = $surveyElement->params->falseValue;
+        return [
             "result_value.value" => ['required', 'in:' . $trueValue . ',' . $falseValue],
         ];
-        return $rules;
     }
 
     /**
@@ -71,12 +70,17 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
     public static function rules(): array
     {
         return [
-            'params.question' => 'required|array',
+            'params.question'   => 'required|array',
             'params.question.*' => 'min:1|max:200',
-            'languageKeys.*' => 'required|exists:evaluation_tool_survey_languages,code',
-            'params.trueValue' => 'min:1|max:20',
+            'languageKeys.*'    => 'required|exists:evaluation_tool_survey_languages,code',
+            'params.trueValue'  => 'min:1|max:20',
             'params.falseValue' => 'min:1|max:20',
         ];
+    }
+
+    public static function prepareResultRequest(): bool
+    {
+        return true;
     }
 
     /**

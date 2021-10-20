@@ -40,7 +40,7 @@ class EvaluationToolDemoSurveySimpleVideo extends Seeder
         }
 
         EvaluationToolSurveyElementFactory::times(1)->video([
-            "videoAssetId" => EvaluationToolAsset::find(1)->id
+            "videoAssetId" => EvaluationToolAsset::where("filename", "eva_tool_demo_video.mp4")->first()->id
         ], "Syncing Video")->create();
         $videoId = EvaluationToolSurveyElement::all()->last()->id;
 
@@ -50,7 +50,7 @@ class EvaluationToolDemoSurveySimpleVideo extends Seeder
         $timebasedSteps = [];
         foreach ($subElementIds as $s => $subElementId) {
             EvaluationToolSurveyStepFactory::times(1)->withData("Bewertung " . ($s + 1), $subElementId, $surveyId)->create();
-            $subStep = EvaluationToolSeeder::getLatestStep();
+            $subStep          = EvaluationToolSeeder::getLatestStep();
             $timebasedSteps[] = [
                 "uuid"                => Uuid::uuid4(),
                 "stepId"              => $subStep->id,

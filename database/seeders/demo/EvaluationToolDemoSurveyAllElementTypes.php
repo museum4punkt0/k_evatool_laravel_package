@@ -38,34 +38,34 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
         $introId = EvaluationToolSurveyElement::all()->last()->id;
 
         EvaluationToolSurveyElementFactory::times(1)->binary([
-            "question" => [
+            "question"   => [
                 "de" => "Gefällt Dir das Tool?",
                 "en" => "Do you like the tool?",
             ],
-            "trueValue" => "ja",
+            "trueValue"  => "ja",
             "falseValue" => "nein",
-            "trueLabel" => ["de" => "ja", "en" => "yes"],
+            "trueLabel"  => ["de" => "ja", "en" => "yes"],
             "falseLabel" => ["de" => "nein", "en" => "no"],
         ], "Binary Frage", "ja oder nein")->create();
 
         $binaryId = EvaluationToolSurveyElement::all()->last()->id;
 
         EvaluationToolSurveyElementFactory::times(1)->multipleChoice([
-            "question" => [
+            "question"      => [
                 "de" => "Wie bist Du auf dieses Tool aufmerksam geworden?",
                 "en" => "How did you get to know this tool?",
             ],
-            "options" => [
+            "options"       => [
                 [
 
-                    'value' => 'Newsletter',
+                    'value'  => 'Newsletter',
                     'labels' => [
                         "de" => "Newsletter",
                         "en" => "newsletter",
                     ],
                 ],
                 [
-                    'value' => 'Empfehlung',
+                    'value'  => 'Empfehlung',
                     'labels' => [
                         "de" => "Empfehlung",
                         "en" => "recommendation",
@@ -79,7 +79,7 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
         $multipleChoiceId = EvaluationToolSurveyElement::all()->last()->id;
 
         EvaluationToolSurveyElementFactory::times(1)->starRating([
-            "question" => [
+            "question"            => [
                 "de" => "Wie zufrieden bist Du mit dem Registrierungsprozess?",
                 "en" => "How satiesfied are you with the registration process?",
             ],
@@ -95,15 +95,15 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
         $starRatingId = EvaluationToolSurveyElement::all()->last()->id;
 
         EvaluationToolSurveyElementFactory::times(1)->yayNay([
-            "question" => [
+            "question"   => [
                 "de" => "Gefällt Dir dieses Bild?",
                 "en" => "Do you like this image",
             ],
-            "trueValue" => "ja",
+            "trueValue"  => "ja",
             "falseValue" => "nein",
-            "trueLabel" => ["de" => "Ja", "en" => "Yes"],
+            "trueLabel"  => ["de" => "Ja", "en" => "Yes"],
             "falseLabel" => ["de" => "Nein", "en" => "No"],
-            "assets" => EvaluationToolAsset::where("mime", "LIKE", 'image/%')->get()->take(3)->pluck("id"),
+            "assetIds"     => EvaluationToolAsset::where("mime", "LIKE", 'image/%')->get()->take(3)->pluck("id"),
 
         ], "Bildbewertung", "Bewertung von Bildern")->create();
 
@@ -114,7 +114,7 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
                 "de" => "Wie zufrieden bist Du mit der barrierefreien Nutzung des Tools?",
                 "en" => "How happy are you with the accessibility of this tool?",
             ],
-            "emojis" => [
+            "emojis"   => [
                 ["type" => "😁", "meaning" => "satisfied"],
                 ["type" => "🤔", "meaning" => "neutral"],
                 ["type" => "😥", "meaning" => "not_satisfied"],
@@ -124,10 +124,10 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
         $emojiId = EvaluationToolSurveyElement::all()->last()->id;
 
         $subElementIds = [];
-        $i = 0;
+        $i             = 0;
         while ($i < 3) {
             EvaluationToolSurveyElementFactory::times(1)->starRating([
-                "question" => [
+                "question"            => [
                     "de" => "Eine auf deutsch formulierte Frage",
                     "en" => "A question presented in English",
                 ],
@@ -148,8 +148,6 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
         $videoId = EvaluationToolSurveyElement::all()->last()->id;
 
 
-
-
         EvaluationToolSurveyElementFactory::times(1)->textInput([
             "question" => [
                 "de" => "Welches Feature hat Dir am besten gefallen?",
@@ -160,69 +158,69 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
         $textInputId = EvaluationToolSurveyElement::all()->last()->id;
 
         EvaluationToolSurveyElementFactory::times(1)->multipleChoice([
-            "question" => [
+            "question"      => [
                 "de" => "Welche Umfragetypen sind deiner Meinung nach am nützlichsten?",
                 "en" => "Which element types are the most useful in your opinion?",
             ],
-            "options" => [
+            "options"       => [
                 [
-                    'value' => 'SimpleText',
+                    'value'  => 'SimpleText',
                     'labels' => [
                         "de" => "SimpleText",
                         "en" => "SimpleText",
                     ],
                 ],
                 [
-                    'value' => 'Binary',
+                    'value'  => 'Binary',
                     'labels' => [
                         "de" => "Binary",
                         "en" => "Binary",
                     ],
                 ],
                 [
-                    'value' => 'MultipleChoice',
+                    'value'  => 'MultipleChoice',
                     'labels' => [
                         "de" => "MultipleChoice",
                         "en" => "MultipleChoice",
                     ],
                 ],
                 [
-                    'value' => 'YayNay',
+                    'value'  => 'YayNay',
                     'labels' => [
                         "de" => "YayNay",
                         "en" => "YayNay",
                     ],
                 ],
                 [
-                    'value' => 'Video',
+                    'value'  => 'Video',
                     'labels' => [
                         "de" => "Video",
                         "en" => "Video",
                     ],
                 ],
                 [
-                    'value' => 'StarRating',
+                    'value'  => 'StarRating',
                     'labels' => [
                         "de" => "StarRating",
                         "en" => "StarRating",
                     ],
                 ],
                 [
-                    'value' => 'Emoji',
+                    'value'  => 'Emoji',
                     'labels' => [
                         "de" => "Emoji",
                         "en" => "Emoji",
                     ],
                 ],
                 [
-                    'value' => 'TextInput',
+                    'value'  => 'TextInput',
                     'labels' => [
                         "de" => "TextInput",
                         "en" => "TextInput",
                     ],
                 ],
                 [
-                    'value' => 'VoiceInput',
+                    'value'  => 'VoiceInput',
                     'labels' => [
                         "de" => "VoiceInput",
                         "en" => "VoiceInput",
@@ -263,14 +261,14 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
         $timebasedSteps = [];
         foreach ($subElementIds as $s => $subElementId) {
             EvaluationToolSurveyStepFactory::times(1)->withData("Bewertung " . ($s + 1), $subElementId, $surveyId)->create();
-            $subStep = EvaluationToolSeeder::getLatestStep();
+            $subStep          = EvaluationToolSeeder::getLatestStep();
             $timebasedSteps[] = [
-                "uuid" => Uuid::uuid4(),
-                "stepId" => $subStep->id,
-                "timecode" => "00:00:" . sprintf('%02d', (($s + 1) * 3 + pow($s, 2))) . ":00",
-                "stopsVideo" => true,
-                "description" => "Beschreibung " . ($s + 1),
-                "displayTime" => 2,
+                "uuid"                => Uuid::uuid4(),
+                "stepId"              => $subStep->id,
+                "timecode"            => "00:00:" . sprintf('%02d', (($s + 1) * 3 + pow($s, 2))) . ":00",
+                "stopsVideo"          => true,
+                "description"         => "Beschreibung " . ($s + 1),
+                "displayTime"         => 2,
                 "allowChangingAnswer" => false,
             ];
         }

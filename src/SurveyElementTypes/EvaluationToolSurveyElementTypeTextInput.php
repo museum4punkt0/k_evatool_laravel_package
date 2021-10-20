@@ -37,16 +37,18 @@ class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyEleme
     {
 
     }
+
     public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement): array
     {
-        // $emojis = $surveyElement->params['emojis'];
-        // $meanings = [];
-        // foreach ($emojis as $key => $value) {
-        // array_push($meanings, $value['meaning']);
-        // }
-        $rules = [
+
+        return [
+            "result_value.text" => "required|min:1|max:500"
         ];
-        return $rules;
+    }
+
+    public static function prepareResultRequest(): bool
+    {
+        return true;
     }
 
     /**
