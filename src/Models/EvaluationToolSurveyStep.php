@@ -92,4 +92,16 @@ class EvaluationToolSurveyStep extends Model
     {
         return $this->hasOne(User::class, "id", "updated_by");
     }
+
+    public function getTimebasedStepsResolvedAttribute()
+    {
+        $stepIds = [];
+        if (isset($this->time_based_steps) && is_array($this->time_based_steps)) {
+            foreach ($this->time_based_steps as $step) {
+                $stepIds[] = $step->stepId;
+            }
+        }
+
+        return EvaluationToolSurveyStep::whereIn("id", $stepIds)->get();
+    }
 }

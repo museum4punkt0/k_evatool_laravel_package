@@ -3,6 +3,7 @@
 namespace Twoavy\EvaluationTool\Transformers;
 
 use League\Fractal\TransformerAbstract;
+use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
@@ -18,40 +19,21 @@ class EvaluationToolSurveyStepResultCombinedTransformer extends TransformerAbstr
     public function transform(EvaluationToolSurveyStep $surveyStep): array
     {
         return [
-            "id"                   => (int)$surveyStep->id,
-            "uuid"                 => request()->uuid,
-            "surveyElementType"    => (string)$surveyStep->survey_element->survey_element_type->key,
-            //            "params"               => $surveyStep->survey_element->params,
-            "params"               => $this->loadAssets($surveyStep->survey_element->params, $surveyStep->survey_element->survey_element_type->key),
-            "resultsCount"         => $surveyStep->survey_step_results_count,
-            "demoResultsCount"     => $surveyStep->survey_step_demo_results_count,
-            "resultByUuid"         => $surveyStep->survey_step_result_by_uuid ? $surveyStep->survey_step_result_by_uuid->result_value : null,
-            "sampleResultPayload"  => $surveyStep->sampleResultPayload,
-            //            "name"                 => (string)$surveyStep->name,
-            //            "surveyId"             => (int)$surveyStep->survey_id,
-            //            "surveyElementId"      => (int)$surveyStep->survey_element_id,
-            "nextStepId"           => $surveyStep->next_step_id ? (int)$surveyStep->next_step_id : null,
-            "timeBasedSteps"       => (array)$surveyStep->time_based_steps,
-            "resultBasedNextSteps" => $surveyStep->result_based_next_steps,
-            /*"published"            => (bool)$surveyStep->published,
-            "publishUp"            => $surveyStep->publish_up,
-            "publishDown"          => $surveyStep->publish_down,*/
-            "group"                => (string)$surveyStep->group,
-            "allowSkip"            => (bool)$surveyStep->allow_skip,
-            /*"links"                => [
-                [
-                    "rel"  => "self",
-                    "href" => route("surveys.survey-steps.show", [$surveyStep->survey_id, $surveyStep->id])
-                ],
-                [
-                    "rel"  => "survey",
-                    "href" => route("surveys.show", $surveyStep->survey_id)
-                ],
-                [
-                    "rel"  => "surveyElement",
-                    "href" => route("survey-elements.show", $surveyStep->survey_element_id)
-                ],
-            ]*/
+            "id"                     => (int)$surveyStep->id,
+            "uuid"                   => request()->uuid,
+            "surveyElementType"      => (string)$surveyStep->survey_element->survey_element_type->key,
+            "params"                 => $this->loadAssets($surveyStep->survey_element->params, $surveyStep->survey_element->survey_element_type->key),
+            "resultsCount"           => $surveyStep->survey_step_results_count,
+            "demoResultsCount"       => $surveyStep->survey_step_demo_results_count,
+            "resultByUuid"           => $surveyStep->survey_step_result_by_uuid ? $surveyStep->survey_step_result_by_uuid->result_value : null,
+            "sampleResultPayload"    => $surveyStep->sampleResultPayload,
+            "timeBasedStepsResolved" => EvaluationToolHelper::transformData($surveyStep->timebased_steps_resolved,
+                EvaluationToolSurveyStepResultCombinedTransformer::class, true),
+            "nextStepId"             => $surveyStep->next_step_id ? (int)$surveyStep->next_step_id : null,
+            "timeBasedSteps"         => (array)$surveyStep->time_based_steps,
+            "resultBasedNextSteps"   => $surveyStep->result_based_next_steps,
+            "group"                  => (string)$surveyStep->group,
+            "allowSkip"              => (bool)$surveyStep->allow_skip,
         ];
     }
 

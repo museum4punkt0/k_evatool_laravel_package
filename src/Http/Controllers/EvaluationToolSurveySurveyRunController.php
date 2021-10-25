@@ -45,7 +45,9 @@ class EvaluationToolSurveySurveyRunController extends Controller
      */
     public function index(EvaluationToolSurvey $survey, Request $request): JsonResponse
     {
-        $surveySteps = $survey->survey_steps;
+        $surveySteps = $survey->survey_steps->filter(function ($value) {
+            return is_null($value->parent_step_id);
+        });;
 
         if (!$survey->published) {
             return $this->errorResponse("survey not avaiable", 409);

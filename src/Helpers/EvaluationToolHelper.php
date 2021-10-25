@@ -22,6 +22,16 @@ class EvaluationToolHelper
         return $model;
     }
 
+    public static function transformData($data, $transformer, $removeDataKey = true)
+    {
+        $transformation = fractal($data, new $transformer);
+        if ($removeDataKey) {
+            $data = $transformation->toArray();
+            return $data["data"];
+        }
+        return $transformation->toArray();
+    }
+
     public static function reverseTransform(Request $request, $transformer)
     {
         $transformedInput = [];
