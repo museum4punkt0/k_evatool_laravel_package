@@ -188,10 +188,10 @@ class EvaluationToolSurveySurveyRunController extends Controller
         $payload              = new StdClass;
         $payload->elementType = $surveyStep->survey_element->survey_element_type->key;
 
-        $samplePayloadFunctionName             = 'samplePayload' . ucfirst($payload->elementType);
-        $payload->resultData                   = new StdClass;
-        $payload->resultData->resultValue      = $this->{$samplePayloadFunctionName}($surveyStep->survey_element->params);
-        $payload->resultData->resultLanguageId = $this->defaultLanguage->id;
+        $samplePayloadFunctionName           = 'samplePayload' . ucfirst($payload->elementType);
+        $payload->resultData                 = new StdClass;
+        $payload->resultData->resultValue    = $this->{$samplePayloadFunctionName}($surveyStep->survey_element->params);
+        $payload->resultData->resultLanguage = $this->defaultLanguage->code;
 
         return $payload;
     }
