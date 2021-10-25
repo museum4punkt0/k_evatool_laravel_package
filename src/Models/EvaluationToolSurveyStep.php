@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
+use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepResultCombinedTransformer;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepTransformer;
 
 class EvaluationToolSurveyStep extends Model
@@ -95,13 +97,14 @@ class EvaluationToolSurveyStep extends Model
 
     public function getTimebasedStepsResolvedAttribute()
     {
-        $stepIds = [];
         if (isset($this->time_based_steps) && is_array($this->time_based_steps)) {
-            foreach ($this->time_based_steps as $step) {
-                $stepIds[] = $step->stepId;
-            }
+            $steps = collect($this->time_based_steps)->map(function ($step) {
+                $step->step = EvaluationToolHelper::transformModel(EvaluationToolSurveyStep::find($step->stepId), true, EvaluationToolSurveyStepResultCombinedTransformer::class);
+                return $step;
+            });
+            return $steps;
         }
 
-        return EvaluationToolSurveyStep::whereIn("id", $stepIds)->get();
+        return $this->time_based_steps;
     }
 }

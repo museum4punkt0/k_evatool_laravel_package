@@ -9,10 +9,15 @@ use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 
 class EvaluationToolHelper
 {
-    public static function transformModel($model, $removeDataKey = true): ?array
+    public static function transformModel($model, $removeDataKey = true, $transformerOverride = false): ?array
     {
         if (isset($model->transformer)) {
-            $transformer    = $model->transformer;
+            $transformer = $model->transformer;
+
+            if ($transformerOverride) {
+                $transformer = $transformerOverride;
+            }
+
             $transformation = fractal($model, new $transformer);
             if ($removeDataKey) {
                 return $transformation->toArray()["data"];
