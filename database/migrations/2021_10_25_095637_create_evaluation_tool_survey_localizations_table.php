@@ -22,6 +22,7 @@ class CreateEvaluationToolSurveyLocalizationsTable extends Migration
             $table->timestamps();
             $table->softDeletes();
         });
+
         Schema::table('evaluation_tool_survey_localizations', function (Blueprint $table) {
             $table->unsignedBigInteger('created_by')->nullable()->after('created_at');
             $table->unsignedBigInteger('updated_by')->nullable()->after('updated_at');

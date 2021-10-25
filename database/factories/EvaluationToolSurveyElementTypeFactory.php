@@ -36,11 +36,20 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
     {
         return $this->state(function () {
             return [
-                'id'          => 1,
-                'key'         => 'binary',
-                'name'        => 'Binary Question',
-                'description' => 'Binary Question description',
-                'params'      => new StdClass,
+                'id'           => 1,
+                'key'          => 'binary',
+                'name'         => 'Binary Question',
+                'descriptions' => [
+                    "title"        => [
+                        "de" => "Binäre Auswahl",
+                        "en" => "Binary selection"
+                    ],
+                    "descriptions" => [
+                        "de" => 'Ideal für die Abfrage im Sinne von "ja" und "nein"',
+                        "en" => 'Most suitable for simple "yes" or "no" options'
+                    ]
+                ],
+                'params'       => new StdClass,
             ];
         });
     }
@@ -49,11 +58,20 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
     {
         return $this->state(function () {
             return [
-                'id'          => 2,
-                'key'         => 'multipleChoice',
-                'name'        => 'Multiple Choice Question',
-                'description' => 'Multiple Choice Question description',
-                'params'      => EvaluationToolSurveyElementTypeMultipleChoice::typeParams(),
+                'id'           => 2,
+                'key'          => 'multipleChoice',
+                'name'         => 'Multiple Choice Question',
+                'descriptions' => [
+                    "title"        => [
+                        "de" => "Multiple-Choice",
+                        "en" => "Multiple choice"
+                    ],
+                    "descriptions" => [
+                        "de" => "Ermöglicht die Abfrage von einer oder mehreren Optionen.",
+                        "en" => "Allows the user to choose between one ore more options."
+                    ]
+                ],
+                'params'       => EvaluationToolSurveyElementTypeMultipleChoice::typeParams(),
             ];
         });
     }
@@ -62,11 +80,20 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
     {
         return $this->state(function () {
             return [
-                'id'          => 3,
-                'key'         => 'simpleText',
-                'name'        => 'Simple text',
-                'description' => 'Simple text description',
-                'params'      => new StdClass(),
+                'id'           => 3,
+                'key'          => 'simpleText',
+                'name'         => 'Simple text',
+                'descriptions' => [
+                    "title"        => [
+                        "de" => "Infotext",
+                        "en" => "Informational text"
+                    ],
+                    "descriptions" => [
+                        "de" => "Für Einleitungen und Erklärungen. Der Benutzer kann hier keine Antwort abgeben.",
+                        "en" => "For introductory or explanatory text. User cannot give feedback."
+                    ]
+                ],
+                'params'       => new StdClass(),
             ];
         });
     }
@@ -75,11 +102,20 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
     {
         return $this->state(function () {
             return [
-                'id'          => 4,
-                'key'         => 'starRating',
-                'name'        => 'Star rating',
-                'description' => 'Star rating description',
-                'params'      => EvaluationToolSurveyElementTypeStarRating::typeParams(),
+                'id'           => 4,
+                'key'          => 'starRating',
+                'name'         => 'Star rating',
+                'descriptions' => [
+                    "title"        => [
+                        "de" => "Sterne-Bewertung",
+                        "en" => "Star rating"
+                    ],
+                    "descriptions" => [
+                        "de" => "Zur Abfrage einer Tendent über ein Sterne-System.",
+                        "en" => "Get tendency through a star-based rating system"
+                    ]
+                ],
+                'params'       => EvaluationToolSurveyElementTypeStarRating::typeParams(),
             ];
         });
     }
@@ -88,11 +124,20 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
     {
         return $this->state(function () {
             return [
-                'id'          => 5,
-                'key'         => 'yayNay',
-                'name'        => 'Yay nay',
-                'description' => 'Yay nay description',
-                'params'      => EvaluationToolSurveyElementTypeYayNay::typeParams(),
+                'id'           => 5,
+                'key'          => 'yayNay',
+                'name'         => 'Yay nay',
+                'descriptions' => [
+                    "title"        => [
+                        "de" => "Bilder swipen",
+                        "en" => "Image swipe"
+                    ],
+                    "descriptions" => [
+                        "de" => "Auswahl der Option durch Wischen nach links oder rechts",
+                        "en" => "Option is chosen by swiping left or right"
+                    ]
+                ],
+                'params'       => EvaluationToolSurveyElementTypeYayNay::typeParams(),
             ];
         });
     }
@@ -101,11 +146,20 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
     {
         return $this->state(function () {
             return [
-                'id'          => 6,
-                'key'         => 'emoji',
-                'name'        => 'Emoji',
-                'description' => 'Emoji description',
-                'params'      => EvaluationToolSurveyElementTypeEmoji::typeParams(),
+                'id'           => 6,
+                'key'          => 'emoji',
+                'name'         => 'Emoji',
+                'descriptions' => [
+                    "title"        => [
+                        "de" => "Emojis",
+                        "en" => "Emojis"
+                    ],
+                    "descriptions" => [
+                        "de" => "Bewertung basierend auf Emojis",
+                        "en" => "Emoji-based rating"
+                    ]
+                ],
+                'params'       => EvaluationToolSurveyElementTypeEmoji::typeParams(),
             ];
         });
     }
@@ -114,11 +168,20 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
     {
         return $this->state(function () {
             return [
-                'id'          => 7,
-                'key'         => 'video',
-                'name'        => 'Video',
-                'description' => 'Video description',
-                'params'      => EvaluationToolSurveyElementTypeVideo::typeParams(),
+                'id'           => 7,
+                'key'          => 'video',
+                'name'         => 'Video',
+                'descriptions' => [
+                    "title"        => [
+                        "de" => "Video",
+                        "en" => "Video"
+                    ],
+                    "descriptions" => [
+                        "de" => "Das Video bietet die Option, dass der User an verschiedenen Stellen des Video Kommentare hinterlassen kann oder zeitbasiert Fragen gestellt bekommt.",
+                        "en" => "The video type offers the option for the user to write comments based on the time location within the video. Additionally other survey elements can be presented at given timestamps."
+                    ]
+                ],
+                'params'       => EvaluationToolSurveyElementTypeVideo::typeParams(),
             ];
         });
     }
@@ -127,11 +190,20 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
     {
         return $this->state(function () {
             return [
-                'id'          => 8,
-                'key'         => 'voiceInput',
-                'name'        => 'Voice Input',
-                'description' => 'Audio input from user voice recording',
-                'params'      => EvaluationToolSurveyElementTypeVoiceInput::typeParams(),
+                'id'           => 8,
+                'key'          => 'voiceInput',
+                'name'         => 'Voice Input',
+                'descriptions' => [
+                    "title"        => [
+                        "de" => "Sprach-Eingabe",
+                        "en" => "Voice input"
+                    ],
+                    "descriptions" => [
+                        "de" => "Kommentare können hier per Sprache aufgezeichnet werden (wie bei einer Sprachnachricht).",
+                        "en" => "Comments can be recorded like voice-mail"
+                    ]
+                ],
+                'params'       => EvaluationToolSurveyElementTypeVoiceInput::typeParams(),
             ];
         });
     }
@@ -140,11 +212,20 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
     {
         return $this->state(function () {
             return [
-                'id'          => 9,
-                'key'         => 'textInput',
-                'name'        => 'Text Input',
-                'description' => 'Text input from user',
-                'params'      => EvaluationToolSurveyElementTypeTextInput::typeParams(),
+                'id'           => 9,
+                'key'          => 'textInput',
+                'name'         => 'Text Input',
+                'descriptions' => [
+                    "title"        => [
+                        "de" => "Freitext-Frage",
+                        "en" => "Text input"
+                    ],
+                    "descriptions" => [
+                        "de" => "Der Benutzer kann einen frei verfassten Kommentar eingeben.",
+                        "en" => "The user can submit a text-based comment."
+                    ]
+                ],
+                'params'       => EvaluationToolSurveyElementTypeTextInput::typeParams(),
             ];
         });
     }

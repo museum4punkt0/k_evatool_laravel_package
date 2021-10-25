@@ -23,12 +23,13 @@ class EvaluationToolSurveyElementType extends Model
     // fields that can be mass-assigned via create or fill methods
     protected $fillable = [
         "name",
-        "description",
+        "descriptions",
         "params"
     ];
 
     protected $casts = [
         'params' => 'json',
+        'descriptions' => 'json',
     ];
 
     public function created_by_user(): HasOne
