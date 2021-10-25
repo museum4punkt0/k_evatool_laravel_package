@@ -16,14 +16,14 @@ class EvaluationToolSurveyElementTypeTransformer extends TransformerAbstract
     public function transform(EvaluationToolSurveyElementType $surveyElementType): array
     {
         return [
-            "id"               => (int)$surveyElementType->id,
-            "key"               => (string)$surveyElementType->key,
-            "name"             => (string)$surveyElementType->name,
-            "description"      => (string)$surveyElementType->description,
-            "params"           => $surveyElementType->params,
-            "createdAt"        => $surveyElementType->created_at,
-            "updatedAt"        => $surveyElementType->updated_at,
-            "deletedAt"        => (string)$surveyElementType->deleted_at,
+            "id"           => (int)$surveyElementType->id,
+            "key"          => (string)$surveyElementType->key,
+            "name"         => (string)$surveyElementType->name,
+            "descriptions" => (array)$surveyElementType->descriptions,
+            "params"       => $surveyElementType->params,
+            "createdAt"    => $surveyElementType->created_at,
+            "updatedAt"    => $surveyElementType->updated_at,
+            "deletedAt"    => (string)$surveyElementType->deleted_at,
         ];
     }
 

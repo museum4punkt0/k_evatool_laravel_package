@@ -40,11 +40,11 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
                 'key'          => 'binary',
                 'name'         => 'Binary Question',
                 'descriptions' => [
-                    "title"        => [
+                    "title"       => [
                         "de" => "Binäre Auswahl",
                         "en" => "Binary selection"
                     ],
-                    "descriptions" => [
+                    "description" => [
                         "de" => 'Ideal für die Abfrage im Sinne von "ja" und "nein"',
                         "en" => 'Most suitable for simple "yes" or "no" options'
                     ]
@@ -62,11 +62,11 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
                 'key'          => 'multipleChoice',
                 'name'         => 'Multiple Choice Question',
                 'descriptions' => [
-                    "title"        => [
+                    "title"       => [
                         "de" => "Multiple-Choice",
                         "en" => "Multiple choice"
                     ],
-                    "descriptions" => [
+                    "description" => [
                         "de" => "Ermöglicht die Abfrage von einer oder mehreren Optionen.",
                         "en" => "Allows the user to choose between one ore more options."
                     ]
@@ -84,11 +84,11 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
                 'key'          => 'simpleText',
                 'name'         => 'Simple text',
                 'descriptions' => [
-                    "title"        => [
+                    "title"       => [
                         "de" => "Infotext",
                         "en" => "Informational text"
                     ],
-                    "descriptions" => [
+                    "description" => [
                         "de" => "Für Einleitungen und Erklärungen. Der Benutzer kann hier keine Antwort abgeben.",
                         "en" => "For introductory or explanatory text. User cannot give feedback."
                     ]
@@ -106,11 +106,11 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
                 'key'          => 'starRating',
                 'name'         => 'Star rating',
                 'descriptions' => [
-                    "title"        => [
+                    "title"       => [
                         "de" => "Sterne-Bewertung",
                         "en" => "Star rating"
                     ],
-                    "descriptions" => [
+                    "description" => [
                         "de" => "Zur Abfrage einer Tendent über ein Sterne-System.",
                         "en" => "Get tendency through a star-based rating system"
                     ]
@@ -128,11 +128,11 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
                 'key'          => 'yayNay',
                 'name'         => 'Yay nay',
                 'descriptions' => [
-                    "title"        => [
+                    "title"       => [
                         "de" => "Bilder swipen",
                         "en" => "Image swipe"
                     ],
-                    "descriptions" => [
+                    "description" => [
                         "de" => "Auswahl der Option durch Wischen nach links oder rechts",
                         "en" => "Option is chosen by swiping left or right"
                     ]
@@ -150,11 +150,11 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
                 'key'          => 'emoji',
                 'name'         => 'Emoji',
                 'descriptions' => [
-                    "title"        => [
+                    "title"       => [
                         "de" => "Emojis",
                         "en" => "Emojis"
                     ],
-                    "descriptions" => [
+                    "description" => [
                         "de" => "Bewertung basierend auf Emojis",
                         "en" => "Emoji-based rating"
                     ]
@@ -172,11 +172,11 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
                 'key'          => 'video',
                 'name'         => 'Video',
                 'descriptions' => [
-                    "title"        => [
+                    "title"       => [
                         "de" => "Video",
                         "en" => "Video"
                     ],
-                    "descriptions" => [
+                    "description" => [
                         "de" => "Das Video bietet die Option, dass der User an verschiedenen Stellen des Video Kommentare hinterlassen kann oder zeitbasiert Fragen gestellt bekommt.",
                         "en" => "The video type offers the option for the user to write comments based on the time location within the video. Additionally other survey elements can be presented at given timestamps."
                     ]
@@ -194,11 +194,11 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
                 'key'          => 'voiceInput',
                 'name'         => 'Voice Input',
                 'descriptions' => [
-                    "title"        => [
+                    "title"       => [
                         "de" => "Sprach-Eingabe",
                         "en" => "Voice input"
                     ],
-                    "descriptions" => [
+                    "description" => [
                         "de" => "Kommentare können hier per Sprache aufgezeichnet werden (wie bei einer Sprachnachricht).",
                         "en" => "Comments can be recorded like voice-mail"
                     ]
@@ -216,11 +216,11 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
                 'key'          => 'textInput',
                 'name'         => 'Text Input',
                 'descriptions' => [
-                    "title"        => [
+                    "title"       => [
                         "de" => "Freitext-Frage",
                         "en" => "Text input"
                     ],
-                    "descriptions" => [
+                    "description" => [
                         "de" => "Der Benutzer kann einen frei verfassten Kommentar eingeben.",
                         "en" => "The user can submit a text-based comment."
                     ]
