@@ -46,6 +46,7 @@ class EvaluationToolSurveyStep extends Model
     protected $casts = [
         "time_based_steps"        => "object",
         "result_based_next_steps" => "object",
+        "demo"                    => "boolean"
     ];
 
     protected $with = ["survey_element"];
@@ -67,17 +68,19 @@ class EvaluationToolSurveyStep extends Model
 
     public function survey_step_results(): HasMany
     {
-        return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id")->where("demo", false);
+        return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id")
+            ->where(["demo" => false]);
     }
 
     public function survey_step_demo_results(): HasMany
     {
-        return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id")->where("demo", true);
+        return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id")
+            ->where(["demo" => true]);
     }
 
-    public function survey_step_results_by_uuid(): HasMany
+    public function survey_step_result_by_uuid(): HasOne
     {
-        return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id")->where('session_id', request()->uuid);
+        return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id")->where(['session_id' => request()->uuid]);
     }
 
     public function created_by_user(): HasOne

@@ -203,10 +203,22 @@ class EvaluationToolSurveySurveyRunController extends Controller
         return $starRatingPayload;
     }
 
-    public function samplePayloadMultipleChoice($params): StdClass
+    public function samplePayloadMultipleChoice($params): array
     {
-        $multipleChoicePayload = new StdClass();
-        return $multipleChoicePayload;
+        $numberOfOptions = $params->minSelectable;
+        // return more option if possible
+        if ($params->minSelectable < $params->maxSelectable) {
+            $numberOfOptions = $params->maxSelectable - $params->minSelectable + 1;
+        }
+
+        $selected = [];
+        $options  = $params->options;
+
+        for ($i = 0; $i < $numberOfOptions; $i++) {
+            $selected[] = $options[$i]->value;
+        }
+
+        return $selected;
     }
 
     public function samplePayloadEmoji($params): StdClass
