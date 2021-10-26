@@ -10,6 +10,7 @@ use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
+use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeVideo;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepTransformer;
 
 class EvaluationToolSurveyStepStoreRequest extends FormRequest
@@ -50,6 +51,13 @@ class EvaluationToolSurveyStepStoreRequest extends FormRequest
                 $this->className::validateResultBasedNextSteps($request, $this->surveyElement);
             }
         }
+
+        if ($request->has('time_based_steps')) {
+            $this->surveyElement = EvaluationToolSurveyElement::find($request->survey_element_id);
+            if ($this->surveyElement->survey_element_type->key == "video") {
+                EvaluationToolSurveyElementTypeVideo::validateTimeBasedSteps($request, $this->surveyElement);
+            }
+        }
     }
 
     /**
@@ -70,36 +78,65 @@ class EvaluationToolSurveyStepStoreRequest extends FormRequest
      */
     public function rules(Request $request): array
     {
-
-        // Todo: Validate result based next steps
-
         return [
-            "survey_element_id"                => "required|numeric|exists:evaluation_tool_survey_elements,id",
-            "next_step_id"                     => "nullable|numeric|exists:evaluation_tool_survey_steps,id",
-            "next_step_survey_id"              => "in:" . $this->surveyId,
-            "result_based_next_steps"          => "nullable|array",
-            "result_based_next_steps.*.stepId" => [
+            "survey_element_id"                      => "required|numeric|exists:evaluation_tool_survey_elements,id",
+            "next_step_id"                           => "nullable|numeric|exists:evaluation_tool_survey_steps,id",
+            "next_step_survey_id"                    => "in:" . $this->surveyId,
+            "result_based_next_steps"                => "nullable|array",
+            "result_based_next_steps.*.stepId"       => [
                 "required",
                 "numeric",
                 "exists:evaluation_tool_survey_steps,id",
                 Rule::notIn([$request->id])
             ],
-            "published"                        => "boolean",
-            // "publish_up"                       => [
-            //     "sometimes",
-            //     "nullable",
-            //     "date",
-            //     "date_format:Y-m-d H:i:s",
-            //     "before:publish_down"
-            // ],
-            // "publish_down"                     => [
-            //     "sometimes",
-            //     "nullable",
-            //     "date",
-            //     "date_format:Y-m-d H:i:s",
-            //     "after:publish_up"
-            // ],
-            "name"                             => "min:2|max:50"
+            "time_based_steps"                       => "nullable|array",
+            "time_based_steps.*.stepId"              => [
+                "required",
+                "numeric",
+                "exists:evaluation_tool_survey_steps,id",
+                Rule::notIn([$request->id])
+            ],
+            "time_based_steps.*.timecode"            => [
+                "required",
+                'regex:/^(?:(?:[0-1][0-9]|[0-2][0-3]):)(?:[0-5][0-9]:){2}(?:[0-2][0-9])$/i'
+            ],
+            "time_based_steps.*.uuid"                => [
+                "required",
+                "uuid"
+            ],
+            "time_based_steps.*.description"         => [
+                "nullable",
+                "max:50",
+                "min:1"
+            ],
+            "time_based_steps.*.stopsVideo"          => [
+                "boolean"
+            ],
+            "time_based_steps.*.allowChangingAnswer" => [
+                "boolean"
+            ],
+            "time_based_steps.*.displayTime"         => [
+                "numeric",
+                "integer",
+                "min:1",
+                "max:30"
+            ],
+            "published"                              => "boolean",
+            /* "publish_up"                       => [
+                 "sometimes",
+                 "nullable",
+                 "date",
+                 "date_format:Y-m-d H:i:s",
+                 "before:publish_down"
+             ],
+             "publish_down"                     => [
+                 "sometimes",
+                 "nullable",
+                 "date",
+                 "date_format:Y-m-d H:i:s",
+                 "after:publish_up"
+             ],*/
+            "name"                                   => "min:2|max:50"
         ];
     }
 }
