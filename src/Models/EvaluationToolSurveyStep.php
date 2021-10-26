@@ -85,6 +85,11 @@ class EvaluationToolSurveyStep extends Model
         return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id")->where(['session_id' => request()->uuid]);
     }
 
+    public function previous_steps(): HasMany
+    {
+        return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep", "next_step_id", "id");
+    }
+
     public function created_by_user(): HasOne
     {
         return $this->hasOne(User::class, "id", "created_by");
