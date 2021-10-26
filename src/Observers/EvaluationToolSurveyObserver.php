@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\Observers;
 use Cocur\Slugify\Slugify;
 use Illuminate\Support\Str;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 
 class EvaluationToolSurveyObserver
 {
@@ -19,6 +20,7 @@ class EvaluationToolSurveyObserver
             $survey->created_by = request()->user()->id;
             $survey->updated_by = request()->user()->id;
         }
+        $survey->admin_layout = $this->updateAdminLayout($survey->admin_layout);
     }
 
     /**
@@ -30,6 +32,7 @@ class EvaluationToolSurveyObserver
         if (isset(request()->user()->id)) {
             $survey->updated_by = request()->user()->id;
         }
+        $survey->admin_layout = $this->updateAdminLayout($survey->admin_layout);
     }
 
     /**
@@ -59,5 +62,16 @@ class EvaluationToolSurveyObserver
         }
 
         return $slug;
+    }
+
+    private function updateAdminLayout($adminLayout)
+    {
+        $tempAdminLayout = [];
+        foreach ($adminLayout as $i=>$step ) {
+            if (EvaluationToolSurveyStep::find($step->id)){
+                array_push($tempAdminLayout, $step);
+            }
+        }
+        return $tempAdminLayout;
     }
 }
