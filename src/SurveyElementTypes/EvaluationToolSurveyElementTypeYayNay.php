@@ -62,13 +62,12 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
         $trueValue  = $surveyElement->params->trueValue;
         $falseValue = $surveyElement->params->falseValue;
 
-        $rules = [
+        return [
             "result_value.images"         => ['required', 'array'],
-            "result_value.images.*.asset" => ['required', 'in:' . implode(",", $surveyElement->params->assets)],
+            "result_value.images.*.asset" => ['required', 'in:' . implode(",", $surveyElement->params->assetIds)],
             "result_value.images.*.value" => ['required', 'in:' . $trueValue . ',' . $falseValue],
             "asset_ids"                   => ['required', new DuplicatesInArray],
         ];
-        return $rules;
     }
 
     public static function prepareResultRequest(EvaluationToolSurveyElement $surveyElement)
