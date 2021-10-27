@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Rules\SnakeCase;
 
 class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementTypeBase
 {
@@ -48,7 +49,7 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
         if ($request->has('params.question')) {
             if (is_array($request->params['question'])) {
                 foreach ($request->params['question'] as $key => $value) {
-                    $languageKeys[] = $key;
+                    $languageKeys["question_" . $key] = $key;
                 }
             }
         }
@@ -73,8 +74,8 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
             'params.question'   => 'required|array',
             'params.question.*' => 'min:1|max:200',
             'languageKeys.*'    => 'required|exists:evaluation_tool_survey_languages,code',
-            'params.trueValue'  => 'min:1|max:20',
-            'params.falseValue' => 'min:1|max:20',
+            'params.trueValue'  => ["required", "min:1", "max:20", new SnakeCase()],
+            'params.falseValue' => ["required", "min:1", "max:20", new SnakeCase()],
         ];
     }
 
