@@ -5,6 +5,8 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Rules\Emoji;
+use Twoavy\EvaluationTool\Rules\SnakeCase;
 
 class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTypeBase
 {
@@ -22,15 +24,15 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
         return [
             "emojis" => [
                 [
-                    "type" => "😊",
+                    "type"    => "😊",
                     "meaning" => "great",
                 ],
                 [
-                    "type" => "😠",
+                    "type"    => "😠",
                     "meaning" => "angry",
                 ],
                 [
-                    "type" => "😎",
+                    "type"    => "😎",
                     "meaning" => "cool",
                 ],
             ],
@@ -44,7 +46,7 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
 
     public static function prepareRequest(Request $request)
     {
-        $meanings = [];
+        /*$meanings = [];
         $types = [];
         if ($request->has("params.emojis")) {
             foreach ($request->params["emojis"] as $emoji) {
@@ -55,12 +57,24 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
         $request->request->add([
             "meanings" => $meanings,
             "types" => $types,
-        ]);
+        ]);*/
+
+        $languageKeys = [];
+
+        if ($request->has('params.question')) {
+            if (is_array($request->params['question'])) {
+                foreach ($request->params['question'] as $questionLanguageKey => $question) {
+                    $languageKeys[] = $questionLanguageKey;
+                }
+            }
+        }
+
+        $request->request->add(['languageKeys' => $languageKeys]);
     }
 
     public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement): array
     {
-        $emojis = $surveyElement->params->emojis;
+        $emojis   = $surveyElement->params->emojis;
         $meanings = [];
         foreach ($emojis as $value) {
             array_push($meanings, $value->meaning);
@@ -82,14 +96,17 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
     public static function rules(): array
     {
         return [
-            'params.emojis' => [
+            'params.question'         => ['required', 'array', 'min:1'],
+            'params.question.*'       => ['required', 'min:1', 'max:200'],
+            'params.emojis'           => [
                 'required',
                 'array',
                 'min:1',
                 'max:10',
             ],
-            "meanings.*" => "min:1|max:20",
-            "types.*" => "min:1|max:1",
+            "params.emojis.*.type"    => ["min:1", "max:20", new Emoji()],
+            "params.emojis.*.meaning" => ["min:1", "max:20", new SnakeCase()],
+            'languageKeys.*'          => ['required', 'exists:evaluation_tool_survey_languages,code'],
         ];
     }
 

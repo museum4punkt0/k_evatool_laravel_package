@@ -1,6 +1,6 @@
 {
     "name": "twoavy/evaluation-tool",
-    "version": "1.0.255",
+    "version": "1.0.256",
     "description": "A laravel package for creating evaluations and surveys",
     "require": {
         "php": "^7.3|^8.0",
@@ -15,6 +15,7 @@
         "illuminate/pipeline": "^8.0",
         "illuminate/support": "^8.0",
         "james-heinrich/getid3": "^1.9",
+        "kozz/emoji-regex": "^1.0",
         "phlak/semver-cli": "^1.0",
         "ramsey/uuid": "^4.2",
         "spatie/image": "1.10.5",
