@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
+use Twoavy\EvaluationTool\Rules\IsMediaType;
 
 class EvaluationToolSurveyElementTypeVideo extends EvaluationToolSurveyElementTypeBase
 {
@@ -38,14 +39,7 @@ class EvaluationToolSurveyElementTypeVideo extends EvaluationToolSurveyElementTy
 
     public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement): array
     {
-        // $emojis = $surveyElement->params['emojis'];
-        // $meanings = [];
-        // foreach ($emojis as $key => $value) {
-        // array_push($meanings, $value['meaning']);
-        // }
-        $rules = [
-        ];
-        return $rules;
+        return [];
     }
 
     /**
@@ -54,7 +48,11 @@ class EvaluationToolSurveyElementTypeVideo extends EvaluationToolSurveyElementTy
     public static function rules(): array
     {
         return [
-            'params.videoAssetId' => 'required|exists:evaluation_tool_assets,id'
+            'params.videoAssetId' => [
+                "required",
+                "exists:evaluation_tool_assets,id",
+                new IsMediaType("video")
+            ]
         ];
     }
 
