@@ -10,6 +10,7 @@ use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
+use Twoavy\EvaluationTool\Rules\Timecode;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeVideo;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepTransformer;
 
@@ -98,7 +99,7 @@ class EvaluationToolSurveyStepStoreRequest extends FormRequest
             ],
             "time_based_steps.*.timecode"            => [
                 "required",
-                'regex:/^(?:(?:[0-1][0-9]|[0-2][0-3]):)(?:[0-5][0-9]:){2}(?:[0-2][0-9])$/i'
+                new Timecode()
             ],
             "time_based_steps.*.uuid"                => [
                 "required",

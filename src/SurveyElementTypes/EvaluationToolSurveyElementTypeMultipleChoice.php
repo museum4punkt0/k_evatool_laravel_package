@@ -10,6 +10,7 @@ use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
+use Twoavy\EvaluationTool\Rules\SnakeCase;
 
 class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurveyElementTypeBase
 {
@@ -66,6 +67,15 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
                 }
             }
         }
+
+        if ($request->has('params.question')) {
+            if (is_array($request->params['question'])) {
+                foreach ($request->params['question'] as $questionLanguageKey => $question) {
+                    $languageKeys[] = $questionLanguageKey;
+                }
+            }
+        }
+
         $request->request->add(['languageKeys' => $languageKeys]);
     }
 
@@ -108,12 +118,17 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
     {
         $maxCount = 10;
         return [
-            'params.question'      => ['required', 'array', 'min:1'],
-            'params.options'       => ['required', 'array', 'min:1'],
-            'params.options.*'     => ['array'],
-            'languageKeys.*'       => ['required', 'exists:evaluation_tool_survey_languages,code'],
-            'params.minSelectable' => ['integer', 'min:1', 'max:' . $maxCount],
-            'params.maxSelectable' => ['integer', 'between:1,params.min_selectable', 'max:' . $maxCount],
+            'params.question'         => ['required', 'array', 'min:1'],
+            'params.options'          => ['required', 'array', 'min:1'],
+            'params.options.*'        => ['array'],
+            'params.options.*.labels' => ["required", 'array'],
+            'params.options.*.value'  => [
+                "required",
+                new SnakeCase()
+            ],
+            'languageKeys.*'          => ['required', 'exists:evaluation_tool_survey_languages,code'],
+            'params.minSelectable'    => ['integer', 'min:1', 'max:' . $maxCount],
+            'params.maxSelectable'    => ['integer', 'between:1,params.min_selectable', 'max:' . $maxCount],
         ];
     }
 
