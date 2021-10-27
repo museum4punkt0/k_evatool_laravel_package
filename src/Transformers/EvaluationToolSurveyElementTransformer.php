@@ -4,6 +4,7 @@ namespace Twoavy\EvaluationTool\Transformers;
 
 use League\Fractal\TransformerAbstract;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeSimpleText;
 
 class EvaluationToolSurveyElementTransformer extends TransformerAbstract
 {
@@ -29,6 +30,7 @@ class EvaluationToolSurveyElementTransformer extends TransformerAbstract
             "updatedBy"         => $surveyElement->updated_by_user ? $surveyElement->updated_by_user->name : null,
             "deletedAt"         => (string)$surveyElement->deleted_at,
             "deletedBy"         => $surveyElement->deleted_by_user ? $surveyElement->deleted_by_user->name : null,
+            "missingLanguage"   => EvaluationToolSurveyElementTypeSimpleText::validateSurveyBasedLanguages($surveyElement)
         ];
     }
 
