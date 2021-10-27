@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\Models;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -79,5 +80,10 @@ class EvaluationToolSurvey extends Model
     public function updated_by_user(): HasOne
     {
         return $this->hasOne(User::class, "id", "updated_by");
+    }
+
+    public function languages(): BelongsToMany
+    {
+        return $this->belongsToMany(EvaluationToolSurveyLanguage::class, "evaluation_tool_surveys_survey_languages", "survey_id", "survey_language_id");
     }
 }

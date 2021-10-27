@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStoreAdminLayoutRequest;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStoreRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
+use Twoavy\EvaluationTool\Observers\EvaluationToolSurveyObserver;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 
 class EvaluationToolSurveyController extends Controller
@@ -66,6 +67,8 @@ class EvaluationToolSurveyController extends Controller
     {
         $survey->fill($request->all());
         $survey->save();
+
+        EvaluationToolSurveyObserver::assignLanguages($survey, $request);
 
         return $this->showOne($survey->refresh());
     }

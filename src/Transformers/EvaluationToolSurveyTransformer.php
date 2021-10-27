@@ -24,6 +24,7 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
             "publishUp"          => $survey->publish_up,
             "publishDown"        => $survey->publish_down,
             "adminLayout"        => $survey->admin_layout ?: [],
+            "languages"          => $survey->languages->pluck("code"),
             "surveyStepsCount"   => $survey->survey_steps_count,
             "surveyResultsCount" => $survey->survey_results_count,
             "createdAt"          => $survey->created_at,
@@ -68,6 +69,7 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
             "publishUp"   => "publish_up",
             "publishDown" => "publish_down",
             "adminLayout" => "admin_layout",
+            "languages"   => "languages"
         ];
     }
 }

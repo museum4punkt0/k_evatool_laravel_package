@@ -3,9 +3,12 @@
 namespace Twoavy\EvaluationTool\Observers;
 
 use Cocur\Slugify\Slugify;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
+use Twoavy\EvaluationTool\Seeders\EvaluationToolSurveyLanguageSeeder;
 
 class EvaluationToolSurveyObserver
 {
@@ -24,6 +27,15 @@ class EvaluationToolSurveyObserver
     }
 
     /**
+     * @param EvaluationToolSurvey $survey
+     * @return void
+     */
+    public function created(EvaluationToolSurvey $survey)
+    {
+        $this->assignLanguages($survey, request());
+    }
+
+    /**
      * @return void
      */
     public function updating(EvaluationToolSurvey $survey)
@@ -33,6 +45,14 @@ class EvaluationToolSurveyObserver
             $survey->updated_by = request()->user()->id;
         }
         $survey->admin_layout = $this->updateAdminLayout($survey->admin_layout);
+    }
+
+    /**
+     * @return void
+     */
+    public function updated(EvaluationToolSurvey $survey)
+    {
+        $this->assignLanguages($survey, request());
     }
 
     /**
@@ -67,7 +87,7 @@ class EvaluationToolSurveyObserver
     private function updateAdminLayout($adminLayout): array
     {
         $tempAdminLayout = [];
-        if($adminLayout) {
+        if ($adminLayout) {
             foreach ($adminLayout as $step) {
                 if (EvaluationToolSurveyStep::find($step->id)) {
                     array_push($tempAdminLayout, $step);
@@ -75,5 +95,20 @@ class EvaluationToolSurveyObserver
             }
         }
         return $tempAdminLayout;
+    }
+
+    public static function assignLanguages($survey, $request): void
+    {
+        if ($request->has("languages") && is_array($request->languages)) {
+            $survey->languages()->detach();
+            if (empty($request->languages)) {
+                $survey->languages()->attach(EvaluationToolSurveyLanguage::where("default", true)->first());
+            }
+            foreach ($request->languages as $languageCode) {
+                if ($language = EvaluationToolSurveyLanguage::where("code", $languageCode)->first()) {
+                    $survey->languages()->attach($language);
+                }
+            }
+        }
     }
 }
