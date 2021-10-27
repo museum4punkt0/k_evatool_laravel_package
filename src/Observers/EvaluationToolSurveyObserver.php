@@ -64,11 +64,11 @@ class EvaluationToolSurveyObserver
         return $slug;
     }
 
-    private function updateAdminLayout($adminLayout)
+    private function updateAdminLayout($adminLayout): array
     {
         $tempAdminLayout = [];
-        foreach ($adminLayout as $i=>$step ) {
-            if (EvaluationToolSurveyStep::find($step->id)){
+        foreach ($adminLayout as $step) {
+            if (EvaluationToolSurveyStep::find($step->id)) {
                 array_push($tempAdminLayout, $step);
             }
         }
