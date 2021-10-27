@@ -3,9 +3,12 @@
 namespace Twoavy\EvaluationTool\SurveyElementTypes;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Rules\DuplicatesInArray;
+use Twoavy\EvaluationTool\Rules\IsMediaType;
+use Twoavy\EvaluationTool\Rules\SnakeCase;
 
 class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementTypeBase
 {
@@ -35,7 +38,7 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
             "falseValue" => "declined",
             "trueLabel"  => ["de" => "ja", "en" => "yes", "fr" => "oui"],
             "falseLabel" => ["de" => "nein", "en" => "no", "fr" => "non"],
-            "assetIds"  => [1, 2, 4]
+            "assetIds"   => [1, 2, 4]
         ];
     }
 
@@ -47,13 +50,31 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
     public static function prepareRequest(Request $request)
     {
         $languageKeys = [];
+
         if ($request->has('params.question')) {
             if (is_array($request->params['question'])) {
                 foreach ($request->params['question'] as $key => $value) {
-                    $languageKeys[] = $key;
+                    $languageKeys["question_" . $key] = $key;
                 }
             }
         }
+
+        if ($request->has('params.trueLabel')) {
+            if (is_array($request->params['trueLabel'])) {
+                foreach ($request->params['trueLabel'] as $key => $value) {
+                    $languageKeys["trueLabel_" . $key] = $key;
+                }
+            }
+        }
+
+        if ($request->has('params.falseLabel')) {
+            if (is_array($request->params['falseLabel'])) {
+                foreach ($request->params['falseLabel'] as $key => $value) {
+                    $languageKeys["falseLabel_" . $key] = $key;
+                }
+            }
+        }
+
         $request->request->add(['languageKeys' => $languageKeys]);
     }
 
@@ -88,10 +109,17 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
     {
         return [
             'params.question'   => 'required|array',
-            // TODO: assets length > 0
-            'params.assetIds'  => 'required|array',
+            'params.assetIds'   => ["required", "array", new DuplicatesInArray],
+            'params.assetIds.*' => [
+                "exists:evaluation_tool_assets,id",
+                new IsMediaType("image")
+            ],
             'params.question.*' => 'min:1|max:200',
             'languageKeys.*'    => 'required|exists:evaluation_tool_survey_languages,code',
+            'params.trueValue'  => ["required", new SnakeCase()],
+            'params.falseValue' => ["required", new SnakeCase()],
+            'params.trueLabel'  => ["required", "array"],
+            'params.falseLabel' => ["required", "array"],
         ];
     }
 
