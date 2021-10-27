@@ -39,12 +39,16 @@ class EvaluationToolSurveySurveyRunController extends Controller
     }
 
     /**
-     * @param EvaluationToolSurvey $survey
+     * @param $surveySlug
      * @param Request $request
      * @return JsonResponse
      */
-    public function index(EvaluationToolSurvey $survey, Request $request): JsonResponse
+    public function index($surveySlug, Request $request): JsonResponse
     {
+        if (!$survey = EvaluationToolSurvey::where("slug", $surveySlug)->first()) {
+            return $this->errorResponse("survey not found", 409);
+        }
+
         $surveySteps = $survey->survey_steps->filter(function ($value) {
             return is_null($value->parent_step_id);
         });;
@@ -73,12 +77,16 @@ class EvaluationToolSurveySurveyRunController extends Controller
     }
 
     /**
-     * @param EvaluationToolSurvey $survey
+     * @param $surveySlug
      * @param EvaluationToolSurveySurveyStepResultStoreRequest $request
      * @return JsonResponse
      */
-    public function store(EvaluationToolSurvey $survey, EvaluationToolSurveySurveyStepResultStoreRequest $request): JsonResponse
+    public function store($surveySlug, EvaluationToolSurveySurveyStepResultStoreRequest $request): JsonResponse
     {
+        if (!$survey = EvaluationToolSurvey::where("slug", $surveySlug)->first()) {
+            return $this->errorResponse("survey not found", 409);
+        }
+
         // Todo: Add resubmit counter (observer)
         if (!$surveyStep = EvaluationToolSurveyStep::find($request->survey_step_id)) {
             return $this->errorResponse("survey step does not exist", 409);
@@ -143,13 +151,16 @@ class EvaluationToolSurveySurveyRunController extends Controller
     /**
      * Stores a survey step result asset record
      *
-     * @param EvaluationToolSurvey $survey
+     * @param $surveySlug
      * @param EvaluationToolSurveyStepResultAssetStoreRequest $request
      * @return JsonResponse
      */
-    public function storeAsset(EvaluationToolSurvey $survey, EvaluationToolSurveyStepResultAssetStoreRequest $request):
-    JsonResponse
+    public function storeAsset($surveySlug, EvaluationToolSurveyStepResultAssetStoreRequest $request): JsonResponse
     {
+        if (!$survey = EvaluationToolSurvey::where("slug", $surveySlug)->first()) {
+            return $this->errorResponse("survey not found", 409);
+        }
+
         // Todo: Create Request
         if (!$request->has("audio")) {
             return $this->errorResponse("no audio provided", 409);
