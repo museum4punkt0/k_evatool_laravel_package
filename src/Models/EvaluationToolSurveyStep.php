@@ -93,9 +93,10 @@ class EvaluationToolSurveyStep extends Model
             ->where(["demo" => true]);
     }
 
-    public function survey_step_result_by_uuid(): HasOne
+    public function survey_step_result_by_uuid(): HasMany
     {
-        return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id")->where(['session_id' => request()->uuid]);
+        return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id")->where(['session_id' => request()
+            ->uuid]);
     }
 
     public function previous_steps(): HasMany

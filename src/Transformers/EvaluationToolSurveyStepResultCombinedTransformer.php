@@ -19,20 +19,20 @@ class EvaluationToolSurveyStepResultCombinedTransformer extends TransformerAbstr
     public function transform(EvaluationToolSurveyStep $surveyStep): array
     {
         return [
-            "id"                     => (int)$surveyStep->id,
-            "uuid"                   => request()->uuid,
-            "surveyElementType"      => (string)$surveyStep->survey_element->survey_element_type->key,
-            "params"                 => $this->loadAssets($surveyStep->survey_element->params, $surveyStep->survey_element->survey_element_type->key),
-            "resultsCount"           => $surveyStep->survey_step_results_count,
-            "demoResultsCount"       => $surveyStep->survey_step_demo_results_count,
-            "resultByUuid"           => $surveyStep->survey_step_result_by_uuid ? $surveyStep->survey_step_result_by_uuid->result_value : null,
-            "sampleResultPayload"    => $surveyStep->sampleResultPayload,
-            "timeBasedStepsResolved" => $surveyStep->timebased_steps_resolved,
-            "nextStepId"             => $surveyStep->next_step_id ? (int)$surveyStep->next_step_id : null,
-            "timeBasedSteps"         => (array)$surveyStep->time_based_steps,
-            "resultBasedNextSteps"   => $surveyStep->result_based_next_steps,
-            "group"                  => (string)$surveyStep->group,
-            "allowSkip"              => (bool)$surveyStep->allow_skip,
+            "id"                   => (int)$surveyStep->id,
+            "uuid"                 => request()->uuid,
+            "surveyElementType"    => (string)$surveyStep->survey_element->survey_element_type->key,
+            "params"               => $this->loadAssets($surveyStep->survey_element->params, $surveyStep->survey_element->survey_element_type->key),
+            "resultsCount"         => $surveyStep->survey_step_results_count,
+            "demoResultsCount"     => $surveyStep->survey_step_demo_results_count,
+            "resultByUuid"         => $this->getResultsByUuid($surveyStep),
+            "sampleResultPayload"  => $surveyStep->sampleResultPayload,
+            "timeBasedSteps"       => $surveyStep->timebased_steps_resolved,
+            "nextStepId"           => $surveyStep->next_step_id ? (int)$surveyStep->next_step_id : null,
+            //            "timeBasedSteps"         => (array)$surveyStep->time_based_steps,
+            "resultBasedNextSteps" => $surveyStep->result_based_next_steps,
+            "group"                => (string)$surveyStep->group,
+            "allowSkip"            => (bool)$surveyStep->allow_skip,
         ];
     }
 
@@ -91,5 +91,19 @@ class EvaluationToolSurveyStepResultCombinedTransformer extends TransformerAbstr
         }
 
         return $params;
+    }
+
+    public function getResultsByUuid($surveyStep)
+    {
+        if ($surveyStep->survey_element_type->key === "video") {
+            return $surveyStep->survey_step_result_by_uuid ? $surveyStep->survey_step_result_by_uuid->map(function ($result) {
+                return [
+                    "timecode"    => $result->time,
+                    "resultValue" => $result->result_value
+                ];
+            }) : null;
+        } else {
+            return $surveyStep->survey_step_result_by_uuid ? $surveyStep->survey_step_result_by_uuid->pluck("result_value") : null;
+        }
     }
 }

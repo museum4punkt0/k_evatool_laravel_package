@@ -113,6 +113,10 @@ class EvaluationToolSurveySurveyRunController extends Controller
         } else {
             // video can store several results, but overwrite if result is at same timecode position
             if ($surveyStep->survey_element_type->key === "video") {
+                // check if video result has timecode
+                if (!$request->has("time")) {
+                    return $this->errorResponse("video results must send a timecode (i.e. 00:00:02:25)", 409);
+                }
                 if (!$surveyStepResult = EvaluationToolSurveyStepResult::where("session_id", $request->session_id)
                     ->where("survey_step_id", $request->survey_step_id)
                     ->where("time", $request->time)
