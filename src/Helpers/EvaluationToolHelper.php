@@ -4,6 +4,7 @@ namespace Twoavy\EvaluationTool\Helpers;
 
 use Illuminate\Http\Request;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 
@@ -100,5 +101,49 @@ class EvaluationToolHelper
         }
 
         return $usedStepIds;
+    }
+
+    public static function checkMissingLanguages(EvaluationToolSurveyElement $element, $keysToCheck = []): array
+    {
+
+        $missing = [];
+
+        // iterate all keys
+        foreach ($keysToCheck as $keyToCheck) {
+            // iterate all surveys
+            $missing[$keyToCheck] = $element->surveys->map(function ($survey) use ($element, $keyToCheck) {
+
+                $languageCodes = $survey->languages;
+
+                // set survey id and all codes
+                $missingIn = [
+                    "surveyId" => $survey->id,
+                    "codes"    => $languageCodes->pluck("code")->flatten()
+                ];
+
+                $index = 0;
+                // check if params is set and is object
+                if (isset($element->params->{$keyToCheck}) && is_object($element->params->{$keyToCheck})) {
+                    // loop through params
+                    foreach ($element->params->{$keyToCheck} as $key => $text) {
+                        // check if code exists in collection and only return when no match
+                        $languageCodes = $languageCodes->filter(function ($value) use ($key) {
+                            return $value->code !== $key;
+                        });
+                        $index++;
+                    }
+                    $missingIn["codes"] = $languageCodes->pluck("code")->flatten();
+                }
+
+                // return null if array im empty
+                if (empty($missingIn["codes"]->toArray())) {
+                    return null;
+                }
+
+                return $missingIn;
+            })->filter()->values(); // this filters all "null" values
+        }
+
+        return $missing;
     }
 }
