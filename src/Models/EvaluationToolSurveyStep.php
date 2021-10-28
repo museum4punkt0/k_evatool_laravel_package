@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
@@ -66,6 +67,18 @@ class EvaluationToolSurveyStep extends Model
     public function survey_element(): HasOne
     {
         return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement", "id", "survey_element_id");
+    }
+
+    public function survey_element_type(): HasOneThrough
+    {
+        return $this->hasOneThrough(
+            EvaluationToolSurveyElementType::class,
+            EvaluationToolSurveyElement::class,
+            "id",
+            "id",
+            "survey_element_id",
+            "survey_element_type_id"
+        );
     }
 
     public function survey_step_results(): HasMany

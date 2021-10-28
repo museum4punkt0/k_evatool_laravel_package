@@ -62,7 +62,7 @@ class EvaluationToolSurveyStepResultCombinedTransformer extends TransformerAbstr
             "allowSkip"            => "allow_skip",
             "published"            => "published",
             "publishUp"            => "publish_up",
-            "publishDown"          => "publish_down",
+            "publishDown"          => "publish_down"
         ];
     }
 

@@ -111,15 +111,29 @@ class EvaluationToolSurveySurveyRunController extends Controller
             ->first()) {
             $surveyStepResult = new EvaluationToolSurveyStepResult();
         } else {
-            $surveyStep->changed_answer++;
+            // video can store several results, but overwrite if result is at same timecode position
+            if ($surveyStep->survey_element_type->key === "video") {
+                if (!$surveyStepResult = EvaluationToolSurveyStepResult::where("session_id", $request->session_id)
+                    ->where("survey_step_id", $request->survey_step_id)
+                    ->where("time", $request->time)
+                    ->first()) {
+                    $surveyStepResult = new EvaluationToolSurveyStepResult();
+                } else {
+                    $surveyStepResult->changed_answer++;
+                }
+            } else {
+                $surveyStepResult->changed_answer++;
+            }
         }
 
         $surveyStepResult->survey_step_id     = $request->survey_step_id;
         $surveyStepResult->session_id         = $request->session_id;
         $surveyStepResult->result_value       = $request->result_value;
+        $surveyStepResult->time               = $request->time;
         $surveyStepResult->result_language_id = $language->id;
         $surveyStepResult->params             = $surveyStep->survey_element->params;
         $surveyStepResult->answered_at        = Carbon::now();
+
         $surveyStepResult->save();
 
         return $this->showOne($surveyStepResult);

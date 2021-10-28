@@ -82,4 +82,9 @@ class EvaluationToolSurveyElementTypeVideo extends EvaluationToolSurveyElementTy
         }
         return true;
     }
+
+    public static function prepareResultRequest(): bool
+    {
+        return true;
+    }
 }
