@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use StdClass;
+use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 
@@ -93,31 +94,10 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
         return true;
     }
 
-    public static function validateSurveyBasedLanguages(EvaluationToolSurveyElement $element){
-        $languageCollection = new Collection();
-        $errorArray = [];
-        foreach ($element->surveys as $survey){
-            foreach ($survey->languages as $language) {
-                $languageCollection->push($language);
-            }
-        }
-        $languageCodes = $languageCollection->pluck('code')->unique();
-        $errorArray['text'] = $languageCodes;
-        $index = 0;
-        foreach ($element->params->text as $key=>$text) {
-            if ($errorArray['text']->contains($key)) {
-                $errorArray['text']->forget($index);
-            } else {
-                /*
-                if (!isset($errorArray['text'][$index]['surveyIds'])) {
-                    $errorArray['text'][$index]['surveyIds'] = [];
-                }
-                $errorArray['text'][$index]['surveyIds'][] = $survey->id;
-                */
-            }
-            $index++;
-        }
-        // $errorArray['text'] = $errorArray['text']->flatten();
-        return $errorArray;
+    public static function validateSurveyBasedLanguages(EvaluationToolSurveyElement $element): array
+    {
+        $keysToCheck = ["text"];
+
+        return EvaluationToolHelper::checkMissingLanguages($element, $keysToCheck);
     }
 }

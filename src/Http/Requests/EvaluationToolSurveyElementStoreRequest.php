@@ -20,7 +20,9 @@ class EvaluationToolSurveyElementStoreRequest extends FormRequest
             $this->elementType = ucfirst($request->survey_element_type);
             $this->className   = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . ucfirst($request->survey_element_type);
             if (class_exists($this->className)) {
-                $this->className::prepareRequest($request);
+                if (method_exists($this->className, "prepareRequest")) {
+                    $this->className::prepareRequest($request);
+                }
             }
         }
     }
@@ -30,7 +32,8 @@ class EvaluationToolSurveyElementStoreRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize(): bool
+    public
+    function authorize(): bool
     {
         return true;
     }
@@ -40,7 +43,8 @@ class EvaluationToolSurveyElementStoreRequest extends FormRequest
      *
      * @return array
      */
-    public function rules(): array
+    public
+    function rules(): array
     {
         // TODO: rules
         $rules = [

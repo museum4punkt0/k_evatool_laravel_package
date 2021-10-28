@@ -16,6 +16,8 @@ class EvaluationToolSurveyElementTransformer extends TransformerAbstract
      */
     public function transform(EvaluationToolSurveyElement $surveyElement): array
     {
+        $typeClassName = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . ucfirst($surveyElement->survey_element_type->key);
+
         return [
             "id"                => (int)$surveyElement->id,
             "name"              => (string)$surveyElement->name,
@@ -30,7 +32,7 @@ class EvaluationToolSurveyElementTransformer extends TransformerAbstract
             "updatedBy"         => $surveyElement->updated_by_user ? $surveyElement->updated_by_user->name : null,
             "deletedAt"         => (string)$surveyElement->deleted_at,
             "deletedBy"         => $surveyElement->deleted_by_user ? $surveyElement->deleted_by_user->name : null,
-            "missingLanguages"  => EvaluationToolSurveyElementTypeSimpleText::validateSurveyBasedLanguages($surveyElement)
+            "missingLanguages"  => class_exists($typeClassName) && method_exists($typeClassName, "validateSurveyBasedLanguages") ? $typeClassName::validateSurveyBasedLanguages($surveyElement) : null
         ];
     }
 
