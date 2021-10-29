@@ -30,6 +30,7 @@ class EvaluationToolSurveyStep extends Model
         "survey_id",
         "survey_element_id",
         "group",
+        "params",
         "next_step_id",
         "time_based_steps",
         "result_based_next_steps",
@@ -48,6 +49,7 @@ class EvaluationToolSurveyStep extends Model
 
     protected $casts = [
         "time_based_steps"        => "object",
+        "params"                  => "object",
         "result_based_next_steps" => "object",
         "demo"                    => "boolean"
     ];
