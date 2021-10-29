@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use StdClass;
+use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStepResultAssetStoreRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
@@ -45,6 +46,9 @@ class EvaluationToolSurveySurveyRunController extends Controller
      */
     public function index($surveySlug, Request $request): JsonResponse
     {
+        // tell the request that it is in "run mode"
+        $request->request->add(["is_run" => true]);
+
         if (!$survey = EvaluationToolSurvey::where("slug", $surveySlug)->first()) {
             return $this->errorResponse("survey not found", 409);
         }
@@ -61,11 +65,19 @@ class EvaluationToolSurveySurveyRunController extends Controller
         if (!$request->has("uuid")) {
             $uuid = $this->generateUuid();
             $request->request->add(["uuid" => $uuid]);
+        } else {
+            $uuid = $request->uuid;
         }
 
         foreach ($surveySteps as $surveyStep) {
             $surveyStep->sampleResultPayload = $this->getSampleResultPayload($surveyStep);
+
+            $resultsByUuid            = $this->getResultsByUuid($surveyStep);
+            $surveyStep->resultByUuid = $resultsByUuid->result;
+            $surveyStep->isAnswered   = $resultsByUuid->isAnswered;
         }
+
+        $survey->status = $this->getPositionWithinSurvey($surveySteps);
 
         $data = $this->showAll($surveySteps, 200, EvaluationToolSurveyStepResultCombinedTransformer::class, false, false);
 
@@ -303,5 +315,78 @@ class EvaluationToolSurveySurveyRunController extends Controller
     public function rulesPayloadYayNay($params)
     {
         return $params;
+    }
+
+    public function getPositionWithinSurvey($surveySteps): ?array
+    {
+        $stepOrdering = [];
+
+        if (!$firstStep = $surveySteps->whereNotNull("is_first_step")->first()) {
+            return null;
+        }
+
+        $upcomingStep      = $firstStep;
+        $currentStep       = $firstStep;
+        $stepOrdering[]    = $firstStep->id;
+        $hasUnansweredStep = false;
+
+        foreach ($surveySteps as $surveyStepMain) {
+            foreach ($surveySteps as $surveyStep) {
+                if ($upcomingStep->next_step_id == $surveyStep->id) {
+                    if ($upcomingStep->isAnswered && !$hasUnansweredStep) {
+                        // Todo check result based next steps
+                        if ($surveyStep->result_based_next_steps) {
+                            $this->getResultBasedNextStep($surveyStep);
+                        } else {
+                            $currentStep = $surveyStep;
+                        }
+                    } else {
+                        $hasUnansweredStep = true;
+                    }
+                    $upcomingStep   = $surveyStep;
+                    $stepOrdering[] = $surveyStep->id;
+                    break;
+                }
+            }
+        }
+
+        return [
+            "currentStep"  => $currentStep->id,
+            "stepOrdering" => $stepOrdering
+            //            "currentStep"  => EvaluationToolHelper::transformModel($currentStep, true, EvaluationToolSurveyStepResultCombinedTransformer::class),
+        ];
+
+//        return null;
+    }
+
+    public function getResultBasedNextStep($surveyStep)
+    {
+//        echo $surveyStep->survey_element->survey_element_type->key;
+    }
+
+    public function getResultsByUuid(EvaluationToolSurveyStep $surveyStep): StdClass
+    {
+        $statusByUuid             = new StdClass;
+        $statusByUuid->isAnswered = false;
+        $statusByUuid->result     = null;
+
+        if ($surveyStep->survey_element_type->key === "video") {
+            if ($surveyStep->survey_step_result_by_uuid->count() > 0) {
+                $statusByUuid->result     = $surveyStep->survey_step_result_by_uuid->map(function ($result) {
+                    return [
+                        "timecode"    => $result->time,
+                        "resultValue" => $result->result_value
+                    ];
+                });
+                $statusByUuid->isAnswered = true;
+            }
+
+        } else {
+            if ($surveyStep->survey_step_result_by_uuid->count() > 0) {
+                $statusByUuid->result     = $surveyStep->survey_step_result_by_uuid->pluck("result_value")->first();
+                $statusByUuid->isAnswered = true;
+            }
+        }
+        return $statusByUuid;
     }
 }
