@@ -4,6 +4,7 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\Rule;
 use StdClass;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
@@ -53,16 +54,24 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
         $request->request->add(['languageKeys' => $languageKeys]);
     }
 
-    public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement)
+    /**
+     * @param EvaluationToolSurveyElement $surveyElement
+     * @return array
+     */
+    public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement): array
     {
-        // $emojis = $surveyElement->params['emojis'];
-        // $meanings = [];
-        // foreach ($emojis as $key => $value) {
-        // array_push($meanings, $value['meaning']);
-        // }
-        $rules = [
+        return [
+            "result_value.read" => [
+                'required',
+                'boolean',
+                Rule::in([true])
+            ],
         ];
-        return $rules;
+    }
+
+    public static function prepareResultRequest(): bool
+    {
+        return true;
     }
 
     /**
