@@ -62,6 +62,6 @@ class EvaluationToolDemoSurveySimpleVideo extends Seeder
             ];
         }
 
-        EvaluationToolSurveyStepFactory::times(1)->withData("Video", $videoId, $surveyId, null, $timebasedSteps)->create();
+        EvaluationToolSurveyStepFactory::times(1)->withData("Video", $videoId, $surveyId, null, $timebasedSteps, true)->create();
     }
 }

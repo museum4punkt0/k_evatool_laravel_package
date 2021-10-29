@@ -83,13 +83,13 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
                 "de" => "Wie zufrieden bist Du mit dem Registrierungsprozess?",
                 "en" => "How satiesfied are you with the registration process?",
             ],
-            "allowHalfSteps" => false,
-            "numberOfStars" => 7,
-            "meaningLowestValue" => "sehr_unzufrieden",
+            "allowHalfSteps"      => false,
+            "numberOfStars"       => 7,
+            "meaningLowestValue"  => "sehr_unzufrieden",
             "meaningHighestValue" => "sehr_zufrieden",
-            "lowestValueLabel" => ["de" => "sehr unzufrieden", "en" => "very unsatisfied"],
-            "middleValueLabel" => ["de" => "neutral", "en" => "neutral"],
-            "highestValueLabel" => ["de" => "sehr zufrieden", "en" => "very satisfied"],
+            "lowestValueLabel"    => ["de" => "sehr unzufrieden", "en" => "very unsatisfied"],
+            "middleValueLabel"    => ["de" => "neutral", "en" => "neutral"],
+            "highestValueLabel"   => ["de" => "sehr zufrieden", "en" => "very satisfied"],
         ], "Sterne-Bewertung", "Von sehr unzufrieden bis sehr zufrieden")->create();
 
         $starRatingId = EvaluationToolSurveyElement::all()->last()->id;
@@ -103,7 +103,7 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
             "falseValue" => "nein",
             "trueLabel"  => ["de" => "Ja", "en" => "Yes"],
             "falseLabel" => ["de" => "Nein", "en" => "No"],
-            "assetIds"     => EvaluationToolAsset::where("mime", "LIKE", 'image/%')->get()->take(3)->pluck("id"),
+            "assetIds"   => EvaluationToolAsset::where("mime", "LIKE", 'image/%')->get()->take(3)->pluck("id"),
 
         ], "Bildbewertung", "Bewertung von Bildern")->create();
 
@@ -131,13 +131,13 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
                     "de" => "Eine auf deutsch formulierte Frage",
                     "en" => "A question presented in English",
                 ],
-                "allowHalfSteps" => false,
-                "numberOfStars" => 5,
-                "meaningLowestValue" => "very_unhappy",
+                "allowHalfSteps"      => false,
+                "numberOfStars"       => 5,
+                "meaningLowestValue"  => "very_unhappy",
                 "meaningHighestValue" => "very_happy",
-                "lowestValueLabel" => ["de" => "sehr unglücklich", "en" => "very unhappy"],
-                "middleValueLabel" => ["de" => "neutral", "en" => "neutral"],
-                "highestValueLabel" => ["de" => "sehr glücklich", "en" => "very happy"],
+                "lowestValueLabel"    => ["de" => "sehr unglücklich", "en" => "very unhappy"],
+                "middleValueLabel"    => ["de" => "neutral", "en" => "neutral"],
+                "highestValueLabel"   => ["de" => "sehr glücklich", "en" => "very happy"],
             ], "Sterne-Bewertung", "Von sehr unglücklich bis sehr glücklich")->create();
             $i++;
             $subElementIds[] = EvaluationToolSurveyElement::all()->last()->id;
@@ -245,7 +245,7 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
 
 
         // create steps
-        EvaluationToolSurveyStepFactory::times(1)->withData("Einleitung", $introId, $surveyId)->create();
+        EvaluationToolSurveyStepFactory::times(1)->withData("Einleitung", $introId, $surveyId, null, null, true)->create();
         $introStep = EvaluationToolSeeder::getLatestStep();
         EvaluationToolSurveyStepFactory::times(1)->withData("Binary Frage", $binaryId, $surveyId)->create();
         $binaryStep = EvaluationToolSeeder::getLatestStep();
