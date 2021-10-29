@@ -115,7 +115,6 @@ class EvaluationToolSurveySurveyStepController extends Controller
     /**
      * @param EvaluationToolSurvey $survey
      * @param EvaluationToolSurveyStep $step
-     * @param EvaluationToolSurveyStepStoreRequest $request
      * @return JsonResponse
      */
     public function setStartStep(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $step):
@@ -138,7 +137,7 @@ class EvaluationToolSurveySurveyStepController extends Controller
 
     /**
      * @param EvaluationToolSurvey $survey
-     * @param EvaluationToolSurveyStep $surveyStep
+     * @param EvaluationToolSurveyStep $step
      * @return JsonResponse
      */
     public function removeNextStep(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $step):
