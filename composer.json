@@ -1,6 +1,6 @@
 {
     "name": "twoavy/evaluation-tool",
-    "version": "1.0.261",
+    "version": "1.0.262",
     "description": "A laravel package for creating evaluations and surveys",
     "require": {
         "php": "^7.3|^8.0",
