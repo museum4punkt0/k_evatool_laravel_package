@@ -26,7 +26,7 @@ class EvaluationToolSurveySurveyStepResultStoreRequest extends FormRequest
         $this->elementType = ucfirst($this->surveyStep->survey_element->survey_element_type->key);
 
         if ($this->elementType == "SimpleText") {
-            $this->abortWithMessage("simple text cannot hold results", 409);
+//            $this->abortWithMessage("simple text cannot hold results", 409);
         }
 
         $this->className = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . ucfirst($this->surveyStep->survey_element->survey_element_type->key);
@@ -58,7 +58,7 @@ class EvaluationToolSurveySurveyStepResultStoreRequest extends FormRequest
             "survey_step_id"  => ['required', 'exists:evaluation_tool_survey_steps,id'],
             "session_id"      => ['required'],
             "result_language" => ['required', 'min:2', 'max:2', 'exists:evaluation_tool_survey_languages,code'],
-            "time"        => [new Timecode()]
+            "time"            => [new Timecode()]
         ];
 
         if (class_exists($this->className)) {

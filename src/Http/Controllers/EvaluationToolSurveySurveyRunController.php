@@ -372,11 +372,6 @@ class EvaluationToolSurveySurveyRunController extends Controller
         $statusByUuid->isAnswered = false;
         $statusByUuid->result     = null;
 
-        // always answered if simple text
-        if ($surveyStep->survey_element_type->key == "simpleText") {
-            $statusByUuid->isAnswered = true;
-        }
-
         if ($surveyStep->survey_element_type->key === "video") {
             if ($surveyStep->survey_step_result_by_uuid->count() > 0) {
                 $statusByUuid->result     = $surveyStep->survey_step_result_by_uuid->map(function ($result) {
