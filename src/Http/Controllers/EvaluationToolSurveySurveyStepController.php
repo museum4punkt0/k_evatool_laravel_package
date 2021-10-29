@@ -126,7 +126,7 @@ class EvaluationToolSurveySurveyStepController extends Controller
             return $this->errorResponse("survey id does not match step id", 409);
         }
 
-        if ($currentFirstStep = EvaluationToolSurveyStep::where("survey_id", $step->survey_id)->where("is_first_step")->first()) {
+        if ($currentFirstStep = EvaluationToolSurveyStep::where("survey_id", $step->survey_id)->whereNotNull("is_first_step")->first()) {
             $currentFirstStep->is_first_step = null;
             $currentFirstStep->save();
         }
