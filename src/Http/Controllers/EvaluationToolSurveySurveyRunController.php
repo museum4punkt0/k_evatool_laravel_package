@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use StdClass;
-use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStepResultAssetStoreRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
@@ -204,11 +203,14 @@ class EvaluationToolSurveySurveyRunController extends Controller
             return $this->errorResponse("survey step result not found", 409);
         }*/
 
-        $fileContent                        = $request->audio;
-        $fileContent                        = str_replace('data:audio/wav;base64,', '', $fileContent);
-        $hash                               = substr(md5($fileContent), 0, 6);
-        $filename                           = "recording_" . date('ymd_His') . "_" . $hash . ".wav";
-        $file                               = $this->audioDisk->put($filename, base64_decode($fileContent));
+        $fileContent = $request->audio;
+        $fileContent = str_replace('data:audio/wav;base64,', '', $fileContent);
+        $hash        = substr(md5($fileContent), 0, 6);
+        $filename    = "recording_" . date('ymd_His') . "_" . $hash . ".wav";
+
+        // store file
+        $this->audioDisk->put($filename, base64_decode($fileContent));
+
         $resultAsset                        = new EvaluationToolSurveyStepResultAsset();
         $resultAsset->filename              = $filename;
         $resultAsset->hash                  = hash_file('md5', $this->audioDisk->path($filename));
@@ -369,6 +371,11 @@ class EvaluationToolSurveySurveyRunController extends Controller
         $statusByUuid             = new StdClass;
         $statusByUuid->isAnswered = false;
         $statusByUuid->result     = null;
+
+        // always answered if simple text
+        if ($surveyStep->survey_element_type->key == "simpleText") {
+            $statusByUuid->isAnswered = true;
+        }
 
         if ($surveyStep->survey_element_type->key === "video") {
             if ($surveyStep->survey_step_result_by_uuid->count() > 0) {
