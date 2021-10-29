@@ -114,6 +114,30 @@ class EvaluationToolSurveySurveyStepController extends Controller
 
     /**
      * @param EvaluationToolSurvey $survey
+     * @param EvaluationToolSurveyStep $step
+     * @param EvaluationToolSurveyStepStoreRequest $request
+     * @return JsonResponse
+     */
+    public function setStartStep(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $step):
+    JsonResponse
+    {
+        // check if survey id and step id match
+        if ($step->survey_id !== $survey->id) {
+            return $this->errorResponse("survey id does not match step id", 409);
+        }
+
+        if ($currentFirstStep = EvaluationToolSurveyStep::where("survey_id", $step->survey_id)->where("is_first_step")->first()) {
+            $currentFirstStep->is_first_step = null;
+            $currentFirstStep->save();
+        }
+
+        $step->is_first_step = true;
+        $step->save();
+        return $this->showOne($step);
+    }
+
+    /**
+     * @param EvaluationToolSurvey $survey
      * @param EvaluationToolSurveyStep $surveyStep
      * @return JsonResponse
      */

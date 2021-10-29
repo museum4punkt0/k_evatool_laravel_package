@@ -93,7 +93,7 @@ class EvaluationToolSurveyStepResultCombinedTransformer extends TransformerAbstr
         return $params;
     }
 
-    public function getResultsByUuid($surveyStep)
+    public function getResultsByUuid(EvaluationToolSurveyStep $surveyStep)
     {
         if ($surveyStep->survey_element_type->key === "video") {
             return $surveyStep->survey_step_result_by_uuid ? $surveyStep->survey_step_result_by_uuid->map(function ($result) {
