@@ -16,6 +16,8 @@ use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResultAsset;
+use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeBinary;
+use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeStarRating;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepResultCombinedTransformer;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveySurveyStepResultStoreRequest;
@@ -337,8 +339,8 @@ class EvaluationToolSurveySurveyRunController extends Controller
                 if ($upcomingStep->next_step_id == $surveyStep->id) {
                     if ($upcomingStep->isAnswered && !$hasUnansweredStep) {
                         // Todo check result based next steps
-                        if ($surveyStep->result_based_next_steps) {
-                            $this->getResultBasedNextStep($surveyStep);
+                        if ($upcomingStep->result_based_next_steps) {
+                            $currentStep = $this->getResultBasedNextStep($upcomingStep);
                         } else {
                             $currentStep = $surveyStep;
                         }
@@ -363,7 +365,17 @@ class EvaluationToolSurveySurveyRunController extends Controller
 
     public function getResultBasedNextStep($surveyStep)
     {
-//        echo $surveyStep->survey_element->survey_element_type->key;
+        switch ($surveyStep->survey_element->survey_element_type->key) {
+            case "binary":
+//                EvaluationToolSurveyElementTypeBinary::getResultBasedNextStep($surveyStep);
+                break;
+            case "starRating":
+                $stepId = EvaluationToolSurveyElementTypeStarRating::getResultBasedNextStep($surveyStep);
+                break;
+            default:
+                break;
+        }
+        return EvaluationToolSurveyStep::find($stepId);
     }
 
     public function getResultsByUuid(EvaluationToolSurveyStep $surveyStep): StdClass

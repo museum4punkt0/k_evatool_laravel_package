@@ -42,7 +42,7 @@ class EvaluationToolSurveyStepObserver
      */
     public function updated(EvaluationToolSurveyStep $surveyStep)
     {
-        if ($surveyStep->survey_element->survey_element_type === "video") {
+        if ($surveyStep->survey_element_type->key === "video") {
             $this->setParentStepIds($surveyStep);
         }
     }
@@ -87,6 +87,10 @@ class EvaluationToolSurveyStepObserver
         EvaluationToolSurveyStep::where("parent_step_id", $surveyStep->id)->update(["parent_step_id" => null]);
 
         if (isset($surveyStep->time_based_steps) && is_array($surveyStep->time_based_steps)) {
+            EvaluationToolSurveyStep::where("parent_step_id", $surveyStep->id)->get()->each(function ($step) {
+                $step->parent_step_id = null;
+                $step->save();
+            });
             foreach ($surveyStep->time_based_steps as $timeBasedStep) {
                 if ($step = EvaluationToolSurveyStep::find($timeBasedStep->stepId)) {
                     $step->parent_step_id = $surveyStep->id;

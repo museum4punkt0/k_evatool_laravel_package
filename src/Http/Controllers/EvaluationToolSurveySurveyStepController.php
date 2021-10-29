@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStepStoreRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
@@ -71,6 +72,10 @@ class EvaluationToolSurveySurveyStepController extends Controller
         }
         $step->fill($request->all());
         $step->save();
+
+        $survey->updated_at = Carbon::now();
+        $survey->save();
+
         return $this->showOne($step);
     }
 
