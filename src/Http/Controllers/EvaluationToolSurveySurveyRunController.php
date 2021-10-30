@@ -375,7 +375,16 @@ class EvaluationToolSurveySurveyRunController extends Controller
             default:
                 break;
         }
-        return EvaluationToolSurveyStep::find($stepId);
+
+        if (isset($stepId)) {
+            return EvaluationToolSurveyStep::find($stepId);
+        }
+
+        if ($surveyStep->next_step_id) {
+            return EvaluationToolSurveyStep::find($surveyStep->next_step_id);
+        }
+
+        return null;
     }
 
     public function getResultsByUuid(EvaluationToolSurveyStep $surveyStep): StdClass
