@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use StdClass;
+use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Rules\IsMediaType;
@@ -23,7 +24,7 @@ class EvaluationToolSurveyElementTypeVideo extends EvaluationToolSurveyElementTy
     public function sampleParams(): array
     {
         return [
-            "videoAssetId" => 1
+            "videoAssetId" => EvaluationToolAsset::where("mime", "LIKE", 'video/%')->first()->id,
         ];
     }
 

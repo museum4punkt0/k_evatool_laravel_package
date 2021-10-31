@@ -83,7 +83,7 @@ class EvaluationToolDemoSurveyResultBased extends Seeder
             ->create();
         $surveyId = EvaluationToolSurvey::get()->last()->id;
 
-        EvaluationToolSurveyStepFactory::times(1)->withData("Einfach-Auswahl", $multipleChoiceId, $surveyId)->create();
+        EvaluationToolSurveyStepFactory::times(1)->withData("Einfach-Auswahl", $multipleChoiceId, $surveyId, null, null, true)->create();
         $multipleChoiceStep = EvaluationToolSeeder::getLatestStep();
 
         EvaluationToolSurveyStepFactory::times(1)->withData("Bewertung", $starRatingId, $surveyId)->create();

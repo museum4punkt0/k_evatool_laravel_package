@@ -143,7 +143,7 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
             $subElementIds[] = EvaluationToolSurveyElement::all()->last()->id;
         }
         EvaluationToolSurveyElementFactory::times(1)->video([
-            "videoAssetId" => EvaluationToolAsset::find(1)->id,
+            "videoAssetId" => EvaluationToolAsset::where("mime", "LIKE", 'video/%')->first()->id,
         ], "Syncing Video")->create();
         $videoId = EvaluationToolSurveyElement::all()->last()->id;
 
