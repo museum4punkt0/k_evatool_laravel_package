@@ -17,6 +17,11 @@ class EvaluationToolSurveyStepObserver
             $surveyStep->created_by = request()->user()->id;
             $surveyStep->updated_by = request()->user()->id;
         }
+
+        // make first step if no steps exist within survey
+        if (EvaluationToolSurveyStep::where("survey_id", $surveyStep->survey_id)->get()->count() == 0) {
+            $surveyStep->is_first_step = true;
+        }
     }
 
     /**
