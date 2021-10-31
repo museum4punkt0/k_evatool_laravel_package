@@ -37,16 +37,10 @@ class EvaluationToolSurveyElementTypeVoiceInput extends EvaluationToolSurveyElem
     {
 
     }
+
     public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement): array
     {
-        // $emojis = $surveyElement->params['emojis'];
-        // $meanings = [];
-        // foreach ($emojis as $key => $value) {
-        // array_push($meanings, $value['meaning']);
-        // }
-        $rules = [
-        ];
-        return $rules;
+        return [];
     }
 
     /**
@@ -72,6 +66,11 @@ class EvaluationToolSurveyElementTypeVoiceInput extends EvaluationToolSurveyElem
                 abort(409, "survey element type '" . $surveyElement->survey_element_type->key . "' does not support result based next steps");
             }
         }
+        return true;
+    }
+
+    public static function prepareResultRequest(): bool
+    {
         return true;
     }
 }
