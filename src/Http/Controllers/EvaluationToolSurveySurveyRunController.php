@@ -16,7 +16,6 @@ use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResultAsset;
-use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeBinary;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeStarRating;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepResultCombinedTransformer;
@@ -333,6 +332,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
         $currentStep       = $firstStep;
         $stepOrdering[]    = $firstStep->id;
         $hasUnansweredStep = false;
+        $finished          = false;
 
         foreach ($surveySteps as $surveyStepMain) {
             foreach ($surveySteps as $surveyStep) {
@@ -347,20 +347,30 @@ class EvaluationToolSurveySurveyRunController extends Controller
                     } else {
                         $hasUnansweredStep = true;
                     }
-                    $upcomingStep   = $surveyStep;
+
                     $stepOrdering[] = $surveyStep->id;
+                    $upcomingStep   = $surveyStep;
                     break;
                 }
             }
         }
 
-        return [
-            "currentStep"  => $currentStep->id,
-            "stepOrdering" => $stepOrdering
-            //            "currentStep"  => EvaluationToolHelper::transformModel($currentStep, true, EvaluationToolSurveyStepResultCombinedTransformer::class),
-        ];
+        // check if current step is last step and answered
+        if ($currentStep->isAnswered && $currentStep->id == end($stepOrdering)) {
+            $finished = true;
+        }
 
-//        return null;
+        // if only one step exists (excluding time based steps)
+        if ($surveySteps->count() == 1) {
+            if ($upcomingStep->isAnswered) {
+                $finished = true;
+            }
+        }
+
+        return [
+            "currentStep"  => $finished ? -1 : $currentStep->id,
+            "stepOrdering" => $stepOrdering
+        ];
     }
 
     public function getResultBasedNextStep($surveyStep)
