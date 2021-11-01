@@ -142,6 +142,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
             }
         }
 
+
         $surveyStepResult->survey_step_id     = $request->survey_step_id;
         $surveyStepResult->session_id         = $request->session_id;
         $surveyStepResult->result_value       = $request->result_value;
@@ -152,7 +153,14 @@ class EvaluationToolSurveySurveyRunController extends Controller
 
         $surveyStepResult->save();
 
-        return $this->showOne($surveyStepResult);
+        // store audio asset
+        if ($surveyStep->survey_element_type->key == "voiceInput") {
+            if (isset($request->result_value)) {
+                $this->createAudioAsset($request->result_value["audio"], $surveyStepResult);
+            }
+        }
+
+        return $this->showOne($surveyStepResult->refresh());
     }
 
     /**
@@ -176,6 +184,33 @@ class EvaluationToolSurveySurveyRunController extends Controller
 
 
         return true;
+    }
+
+    public function createAudioAsset($audioData, EvaluationToolSurveyStepResult $result)
+    {
+        $audioData = str_replace('data:audio/wav;base64,', '', $audioData);
+        $hash      = substr(md5($audioData), 0, 6);
+        $filename  = "recording_" . date('ymd_His') . "_" . $hash . ".wav";
+
+        // store file
+        $this->audioDisk->put($filename, base64_decode($audioData));
+
+        $fileHash = hash_file('md5', $this->audioDisk->path($filename));
+
+        if (!$resultAsset = EvaluationToolSurveyStepResultAsset::where("hash", $fileHash)->first()) {
+            $resultAsset                        = new EvaluationToolSurveyStepResultAsset();
+            $resultAsset->filename              = $filename;
+            $resultAsset->hash                  = hash_file('md5', $this->audioDisk->path($filename));
+            $resultAsset->mime                  = mime_content_type($this->audioDisk->path($filename));
+            $resultAsset->size                  = $this->audioDisk->size($filename);
+            $resultAsset->meta                  = EvaluationToolAssetController::getFileMetaData($this->audioDisk->path($filename));
+            $resultAsset->survey_step_result_id = $result->id;
+            $resultAsset->save();
+        }
+
+        $resultValue          = ["resultAssetId" => $resultAsset->id];
+        $result->result_value = $resultValue;
+        $result->save();
     }
 
     /**
