@@ -68,6 +68,9 @@ class EvaluationToolSurveyStepObserver
      */
     public function deleted(EvaluationToolSurveyStep $surveyStep)
     {
+        $surveyStep->is_first_step = null;
+        $surveyStep->save();
+
         $survey = EvaluationToolSurvey::find($surveyStep->survey_id);
         if (isset($survey->admin_layout) && is_array($survey->admin_layout)) {
             $adminLayout = $survey->admin_layout;
