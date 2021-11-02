@@ -58,14 +58,14 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
             "options"       => [
                 [
 
-                    'value'  => 'Newsletter',
+                    'value'  => 'newsletter',
                     'labels' => [
                         "de" => "Newsletter",
                         "en" => "newsletter",
                     ],
                 ],
                 [
-                    'value'  => 'Empfehlung',
+                    'value'  => 'empfehlung',
                     'labels' => [
                         "de" => "Empfehlung",
                         "en" => "recommendation",
@@ -164,63 +164,63 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
             ],
             "options"       => [
                 [
-                    'value'  => 'SimpleText',
+                    'value'  => 'simpleText',
                     'labels' => [
                         "de" => "SimpleText",
                         "en" => "SimpleText",
                     ],
                 ],
                 [
-                    'value'  => 'Binary',
+                    'value'  => 'binary',
                     'labels' => [
                         "de" => "Binary",
                         "en" => "Binary",
                     ],
                 ],
                 [
-                    'value'  => 'MultipleChoice',
+                    'value'  => 'multipleChoice',
                     'labels' => [
                         "de" => "MultipleChoice",
                         "en" => "MultipleChoice",
                     ],
                 ],
                 [
-                    'value'  => 'YayNay',
+                    'value'  => 'yayNay',
                     'labels' => [
                         "de" => "YayNay",
                         "en" => "YayNay",
                     ],
                 ],
                 [
-                    'value'  => 'Video',
+                    'value'  => 'video',
                     'labels' => [
                         "de" => "Video",
                         "en" => "Video",
                     ],
                 ],
                 [
-                    'value'  => 'StarRating',
+                    'value'  => 'starRating',
                     'labels' => [
                         "de" => "StarRating",
                         "en" => "StarRating",
                     ],
                 ],
                 [
-                    'value'  => 'Emoji',
+                    'value'  => 'emoji',
                     'labels' => [
                         "de" => "Emoji",
                         "en" => "Emoji",
                     ],
                 ],
                 [
-                    'value'  => 'TextInput',
+                    'value'  => 'textInput',
                     'labels' => [
                         "de" => "TextInput",
                         "en" => "TextInput",
                     ],
                 ],
                 [
-                    'value'  => 'VoiceInput',
+                    'value'  => 'voiceInput',
                     'labels' => [
                         "de" => "VoiceInput",
                         "en" => "VoiceInput",
