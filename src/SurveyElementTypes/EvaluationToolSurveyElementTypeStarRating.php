@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Rules\SnakeCase;
 
 class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElementTypeBase
@@ -144,5 +145,20 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
             }
         }
         return true;
+    }
+
+    public static function getResultBasedNextStep(EvaluationToolSurveyStep $surveyStep)
+    {
+        if (isset($surveyStep->resultByUuid["rating"])) {
+            $rating = $surveyStep->resultByUuid["rating"];
+            if ($surveyStep->result_based_next_steps && !empty($surveyStep->result_based_next_steps)) {
+                foreach ($surveyStep->result_based_next_steps as $nextStep) {
+                    if ($nextStep->start <= $rating && $nextStep->end >= $rating) {
+                        return $nextStep->stepId;
+                    }
+                }
+            }
+        }
+        return $surveyStep->next_step_id;
     }
 }

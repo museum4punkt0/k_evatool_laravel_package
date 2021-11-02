@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
+use Twoavy\EvaluationTool\Rules\Timecode;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepResultTransformer;
 
@@ -25,7 +26,7 @@ class EvaluationToolSurveySurveyStepResultStoreRequest extends FormRequest
         $this->elementType = ucfirst($this->surveyStep->survey_element->survey_element_type->key);
 
         if ($this->elementType == "SimpleText") {
-            $this->abortWithMessage("simple text cannot hold results", 409);
+//            $this->abortWithMessage("simple text cannot hold results", 409);
         }
 
         $this->className = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . ucfirst($this->surveyStep->survey_element->survey_element_type->key);
@@ -56,7 +57,8 @@ class EvaluationToolSurveySurveyStepResultStoreRequest extends FormRequest
         $rules = [
             "survey_step_id"  => ['required', 'exists:evaluation_tool_survey_steps,id'],
             "session_id"      => ['required'],
-            "result_language" => ['required', 'min:2', 'max:2', 'exists:evaluation_tool_survey_languages,code']
+            "result_language" => ['required', 'min:2', 'max:2', 'exists:evaluation_tool_survey_languages,code'],
+            "time"            => [new Timecode()]
         ];
 
         if (class_exists($this->className)) {

@@ -10,6 +10,7 @@ use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyStepFactory;
 use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Seeders\EvaluationToolSeeder;
 
 class EvaluationToolDemoSurveySimpleVideo extends Seeder
@@ -62,6 +63,7 @@ class EvaluationToolDemoSurveySimpleVideo extends Seeder
             ];
         }
 
-        EvaluationToolSurveyStepFactory::times(1)->withData("Video", $videoId, $surveyId, null, $timebasedSteps)->create();
+        EvaluationToolSurveyStep::where('is_first_step', true)->where('survey_id',$surveyId )->update(['is_first_step'=>null]);
+        EvaluationToolSurveyStepFactory::times(1)->withData("Video", $videoId, $surveyId, null, $timebasedSteps, true)->create();
     }
 }

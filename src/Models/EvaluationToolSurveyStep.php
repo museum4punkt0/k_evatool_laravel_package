@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
+use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyRunController;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepResultCombinedTransformer;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepTransformer;
 
@@ -29,6 +31,7 @@ class EvaluationToolSurveyStep extends Model
         "survey_id",
         "survey_element_id",
         "group",
+        "params",
         "next_step_id",
         "time_based_steps",
         "result_based_next_steps",
@@ -47,6 +50,7 @@ class EvaluationToolSurveyStep extends Model
 
     protected $casts = [
         "time_based_steps"        => "object",
+        "params"                  => "object",
         "result_based_next_steps" => "object",
         "demo"                    => "boolean"
     ];
@@ -68,6 +72,18 @@ class EvaluationToolSurveyStep extends Model
         return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement", "id", "survey_element_id");
     }
 
+    public function survey_element_type(): HasOneThrough
+    {
+        return $this->hasOneThrough(
+            EvaluationToolSurveyElementType::class,
+            EvaluationToolSurveyElement::class,
+            "id",
+            "id",
+            "survey_element_id",
+            "survey_element_type_id"
+        );
+    }
+
     public function survey_step_results(): HasMany
     {
         return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id")
@@ -80,9 +96,10 @@ class EvaluationToolSurveyStep extends Model
             ->where(["demo" => true]);
     }
 
-    public function survey_step_result_by_uuid(): HasOne
+    public function survey_step_result_by_uuid(): HasMany
     {
-        return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id")->where(['session_id' => request()->uuid]);
+        return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult", "survey_step_id", "id")->where(['session_id' => request()
+            ->uuid]);
     }
 
     public function previous_steps(): HasMany
@@ -104,7 +121,17 @@ class EvaluationToolSurveyStep extends Model
     {
         if (isset($this->time_based_steps) && is_array($this->time_based_steps)) {
             $steps = collect($this->time_based_steps)->map(function ($step) {
-                $step->step = EvaluationToolHelper::transformModel(EvaluationToolSurveyStep::find($step->stepId), true, EvaluationToolSurveyStepResultCombinedTransformer::class);
+
+                $runController = new EvaluationToolSurveySurveyRunController();
+
+                $surveyStep               = EvaluationToolSurveyStep::find($step->stepId);
+                $resultsByUuid            = $runController->getResultsByUuid($surveyStep);
+                $surveyStep->resultByUuid = $resultsByUuid->result;
+                $surveyStep->isAnswered   = $resultsByUuid->isAnswered;
+
+
+                $step->step = EvaluationToolHelper::transformModel($surveyStep, true,
+                    EvaluationToolSurveyStepResultCombinedTransformer::class);
                 return $step;
             });
             return $steps;

@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStepStoreRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
@@ -71,6 +72,10 @@ class EvaluationToolSurveySurveyStepController extends Controller
         }
         $step->fill($request->all());
         $step->save();
+
+        $survey->updated_at = Carbon::now();
+        $survey->save();
+
         return $this->showOne($step);
     }
 
@@ -114,7 +119,30 @@ class EvaluationToolSurveySurveyStepController extends Controller
 
     /**
      * @param EvaluationToolSurvey $survey
-     * @param EvaluationToolSurveyStep $surveyStep
+     * @param EvaluationToolSurveyStep $step
+     * @return JsonResponse
+     */
+    public function setStartStep(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $step):
+    JsonResponse
+    {
+        // check if survey id and step id match
+        if ($step->survey_id !== $survey->id) {
+            return $this->errorResponse("survey id does not match step id", 409);
+        }
+
+        if ($currentFirstStep = EvaluationToolSurveyStep::where("survey_id", $step->survey_id)->whereNotNull("is_first_step")->first()) {
+            $currentFirstStep->is_first_step = null;
+            $currentFirstStep->save();
+        }
+
+        $step->is_first_step = true;
+        $step->save();
+        return $this->showOne($step);
+    }
+
+    /**
+     * @param EvaluationToolSurvey $survey
+     * @param EvaluationToolSurveyStep $step
      * @return JsonResponse
      */
     public function removeNextStep(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $step):

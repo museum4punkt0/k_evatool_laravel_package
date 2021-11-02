@@ -17,6 +17,11 @@ class EvaluationToolSurveyStepObserver
             $surveyStep->created_by = request()->user()->id;
             $surveyStep->updated_by = request()->user()->id;
         }
+
+        // make first step if no steps exist within survey
+        if (EvaluationToolSurveyStep::where("survey_id", $surveyStep->survey_id)->get()->count() == 0) {
+            $surveyStep->is_first_step = true;
+        }
     }
 
     /**
@@ -42,7 +47,7 @@ class EvaluationToolSurveyStepObserver
      */
     public function updated(EvaluationToolSurveyStep $surveyStep)
     {
-        if ($surveyStep->survey_element->survey_element_type === "video") {
+        if ($surveyStep->survey_element_type->key === "video") {
             $this->setParentStepIds($surveyStep);
         }
     }
@@ -63,6 +68,9 @@ class EvaluationToolSurveyStepObserver
      */
     public function deleted(EvaluationToolSurveyStep $surveyStep)
     {
+        $surveyStep->is_first_step = null;
+        $surveyStep->save();
+
         $survey = EvaluationToolSurvey::find($surveyStep->survey_id);
         if (isset($survey->admin_layout) && is_array($survey->admin_layout)) {
             $adminLayout = $survey->admin_layout;
@@ -87,6 +95,10 @@ class EvaluationToolSurveyStepObserver
         EvaluationToolSurveyStep::where("parent_step_id", $surveyStep->id)->update(["parent_step_id" => null]);
 
         if (isset($surveyStep->time_based_steps) && is_array($surveyStep->time_based_steps)) {
+            EvaluationToolSurveyStep::where("parent_step_id", $surveyStep->id)->get()->each(function ($step) {
+                $step->parent_step_id = null;
+                $step->save();
+            });
             foreach ($surveyStep->time_based_steps as $timeBasedStep) {
                 if ($step = EvaluationToolSurveyStep::find($timeBasedStep->stepId)) {
                     $step->parent_step_id = $surveyStep->id;

@@ -8,14 +8,14 @@ use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 class EvaluationToolSurveyTransformer extends TransformerAbstract
 {
     /**
-     * Category transformer.
+     * Survey transformer.
      *
      * @param EvaluationToolSurvey $survey
      * @return array
      */
     public function transform(EvaluationToolSurvey $survey): array
     {
-        return [
+        $transformed = [
             "id"                 => (int)$survey->id,
             "name"               => (string)$survey->name,
             "slug"               => (string)$survey->slug,
@@ -27,6 +27,7 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
             "languages"          => $survey->languages->pluck("code"),
             "surveyStepsCount"   => $survey->survey_steps_count,
             "surveyResultsCount" => $survey->survey_results_count,
+            "statusByUuid"       => $survey->status ?: null,
             "createdAt"          => $survey->created_at,
             "createdBy"          => $survey->created_by_user ? $survey->created_by_user->name : null,
             "updatedAt"          => $survey->updated_at,
@@ -44,6 +45,12 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
                 ],
             ]
         ];
+
+        if (request()->has("is_run")) {
+            unset($transformed["adminLayout"]);
+        }
+
+        return $transformed;
     }
 
     public static function originalAttribute($index): ?string

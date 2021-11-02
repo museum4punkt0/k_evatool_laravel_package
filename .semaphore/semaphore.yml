@@ -22,4 +22,4 @@ promotions:
   - name: Staging
     pipeline_file: staging.yml
     auto_promote:
-      when: branch = 'develop' AND result = 'passed'
+      when: branch = 'master' AND result = 'passed'
