@@ -4,12 +4,8 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 
 use Faker\Factory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use StdClass;
-use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
-use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
-use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Rules\SnakeCase;
 
 class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurveyElementTypeBase
