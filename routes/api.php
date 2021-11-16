@@ -12,6 +12,7 @@ use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyStepSurveyS
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyResultAssetController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyRunController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyStepController;
+use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySeedController;
 
 Route::prefix('api/evaluation-tool')
     ->middleware(['api'])
@@ -35,6 +36,7 @@ Route::prefix('api/evaluation-tool')
         Route::apiResource('surveys.results', EvaluationToolSurveySurveyResultController::class);
         Route::apiResource('surveys.steps.results', EvaluationToolSurveySurveyStepSurveyStepResultController::class);
         Route::apiResource('surveys-results-assets', EvaluationToolSurveyResultAssetController::class);
+        Route::apiResource('surveys/{survey}/seed', EvaluationToolSurveySeedController::class);
     });
 
 Route::any('/tus/{any?}', function () {
