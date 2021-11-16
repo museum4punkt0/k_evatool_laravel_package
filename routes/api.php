@@ -36,7 +36,7 @@ Route::prefix('api/evaluation-tool')
         Route::apiResource('surveys.results', EvaluationToolSurveySurveyResultController::class);
         Route::apiResource('surveys.steps.results', EvaluationToolSurveySurveyStepSurveyStepResultController::class);
         Route::apiResource('surveys-results-assets', EvaluationToolSurveyResultAssetController::class);
-        Route::apiResource('surveys/{survey}/seed', EvaluationToolSurveySeedController::class);
+        Route::get('surveys/{survey}/seed', [EvaluationToolSurveySeedController::class, "seedResults"]);
     });
 
 Route::any('/tus/{any?}', function () {
