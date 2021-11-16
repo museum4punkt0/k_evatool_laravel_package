@@ -137,6 +137,12 @@ class EvaluationToolAssetController extends Controller
 
         if (isset($metaData["video"])) {
             $metaDataPrepared["video"] = $metaData["video"];
+            if (isset($metaData["playtime_seconds"])) {
+                $metaDataPrepared["playtime_seconds"] = $metaData["playtime_seconds"];
+            }
+            if (isset($metaData["playtime_string"])) {
+                $metaDataPrepared["playtime_string"] = $metaData["playtime_string"];
+            }
         }
 
         if (isset($metaData["audio"])) {
