@@ -81,6 +81,7 @@ class EvaluationToolSurveySeedController extends Controller
             }
             return false;
         }
+        return false;
     }
 
     public function getStepsWithResults($surveySteps)
