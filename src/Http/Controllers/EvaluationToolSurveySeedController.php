@@ -19,45 +19,45 @@ class EvaluationToolSurveySeedController extends Controller
     {
         $this->middleware("auth:api");
         $this->timestamp = Carbon::now()->subMinutes(rand(5, 60 * 24 * 30 * 6));
-        $this->uuid = Str::uuid();
+        $this->uuid      = Str::uuid();
     }
 
     /**
      *  Seed a single survey
      *
      * @param EvaluationToolSurvey $survey
-     * @return JsonResponse
      */
     public function seedResults(EvaluationToolSurvey $survey)
     {
-        $languageCode = $survey->languages->random(1)->first()->code;
+        $languageId = $survey->languages->random(1)->first()->id;
 
         $surveySteps = $survey->survey_steps->filter(function ($value) {
             return is_null($value->parent_step_id);
         });
 
         $surveyRunController = new EvaluationToolSurveySurveyRunController();
-        $position = $surveyRunController->getPositionWithinSurvey($surveySteps);
-
-        $counter = 0;
+        $position            = $surveyRunController->getPositionWithinSurvey($surveySteps);
 
         while ($position["currentStep"] != -1) {
-            $success = $this->seedSurveyStepResult(EvaluationToolSurveyStep::find($position["currentStep"]), $languageCode);
+            echo "current step: " . $position["currentStep"] . PHP_EOL;
+            $success = $this->seedSurveyStepResult(EvaluationToolSurveyStep::find($position["currentStep"]), $languageId);
             if (!$success) {
                 echo "seed method not found";
                 break;
             }
             $position = $surveyRunController->getPositionWithinSurvey($surveySteps);
-            print_r($counter++);
         }
     }
-    public function seedSurveyStepResult(EvaluationToolSurveyStep $surveyStep, $languageCode): bool
+
+    public function seedSurveyStepResult(EvaluationToolSurveyStep $surveyStep, $languageId): bool
     {
         $elementType = $surveyStep->survey_element->survey_element_type->key;
+
         $className = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . ucfirst($elementType);
         if (class_exists($className)) {
             if (method_exists($className, "seedResult")) {
-                $className::seedResult($surveyStep->survey_element(), $this->uuid, $languageCode);
+                $this->timestamp->addSeconds(rand(5, 60));
+                $className::seedResult($surveyStep, $this->uuid, $languageId, $this->timestamp);
                 return true;
             }
             return false;
