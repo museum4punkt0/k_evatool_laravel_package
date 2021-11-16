@@ -10,6 +10,7 @@ use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyStepFactory;
 use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Seeders\EvaluationToolSeeder;
 
@@ -32,9 +33,9 @@ class EvaluationToolDemoSurveySimpleVideo extends Seeder
                 "numberOfStars"       => 5,
                 "meaningLowestValue"  => "very_unhappy",
                 "meaningHighestValue" => "very_happy",
-                "lowestValueLabel" => ["de" => "sehr unglücklich", "en" => "very unhappy"],
-                "middleValueLabel" => ["de" => "neutral", "en" => "neutral"],
-                "highestValueLabel" => ["de" => "sehr glücklich", "en" => "very happy"],
+                "lowestValueLabel"    => ["de" => "sehr unglücklich", "en" => "very unhappy"],
+                "middleValueLabel"    => ["de" => "neutral", "en" => "neutral"],
+                "highestValueLabel"   => ["de" => "sehr glücklich", "en" => "very happy"],
             ], "Sterne-Bewertung", "Von sehr unglücklich bis sehr glücklich")->create();
             $i++;
             $subElementIds[] = EvaluationToolSurveyElement::all()->last()->id;
@@ -46,7 +47,13 @@ class EvaluationToolDemoSurveySimpleVideo extends Seeder
         $videoId = EvaluationToolSurveyElement::all()->last()->id;
 
         EvaluationToolSurveyFactory::times(1)->withName("Einfaches Video", "Video mit zeitbasierten Unterschritten")->create();
-        $surveyId = EvaluationToolSurvey::get()->last()->id;
+
+        // set languages
+        $survey = EvaluationToolSurvey::get()->last();
+        $survey->languages()->sync(EvaluationToolSurveyLanguage::all()->random(rand(1, EvaluationToolSurveyLanguage::all()->count())));
+
+        // set survey id
+        $surveyId = $survey->id;
 
         $timebasedSteps = [];
         foreach ($subElementIds as $s => $subElementId) {
@@ -63,7 +70,7 @@ class EvaluationToolDemoSurveySimpleVideo extends Seeder
             ];
         }
 
-        EvaluationToolSurveyStep::where('is_first_step', true)->where('survey_id',$surveyId )->update(['is_first_step'=>null]);
+        EvaluationToolSurveyStep::where('is_first_step', true)->where('survey_id', $surveyId)->update(['is_first_step' => null]);
         EvaluationToolSurveyStepFactory::times(1)->withData("Video", $videoId, $surveyId, null, $timebasedSteps, true)->create();
     }
 }

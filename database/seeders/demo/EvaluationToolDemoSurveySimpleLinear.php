@@ -9,6 +9,7 @@ use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyFactory;
 use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyStepFactory;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Seeders\EvaluationToolSeeder;
 
@@ -78,7 +79,13 @@ class EvaluationToolDemoSurveySimpleLinear extends Seeder
         $starRatingId = EvaluationToolSurveyElement::all()->last()->id;
 
         EvaluationToolSurveyFactory::times(1)->withName("Einfache Umfrage", "Lineare Abfolge, ohne konditionale Elemente")->create();
-        $surveyId = EvaluationToolSurvey::get()->last()->id;
+
+        // set languages
+        $survey = EvaluationToolSurvey::get()->last();
+        $survey->languages()->sync(EvaluationToolSurveyLanguage::all()->random(rand(1, EvaluationToolSurveyLanguage::all()->count())));
+
+        // set survey id
+        $surveyId = $survey->id;
 
         EvaluationToolSurveyStepFactory::times(1)->withData("Einleitung", $introId, $surveyId, null, null, true)->create();
         $introStep = EvaluationToolSeeder::getLatestStep();

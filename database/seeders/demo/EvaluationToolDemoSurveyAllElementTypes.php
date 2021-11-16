@@ -10,6 +10,7 @@ use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyStepFactory;
 use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Seeders\EvaluationToolSeeder;
 
 class EvaluationToolDemoSurveyAllElementTypes extends Seeder
@@ -24,7 +25,13 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
         // create survey
         EvaluationToolSurveyFactory::times(1)->withName("Umfrage mit allen Elementtypen", "Umfrage mit allen Elementtypen in verschiedenen Konfigurationen")
             ->create();
-        $surveyId = EvaluationToolSurvey::all()->last()->id;
+
+        // set languages
+        $survey   = EvaluationToolSurvey::get()->last();
+        $survey->languages()->sync(EvaluationToolSurveyLanguage::all()->random(rand(1, EvaluationToolSurveyLanguage::all()->count())));
+
+        // set survey id
+        $surveyId = $survey->id;
 
 
         // create elements

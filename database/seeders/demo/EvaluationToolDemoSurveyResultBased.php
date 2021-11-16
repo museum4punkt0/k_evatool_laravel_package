@@ -10,6 +10,7 @@ use Twoavy\EvaluationTool\Factories\EvaluationToolSurveyStepFactory;
 use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Seeders\EvaluationToolSeeder;
 
 class EvaluationToolDemoSurveyResultBased extends Seeder
@@ -81,7 +82,13 @@ class EvaluationToolDemoSurveyResultBased extends Seeder
 
         EvaluationToolSurveyFactory::times(1)->withName("Umfrage mit ergebnisbasierten Folgeschritten", "Komplexere Anordnung mit Weichenstellungen.")
             ->create();
-        $surveyId = EvaluationToolSurvey::get()->last()->id;
+
+        // set languages
+        $survey   = EvaluationToolSurvey::get()->last();
+        $survey->languages()->sync(EvaluationToolSurveyLanguage::all()->random(rand(1, EvaluationToolSurveyLanguage::all()->count())));
+
+        // set survey id
+        $surveyId = $survey->id;
 
         EvaluationToolSurveyStepFactory::times(1)->withData("Einfach-Auswahl", $multipleChoiceId, $surveyId, null, null, true)->create();
         $multipleChoiceStep = EvaluationToolSeeder::getLatestStep();
