@@ -72,7 +72,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
         foreach ($surveySteps as $surveyStep) {
             $surveyStep->sampleResultPayload = $this->getSampleResultPayload($surveyStep);
 
-            $resultsByUuid            = $this->getResultsByUuid($surveyStep);
+            $resultsByUuid            = $this->getResultsByUuid($surveyStep, $uuid);
             $surveyStep->resultByUuid = $resultsByUuid->result;
             $surveyStep->isAnswered   = $resultsByUuid->isAnswered;
         }
@@ -141,7 +141,6 @@ class EvaluationToolSurveySurveyRunController extends Controller
                 $surveyStepResult->changed_answer++;
             }
         }
-
 
         $surveyStepResult->survey_step_id     = $request->survey_step_id;
         $surveyStepResult->session_id         = $request->session_id;
@@ -432,15 +431,15 @@ class EvaluationToolSurveySurveyRunController extends Controller
         return null;
     }
 
-    public function getResultsByUuid(EvaluationToolSurveyStep $surveyStep): StdClass
+    public function getResultsByUuid(EvaluationToolSurveyStep $surveyStep, $uuid): StdClass
     {
         $statusByUuid             = new StdClass;
         $statusByUuid->isAnswered = false;
         $statusByUuid->result     = null;
 
         if ($surveyStep->survey_element_type->key === "video") {
-            if ($surveyStep->survey_step_result_by_uuid->count() > 0) {
-                $statusByUuid->result     = $surveyStep->survey_step_result_by_uuid->map(function ($result) {
+            if ($surveyStep->survey_step_result_by_uuid($uuid)->count() > 0) {
+                $statusByUuid->result     = $surveyStep->survey_step_result_by_uuid($uuid)->map(function ($result) {
                     return [
                         "timecode"    => $result->time,
                         "resultValue" => $result->result_value
@@ -450,8 +449,8 @@ class EvaluationToolSurveySurveyRunController extends Controller
             }
 
         } else {
-            if ($surveyStep->survey_step_result_by_uuid->count() > 0) {
-                $statusByUuid->result     = $surveyStep->survey_step_result_by_uuid->pluck("result_value")->first();
+            if ($surveyStep->survey_step_result_by_uuid($uuid)->count() > 0) {
+                $statusByUuid->result     = $surveyStep->survey_step_result_by_uuid($uuid)->pluck("result_value")->first();
                 $statusByUuid->isAnswered = true;
             }
         }

@@ -3,10 +3,9 @@
 namespace Twoavy\EvaluationTool\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyRunController;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
@@ -20,32 +19,48 @@ class EvaluationToolSurveySeedController extends Controller
         $this->middleware("auth:api");
         $this->timestamp = Carbon::now()->subMinutes(rand(5, 60 * 24 * 30 * 6));
         $this->uuid      = Str::uuid();
+
+        $this->surveyRunController = new EvaluationToolSurveySurveyRunController();
     }
 
     /**
      *  Seed a single survey
      *
      * @param EvaluationToolSurvey $survey
+     * @param int $count
      */
-    public function seedResults(EvaluationToolSurvey $survey)
+    public function seedResults(EvaluationToolSurvey $survey, int $count = 500)
     {
-        $languageId = $survey->languages->random(1)->first()->id;
+        $seedCount = 0;
 
-        $surveySteps = $survey->survey_steps->filter(function ($value) {
-            return is_null($value->parent_step_id);
-        });
+        if (request()->has("count") && is_int(request()->count)) {
+            $seedCount = request()->count;
+        }
 
-        $surveyRunController = new EvaluationToolSurveySurveyRunController();
-        $position            = $surveyRunController->getPositionWithinSurvey($surveySteps);
+        while ($seedCount < $count) {
 
-        while ($position["currentStep"] != -1) {
-            echo "current step: " . $position["currentStep"] . PHP_EOL;
-            $success = $this->seedSurveyStepResult(EvaluationToolSurveyStep::find($position["currentStep"]), $languageId);
-            if (!$success) {
-                echo "seed method not found";
-                break;
+            $this->uuid = Str::uuid();
+            $languageId = $survey->languages->random(1)->first()->id;
+
+            $surveySteps = $survey->survey_steps->filter(function ($value) {
+                return is_null($value->parent_step_id);
+            });
+
+            $surveySteps = $this->getStepsWithResults($surveySteps);
+
+            $position = $this->surveyRunController->getPositionWithinSurvey($surveySteps);
+
+            while ($position["currentStep"] != -1) {
+                echo "current step: " . $position["currentStep"] . PHP_EOL;
+                $success = $this->seedSurveyStepResult(EvaluationToolSurveyStep::find($position["currentStep"]), $languageId);
+                if (!$success) {
+                    echo "seed method not found";
+                    break;
+                }
+                $surveySteps = $this->getStepsWithResults($surveySteps);
+                $position    = $this->surveyRunController->getPositionWithinSurvey($surveySteps);
             }
-            $position = $surveyRunController->getPositionWithinSurvey($surveySteps);
+            $seedCount++;
         }
     }
 
@@ -62,5 +77,15 @@ class EvaluationToolSurveySeedController extends Controller
             }
             return false;
         }
+    }
+
+    public function getStepsWithResults($surveySteps)
+    {
+        foreach ($surveySteps as $surveyStep) {
+            $resultsByUuid            = $this->surveyRunController->getResultsByUuid($surveyStep, $this->uuid);
+            $surveyStep->resultByUuid = $resultsByUuid->result;
+            $surveyStep->isAnswered   = $resultsByUuid->isAnswered;
+        }
+        return $surveySteps;
     }
 }

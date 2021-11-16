@@ -13,7 +13,7 @@ class SeedSurveyResultsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'evaluation:seed_survey_results {survey_id}';
+    protected $signature = 'evaluation:seed_survey_results {survey_id} {count}';
 
     /**
      * The console command description.
@@ -40,12 +40,13 @@ class SeedSurveyResultsCommand extends Command
     public function handle(): int
     {
         $surveyId = $this->argument('survey_id');
-        if (!$survey = EvaluationToolSurvey::find($surveyId)){
+        $count    = $this->argument("count");
+        if (!$survey = EvaluationToolSurvey::find($surveyId)) {
             $this->info("survey not found");
             return -1;
         }
         $controller = new EvaluationToolSurveySeedController();
-        $controller->seedResults(($survey));
+        $controller->seedResults($survey, $count);
 
         $this->info("Evaluation tool seed survey results successful");
         return 0;
