@@ -8,6 +8,7 @@ use TusPhp\Tus\Server as TusServer;
 use Illuminate\Support\ServiceProvider;
 use Twoavy\EvaluationTool\Console\Commands\TestCommand;
 use Twoavy\EvaluationTool\Console\Commands\TypesCommand;
+use Twoavy\EvaluationTool\Console\Commands\SeedSurveyResultsCommand;
 use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
@@ -98,7 +99,8 @@ class EvaluationToolServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 TestCommand::class,
-                TypesCommand::class
+                TypesCommand::class,
+                SeedSurveyResultsCommand::class
             ]);
 
             if (!class_exists('CreateEvaluationToolSurveysTable')) {
