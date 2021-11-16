@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 
 trait EvaluationToolResponse
 {
-    protected function successResponse($data, $code, $systemCode = false): JsonResponse
+    protected function successResponse($data, $code = 200, $systemCode = false): JsonResponse
     {
         if ($systemCode) {
             $data["code"] = $systemCode;

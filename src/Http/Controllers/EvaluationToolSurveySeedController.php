@@ -42,6 +42,8 @@ class EvaluationToolSurveySeedController extends Controller
             $this->uuid = Str::uuid();
             $languageId = $survey->languages->random(1)->first()->id;
 
+            $this->timestamp = Carbon::now()->subMinutes(rand(5, 60 * 24 * 30 * 6));
+
             $surveySteps = $survey->survey_steps->filter(function ($value) {
                 return is_null($value->parent_step_id);
             });
@@ -79,6 +81,7 @@ class EvaluationToolSurveySeedController extends Controller
             }
             return false;
         }
+        return false;
     }
 
     public function getStepsWithResults($surveySteps)
