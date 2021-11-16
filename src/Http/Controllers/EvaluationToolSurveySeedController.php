@@ -51,10 +51,12 @@ class EvaluationToolSurveySeedController extends Controller
             $position = $this->surveyRunController->getPositionWithinSurvey($surveySteps);
 
             while ($position["currentStep"] != -1) {
-                echo "current step: " . $position["currentStep"] . PHP_EOL;
-                $success = $this->seedSurveyStepResult(EvaluationToolSurveyStep::find($position["currentStep"]), $languageId);
+                $step = EvaluationToolSurveyStep::find($position["currentStep"]);
+                echo "current step: " . $position["currentStep"] . " - " . $step->survey_element->survey_element_type->key . PHP_EOL;
+
+                $success = $this->seedSurveyStepResult($step, $languageId);
                 if (!$success) {
-                    echo "seed method not found";
+                    echo "seed method not found" . PHP_EOL . PHP_EOL;
                     break;
                 }
                 $surveySteps = $this->getStepsWithResults($surveySteps);
