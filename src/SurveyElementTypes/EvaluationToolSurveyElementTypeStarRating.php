@@ -172,9 +172,10 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
         $surveyResult->result_language_id = $languageId;
         $surveyResult->answered_at        = $timestamp;
         $surveyResult->params             = $surveyStep->survey_element->params;
+        $numberOfStars                    = $surveyResult->params['numberOfStars'];
 
         $resultValue                = new StdClass;
-        $resultValue->rating        = rand(1, 5);
+        $resultValue->rating        = rand(1, $numberOfStars);
         $surveyResult->result_value = $resultValue;
 
         $surveyResult->save();

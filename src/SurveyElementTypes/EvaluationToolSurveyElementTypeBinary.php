@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Rules\SnakeCase;
 
 class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementTypeBase
@@ -92,5 +93,23 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
     public static function validateResultBasedNextSteps(Request $request, EvaluationToolSurveyElement $surveyElement): bool
     {
         return true;
+    }
+
+    public static function seedResult($surveyStep, $uuid, $languageId, $timestamp)
+    {
+        $surveyResult                     = new EvaluationToolSurveyStepResult();
+        $surveyResult->session_id         = $uuid;
+        $surveyResult->demo               = true;
+        $surveyResult->survey_step_id     = $surveyStep->id;
+        $surveyResult->result_language_id = $languageId;
+        $surveyResult->answered_at        = $timestamp;
+        $surveyResult->params             = $surveyStep->survey_element->params;
+        $binaryValues                     = array($surveyResult->params['trueValue'], $surveyResult->params['falseValue']);
+
+        $resultValue                = new StdClass;
+        $resultValue->value         = $binaryValues[array_rand($binaryValues, 1)];
+        $surveyResult->result_value = $resultValue;
+
+        $surveyResult->save();
     }
 }
