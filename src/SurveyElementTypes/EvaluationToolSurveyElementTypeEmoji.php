@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Rules\Emoji;
 use Twoavy\EvaluationTool\Rules\SnakeCase;
 
@@ -118,5 +119,23 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
     public static function validateResultBasedNextSteps(Request $request, EvaluationToolSurveyElement $surveyElement): bool
     {
         return true;
+    }
+
+    public static function seedResult($surveyStep, $uuid, $languageId, $timestamp)
+    {
+        $surveyResult                     = new EvaluationToolSurveyStepResult();
+        $surveyResult->session_id         = $uuid;
+        $surveyResult->demo               = true;
+        $surveyResult->survey_step_id     = $surveyStep->id;
+        $surveyResult->result_language_id = $languageId;
+        $surveyResult->answered_at        = $timestamp;
+        $surveyResult->params             = $surveyStep->survey_element->params;
+        $emojisArray                      = collect($surveyResult->params['emojis'])->random();
+
+        $resultValue                = new StdClass;
+        $resultValue->meaning       = $emojisArray['meaning'];
+        $surveyResult->result_value = $resultValue;
+
+        $surveyResult->save();
     }
 }

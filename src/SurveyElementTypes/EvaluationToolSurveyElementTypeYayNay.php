@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Rules\DuplicatesInArray;
 use Twoavy\EvaluationTool\Rules\IsMediaType;
 use Twoavy\EvaluationTool\Rules\SnakeCase;
@@ -131,5 +132,31 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
     public static function validateResultBasedNextSteps(Request $request, EvaluationToolSurveyElement $surveyElement): bool
     {
         return true;
+    }
+
+    public static function seedResult($surveyStep, $uuid, $languageId, $timestamp)
+    {
+        $surveyResult                     = new EvaluationToolSurveyStepResult();
+        $surveyResult->session_id         = $uuid;
+        $surveyResult->demo               = true;
+        $surveyResult->survey_step_id     = $surveyStep->id;
+        $surveyResult->result_language_id = $languageId;
+        $surveyResult->answered_at        = $timestamp;
+        $surveyResult->params             = $surveyStep->survey_element->params;
+        $imagesArray                      = collect($surveyResult->params['assetIds']);
+        $binaryValues                     = array($surveyResult->params['trueValue'], $surveyResult->params['falseValue']);
+
+        $randomArray = array();
+        foreach ($imagesArray as $id) {
+            $assetResult          = array();
+            $assetResult['asset'] = $id;
+            $assetResult['value'] = $binaryValues[array_rand($binaryValues, 1)];
+            array_push($randomArray, $assetResult);
+        }
+        $resultValue                = new StdClass;
+        $resultValue->images        = $randomArray;
+        $surveyResult->result_value = $resultValue;
+
+        $surveyResult->save();
     }
 }
