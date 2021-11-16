@@ -6,6 +6,7 @@ use Faker\Factory;
 use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Rules\SnakeCase;
 
 class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurveyElementTypeBase
@@ -124,7 +125,7 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
             ],
             'languageKeys.*'          => ['required', 'exists:evaluation_tool_survey_languages,code'],
             'params.minSelectable'    => ['integer', 'min:1', 'max:' . $maxCount],
-//            'params.maxSelectable'    => ['integer', 'between:1,params.minSelectable', 'max:' . $maxCount],
+            //            'params.maxSelectable'    => ['integer', 'between:1,params.minSelectable', 'max:' . $maxCount],
         ];
     }
 
@@ -136,5 +137,31 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
     public static function validateResultBasedNextSteps(Request $request, EvaluationToolSurveyElement $surveyElement): bool
     {
         return true;
+    }
+
+    public static function seedResult($surveyStep, $uuid, $languageId, $timestamp)
+    {
+        $surveyResult                     = new EvaluationToolSurveyStepResult();
+        $surveyResult->session_id         = $uuid;
+        $surveyResult->demo               = true;
+        $surveyResult->survey_step_id     = $surveyStep->id;
+        $surveyResult->result_language_id = $languageId;
+        $surveyResult->answered_at        = $timestamp;
+        $surveyResult->params             = $surveyStep->survey_element->params;
+
+        $resultValue = new StdClass;
+
+        $maxSelectable = $surveyResult->params['maxSelectable'];
+        $minSelectable = $surveyResult->params['minSelectable'];
+        $optionsArray  = collect($surveyResult->params['options'])->random(rand($minSelectable, $maxSelectable));
+        $randomArray   = array();
+
+        foreach ($optionsArray as $value) {
+            array_push($randomArray, $value['value']);
+        }
+        $resultValue->selected      = $randomArray;
+        $surveyResult->result_value = $resultValue;
+
+        $surveyResult->save();
     }
 }
