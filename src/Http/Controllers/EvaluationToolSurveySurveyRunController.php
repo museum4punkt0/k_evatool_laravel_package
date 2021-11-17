@@ -438,8 +438,8 @@ class EvaluationToolSurveySurveyRunController extends Controller
         $statusByUuid->result     = null;
 
         if ($surveyStep->survey_element_type->key === "video") {
-            if ($surveyStep->survey_step_result_by_uuid($uuid)->count() > 0) {
-                $statusByUuid->result     = $surveyStep->survey_step_result_by_uuid($uuid)->map(function ($result) {
+            if ($surveyStep->survey_step_result_by_uuid($uuid)->get()->count() > 0) {
+                $statusByUuid->result     = $surveyStep->survey_step_result_by_uuid($uuid)->get()->map(function ($result) {
                     return [
                         "timecode"    => $result->time,
                         "resultValue" => $result->result_value
@@ -447,10 +447,9 @@ class EvaluationToolSurveySurveyRunController extends Controller
                 });
                 $statusByUuid->isAnswered = true;
             }
-
         } else {
-            if ($surveyStep->survey_step_result_by_uuid($uuid)->count() > 0) {
-                $statusByUuid->result     = $surveyStep->survey_step_result_by_uuid($uuid)->pluck("result_value")->first();
+            if ($surveyStep->survey_step_result_by_uuid($uuid)->get()->count() > 0) {
+                $statusByUuid->result     = $surveyStep->survey_step_result_by_uuid($uuid)->get()->pluck("result_value")->first();
                 $statusByUuid->isAnswered = true;
             }
         }
