@@ -8,6 +8,7 @@ use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Rules\IsMediaType;
 
 class EvaluationToolSurveyElementTypeVideo extends EvaluationToolSurveyElementTypeBase
@@ -88,4 +89,35 @@ class EvaluationToolSurveyElementTypeVideo extends EvaluationToolSurveyElementTy
     {
         return true;
     }
+
+    public static function seedResult($surveyStep, $uuid, $languageId, $timestamp)
+    {
+        $videoQuestionsCounter = rand(1, 5);
+        $asset                 = EvaluationToolAsset::find($surveyStep->survey_element->params->videoAssetId);
+
+//        var_dump($asset->meta->playtime_seconds);
+//        var_dump($videoQuestionsCounter);
+
+        $timeOffset = $asset->meta->playtime_seconds / $videoQuestionsCounter;
+
+        for ($i = 1; $i <= $videoQuestionsCounter; $i++) {
+
+            $surveyResult                     = new EvaluationToolSurveyStepResult();
+            $surveyResult->session_id         = $uuid;
+            $surveyResult->demo               = true;
+            $surveyResult->survey_step_id     = $surveyStep->id;
+            $surveyResult->result_language_id = $languageId;
+            $surveyResult->answered_at        = $timestamp;
+            $surveyResult->params             = $surveyStep->survey_element->params;
+            $surveyResult->time           = "00:00:" . intval($timeOffset * $i) . ":00";
+
+            $videoComment = $i.' This is a great comment I have for this video.';
+
+            $resultValue                = new StdClass;
+            $resultValue->text          = $videoComment;
+            $surveyResult->result_value = $resultValue;
+            $surveyResult->save();
+        }
+    }
+
 }

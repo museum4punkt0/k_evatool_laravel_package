@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 
 class EvaluationToolSurveyElementTypeVoiceInput extends EvaluationToolSurveyElementTypeBase
 {
@@ -72,5 +73,24 @@ class EvaluationToolSurveyElementTypeVoiceInput extends EvaluationToolSurveyElem
     public static function prepareResultRequest(): bool
     {
         return true;
+    }
+
+    public static function seedResult($surveyStep, $uuid, $languageId, $timestamp)
+    {
+        $surveyResult                     = new EvaluationToolSurveyStepResult();
+        $surveyResult->session_id         = $uuid;
+        $surveyResult->demo               = true;
+        $surveyResult->survey_step_id     = $surveyStep->id;
+        $surveyResult->result_language_id = $languageId;
+        $surveyResult->answered_at        = $timestamp;
+        $surveyResult->params             = $surveyStep->survey_element->params;
+
+        $randomAudio = 'data:audio/wav;base64,AAAAHGZ0eXBpc281AAAAAWlzb21pc281aGxzZ';
+
+        $resultValue                = new StdClass;
+        $resultValue->audio         = $randomAudio;
+        $surveyResult->result_value = $resultValue;
+
+        $surveyResult->save();
     }
 }
