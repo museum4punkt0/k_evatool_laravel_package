@@ -84,59 +84,48 @@ class EvaluationToolSurveyStatsController extends Controller
                 $resultsByStep->steps[$result->survey_step_id]->total = 0;
                 $resultsByStep->steps[$result->survey_step_id]->today = new StdClass;
                 $resultsByStep->steps[$result->survey_step_id]->today->total = 0;
+                $resultsByStep->steps[$result->survey_step_id]->today->results = new StdClass;
                 $resultsByStep->steps[$result->survey_step_id]->yesterday = new StdClass;
                 $resultsByStep->steps[$result->survey_step_id]->yesterday->total = 0;
+                $resultsByStep->steps[$result->survey_step_id]->yesterday->results = new StdClass;
                 $resultsByStep->steps[$result->survey_step_id]->currentWeek = new StdClass;
                 $resultsByStep->steps[$result->survey_step_id]->currentWeek->total = 0;
+                $resultsByStep->steps[$result->survey_step_id]->currentWeek->results = new StdClass;
                 $resultsByStep->steps[$result->survey_step_id]->lastWeek = new StdClass;
                 $resultsByStep->steps[$result->survey_step_id]->lastWeek->total = 0;
+                $resultsByStep->steps[$result->survey_step_id]->lastWeek->results = new StdClass;
                 $resultsByStep->steps[$result->survey_step_id]->currentMonth = new StdClass;
                 $resultsByStep->steps[$result->survey_step_id]->currentMonth->total = 0;
+                $resultsByStep->steps[$result->survey_step_id]->currentMonth->results = new StdClass;
                 $resultsByStep->steps[$result->survey_step_id]->lastMonth = new StdClass;
                 $resultsByStep->steps[$result->survey_step_id]->lastMonth->total = 0;
+                $resultsByStep->steps[$result->survey_step_id]->lastMonth->results = new StdClass;
                 $resultsByStep->steps[$result->survey_step_id]->currentYear = new StdClass;
                 $resultsByStep->steps[$result->survey_step_id]->currentYear->total = 0;
+                $resultsByStep->steps[$result->survey_step_id]->currentYear->results = new StdClass;
                 $resultsByStep->steps[$result->survey_step_id]->lastYear = new StdClass;
                 $resultsByStep->steps[$result->survey_step_id]->lastYear->total = 0;
+                $resultsByStep->steps[$result->survey_step_id]->lastYear->results = new StdClass;
                 $resultsByStep->steps[$result->survey_step_id]->type = $result->survey_step->survey_element->survey_element_type->key;
                 $resultsByStep->steps[$result->survey_step_id]->params = $result->survey_step->survey_element->params;
             }
             $elementType = $result->survey_step->survey_element->survey_element_type->key;
             $className = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . ucfirst($elementType);
 
-            // count results for each timespan
             foreach ($timeSpans as $timeSpan) {
                 if (Carbon::parse($result->answered_at)->between($timeSpan[1], $timeSpan[2])) {
                     $key = $timeSpan[0];
                     $resultsByStep->steps[$result->survey_step_id]->$key->total++;
 
                     if (class_exists($className)) {
-                        if (method_exists($className, "getResults")) {
-                            $results = $className::getResults($result->survey_step, $timeSpan[1], $timeSpan[2]);
-                            $resultsByStep->steps[$result->survey_step_id]->$key->results = $results;
+                        if (method_exists($className, "getResult")) {
+                            $className::getResult($result, $resultsByStep->steps[$result->survey_step_id]->$key->results);
                         }
                     }
                 }
             }
             $resultsByStep->steps[$result->survey_step_id]->total++;
             $resultsByStep->total++;
-        }
-
-        // get results for each survey step in timestamp
-        foreach ($resultsByStep->steps as $step) {
-            $surveyStep = EvaluationToolSurveyStep::find($step->stepId);
-            $elementType = $surveyStep->survey_element->survey_element_type->key;
-            $className = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . ucfirst($elementType);
-            foreach ($timeSpans as $timeSpan) {
-                if (class_exists($className)) {
-                    if (method_exists($className, "getResults")) {
-                        $results = $className::getResults($surveyStep, $timeSpan[1], $timeSpan[2]);
-                        $resultsByStep->steps[$step->stepId]->$key->results = $results;
-                    }else{
-                        // dd('get results method does not exist for type '.$elementType);
-                    }
-                }
-            }
         }
 
         $resultsByStep->steps = collect($resultsByStep->steps)->values();
