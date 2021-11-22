@@ -71,20 +71,43 @@ class EvaluationToolSurveyStatsController extends Controller
 
         foreach ($results as $result) {
             if (!isset($resultsByStep->steps[$result->survey_step_id])) {
-                $resultsByStep->steps[$result->survey_step_id]                     = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->stepId             = $result->survey_step_id;
-                $resultsByStep->steps[$result->survey_step_id]->total              = 0;
-                $resultsByStep->steps[$result->survey_step_id]->today              = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->today->total       = 0;
-                $resultsByStep->steps[$result->survey_step_id]->yesterday          = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->yesterday->total   = 0;
-                $resultsByStep->steps[$result->survey_step_id]->currentWeek        = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->currentWeek->total = 0;
-                $resultsByStep->steps[$result->survey_step_id]->lastWeek           = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->lastWeek->total    = 0;
-                $resultsByStep->steps[$result->survey_step_id]->type = $result->survey_step->survey_element->survey_element_type->key;
-                $resultsByStep->steps[$result->survey_step_id]->params = $result->survey_step->survey_element->params;
+                $resultsByStep->steps[$result->survey_step_id]                      = new StdClass;
+                $resultsByStep->steps[$result->survey_step_id]->stepId              = $result->survey_step_id;
+                $resultsByStep->steps[$result->survey_step_id]->total               = 0;
+                $resultsByStep->steps[$result->survey_step_id]->today               = new StdClass;
+                $resultsByStep->steps[$result->survey_step_id]->today->total        = 0;
+                $resultsByStep->steps[$result->survey_step_id]->yesterday           = new StdClass;
+                $resultsByStep->steps[$result->survey_step_id]->yesterday->total    = 0;
+                $resultsByStep->steps[$result->survey_step_id]->currentWeek         = new StdClass;
+                $resultsByStep->steps[$result->survey_step_id]->currentWeek->total  = 0;
+                $resultsByStep->steps[$result->survey_step_id]->lastWeek            = new StdClass;
+                $resultsByStep->steps[$result->survey_step_id]->lastWeek->total     = 0;
+                $resultsByStep->steps[$result->survey_step_id]->currentMonth        = new StdClass;
+                $resultsByStep->steps[$result->survey_step_id]->currentMonth->total = 0;
+                $resultsByStep->steps[$result->survey_step_id]->lastMonth           = new StdClass;
+                $resultsByStep->steps[$result->survey_step_id]->lastMonth->total    = 0;
+                $resultsByStep->steps[$result->survey_step_id]->currentYear         = new StdClass;
+                $resultsByStep->steps[$result->survey_step_id]->currentYear->total  = 0;
+                $resultsByStep->steps[$result->survey_step_id]->lastYear            = new StdClass;
+                $resultsByStep->steps[$result->survey_step_id]->lastYear->total     = 0;
+                $resultsByStep->steps[$result->survey_step_id]->type                = $result->survey_step->survey_element->survey_element_type->key;
+                $resultsByStep->steps[$result->survey_step_id]->params              = $result->survey_step->survey_element->params;
             }
+
+            $yesterdayStart    = Carbon::now();
+            $yesterdayEnd      = Carbon::now();
+            $currentWeekStart  = Carbon::now();
+            $currentWeekEnd    = Carbon::now();
+            $lastWeekStart     = Carbon::now();
+            $lastWeekEnd       = Carbon::now();
+            $currentMonthStart = Carbon::now();
+            $currentMonthEnd   = Carbon::now();
+            $lastMonthsStart   = Carbon::now();
+            $lastMonthEnd      = Carbon::now();
+            $currentYearStart  = Carbon::now();
+            $currentYearEnd    = Carbon::now();
+            $lastYearsStart    = Carbon::now();
+            $lastYearEnd       = Carbon::now();
 
 
             $resultsByStep->steps[$result->survey_step_id]->total++;
