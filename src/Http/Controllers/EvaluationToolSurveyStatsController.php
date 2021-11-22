@@ -118,8 +118,8 @@ class EvaluationToolSurveyStatsController extends Controller
                     $resultsByStep->steps[$result->survey_step_id]->$key->total++;
 
                     if (class_exists($className)) {
-                        if (method_exists($className, "getResult")) {
-                            $className::getResult($result, $resultsByStep->steps[$result->survey_step_id]->$key->results);
+                        if (method_exists($className, "statsCountResult")) {
+                            $className::statsCountResult($result, $resultsByStep->steps[$result->survey_step_id]->$key->results);
                         }
                     }
                 }

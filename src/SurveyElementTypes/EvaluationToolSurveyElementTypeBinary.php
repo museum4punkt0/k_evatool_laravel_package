@@ -112,12 +112,15 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
 
         $surveyResult->save();
     }
-    public static function getResult($result, $results): void
+    public static function statsCountResult($result, $results): void
     {
         $value = $result->result_value["value"];
-        if (!isset($results->$value)) {
-            $results->$value = 0;
+        if(in_array($value, array($result->params['trueValue'], $result->params['falseValue']))){
+            $value = $result->result_value["value"];
+            if (!isset($results->$value)) {
+                $results->$value = 0;
+            }
+            $results->$value++;
         }
-        $results->$value++;
     }
 }
