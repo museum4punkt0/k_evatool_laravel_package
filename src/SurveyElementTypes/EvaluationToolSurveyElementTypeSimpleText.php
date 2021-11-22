@@ -3,7 +3,6 @@
 namespace Twoavy\EvaluationTool\SurveyElementTypes;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Validation\Rule;
 use StdClass;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
@@ -24,7 +23,7 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
      */
     public function sampleParams(): array
     {
-        $text                               = [];
+        $text = [];
         $text[$this->primaryLanguage->code] = $this->faker->words($this->faker->numberBetween(3, 50), true);
         foreach ($this->secondaryLanguages as $secondaryLanguage) {
             if ($this->faker->boolean(30)) {
@@ -65,7 +64,7 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
             "result_value.read" => [
                 'required',
                 'boolean',
-                Rule::in([true])
+                Rule::in([true]),
             ],
         ];
     }
@@ -82,8 +81,8 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
     {
         $maxCount = 10;
         return [
-            'params.text'    => ['required', 'array', 'min:1'],
-            'params.text.*'  => ['min:1', "max:500"],
+            'params.text' => ['required', 'array', 'min:1'],
+            'params.text.*' => ['min:1', "max:500"],
             'languageKeys.*' => ['required', 'exists:evaluation_tool_survey_languages,code'],
         ];
     }
@@ -113,18 +112,28 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
 
     public static function seedResult($surveyStep, $uuid, $languageId, $timestamp)
     {
-        $surveyResult                     = new EvaluationToolSurveyStepResult();
-        $surveyResult->session_id         = $uuid;
-        $surveyResult->demo               = true;
-        $surveyResult->survey_step_id     = $surveyStep->id;
+        $surveyResult = new EvaluationToolSurveyStepResult();
+        $surveyResult->session_id = $uuid;
+        $surveyResult->demo = true;
+        $surveyResult->survey_step_id = $surveyStep->id;
         $surveyResult->result_language_id = $languageId;
-        $surveyResult->answered_at        = $timestamp;
-        $surveyResult->params             = $surveyStep->survey_element->params;
+        $surveyResult->answered_at = $timestamp;
+        $surveyResult->params = $surveyStep->survey_element->params;
 
-        $resultValue                = new StdClass;
-        $resultValue->read          = true;
+        $resultValue = new StdClass;
+        $resultValue->read = true;
         $surveyResult->result_value = $resultValue;
 
         $surveyResult->save();
+    }
+    public static function statsCountResult($result, $results): void
+    {
+        $value = $result->result_value["read"];
+        if (!isset($results->read)) {
+            $results->read = 0;
+        }
+        if ($value) {
+            $results->read++;
+        }
     }
 }
