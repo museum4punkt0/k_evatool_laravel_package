@@ -112,4 +112,8 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
 
         $surveyResult->save();
     }
+    public static function getResults($surveyStep, $startTime, $endTime): array
+    {
+        return array();
+    }
 }
