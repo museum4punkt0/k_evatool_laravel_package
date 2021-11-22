@@ -124,7 +124,7 @@ class EvaluationToolSurveyStep extends Model
                 $runController = new EvaluationToolSurveySurveyRunController();
 
                 $surveyStep               = EvaluationToolSurveyStep::find($step->stepId);
-                $resultsByUuid            = $runController->getResultsByUuid($surveyStep);
+                $resultsByUuid            = $runController->getResultsByUuid($surveyStep, request()->uuid);
                 $surveyStep->resultByUuid = $resultsByUuid->result;
                 $surveyStep->isAnswered   = $resultsByUuid->isAnswered;
 
