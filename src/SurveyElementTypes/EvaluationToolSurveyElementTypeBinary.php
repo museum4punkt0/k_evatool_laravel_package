@@ -22,7 +22,7 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
     public function sampleParams(): array
     {
 
-        $question                               = [];
+        $question = [];
         $question[$this->primaryLanguage->code] = $this->faker->words($this->faker->numberBetween(3, 20), true);
         foreach ($this->secondaryLanguages as $secondaryLanguage) {
             if ($this->faker->boolean(60)) {
@@ -31,10 +31,10 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
         }
 
         return [
-            "question"   => $question,
-            "trueValue"  => "accepted",
+            "question" => $question,
+            "trueValue" => "accepted",
             "falseValue" => "declined",
-            "trueLabel"  => ["de" => "ja", "en" => "yes", "fr" => "oui"],
+            "trueLabel" => ["de" => "ja", "en" => "yes", "fr" => "oui"],
             "falseLabel" => ["de" => "nein", "en" => "no", "fr" => "non"],
         ];
     }
@@ -59,7 +59,7 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
 
     public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement): array
     {
-        $trueValue  = $surveyElement->params->trueValue;
+        $trueValue = $surveyElement->params->trueValue;
         $falseValue = $surveyElement->params->falseValue;
         return [
             "result_value.value" => ['required', 'in:' . $trueValue . ',' . $falseValue],
@@ -72,10 +72,10 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
     public static function rules(): array
     {
         return [
-            'params.question'   => 'required|array',
+            'params.question' => 'required|array',
             'params.question.*' => 'min:1|max:200',
-            'languageKeys.*'    => 'required|exists:evaluation_tool_survey_languages,code',
-            'params.trueValue'  => ["required", "min:1", "max:20", new SnakeCase()],
+            'languageKeys.*' => 'required|exists:evaluation_tool_survey_languages,code',
+            'params.trueValue' => ["required", "min:1", "max:20", new SnakeCase()],
             'params.falseValue' => ["required", "min:1", "max:20", new SnakeCase()],
         ];
     }
@@ -97,19 +97,30 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
 
     public static function seedResult($surveyStep, $uuid, $languageId, $timestamp)
     {
-        $surveyResult                     = new EvaluationToolSurveyStepResult();
-        $surveyResult->session_id         = $uuid;
-        $surveyResult->demo               = true;
-        $surveyResult->survey_step_id     = $surveyStep->id;
+        $surveyResult = new EvaluationToolSurveyStepResult();
+        $surveyResult->session_id = $uuid;
+        $surveyResult->demo = true;
+        $surveyResult->survey_step_id = $surveyStep->id;
         $surveyResult->result_language_id = $languageId;
-        $surveyResult->answered_at        = $timestamp;
-        $surveyResult->params             = $surveyStep->survey_element->params;
-        $binaryValues                     = array($surveyResult->params['trueValue'], $surveyResult->params['falseValue']);
+        $surveyResult->answered_at = $timestamp;
+        $surveyResult->params = $surveyStep->survey_element->params;
+        $binaryValues = array($surveyResult->params['trueValue'], $surveyResult->params['falseValue']);
 
-        $resultValue                = new StdClass;
-        $resultValue->value         = $binaryValues[array_rand($binaryValues, 1)];
+        $resultValue = new StdClass;
+        $resultValue->value = $binaryValues[array_rand($binaryValues, 1)];
         $surveyResult->result_value = $resultValue;
 
         $surveyResult->save();
+    }
+    public static function statsCountResult($result, $results): void
+    {
+        $value = $result->result_value["value"];
+        if(in_array($value, array($result->params['trueValue'], $result->params['falseValue']))){
+            $value = $result->result_value["value"];
+            if (!isset($results->$value)) {
+                $results->$value = 0;
+            }
+            $results->$value++;
+        }
     }
 }
