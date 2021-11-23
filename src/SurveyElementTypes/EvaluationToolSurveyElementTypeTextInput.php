@@ -76,4 +76,8 @@ class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyEleme
         }
         return true;
     }
+    public static function statsCountResult($result, $results): void
+    {
+        $results->todo = "EvaluationToolSurveyElementTypeTextInput::statsCountResult";
+    }
 }

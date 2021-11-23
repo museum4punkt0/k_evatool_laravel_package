@@ -119,5 +119,9 @@ class EvaluationToolSurveyElementTypeVideo extends EvaluationToolSurveyElementTy
             $surveyResult->save();
         }
     }
+    public static function statsCountResult($result, $results): void
+    {
+        $results->todo = "EvaluationToolSurveyElementTypeVideo::statsCountResult";
+    }
 
 }
