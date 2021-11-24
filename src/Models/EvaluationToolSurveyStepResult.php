@@ -41,6 +41,10 @@ class EvaluationToolSurveyStepResult extends Model
         'demo'         => 'boolean'
     ];
 
+    protected $dates = [
+        "answered_at"
+    ];
+
     public function survey_step(): HasOne
     {
         return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep", "id", "survey_step_id");
@@ -48,7 +52,7 @@ class EvaluationToolSurveyStepResult extends Model
 
     public function language(): HasOne
     {
-        return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage", "id","result_language_id");
+        return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage", "id", "result_language_id");
     }
 
     public function created_by_user(): HasOne
