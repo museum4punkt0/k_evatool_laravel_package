@@ -16,6 +16,7 @@ use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResultAsset;
+use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeBinary;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeStarRating;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepResultCombinedTransformer;
@@ -370,22 +371,41 @@ class EvaluationToolSurveySurveyRunController extends Controller
 
         foreach ($surveySteps as $surveyStepMain) {
             foreach ($surveySteps as $surveyStep) {
+                if ($upcomingStep->result_based_next_steps && !empty($upcomingStep->result_based_next_steps)) {
+                    if ($upcomingStep->isAnswered) {
+                        $nextStep = $this->getResultBasedNextStep($upcomingStep);
+                        if (isset($nextStep->id) && $nextStep->id == $surveyStep->id) {
+                            $currentStep    = $surveyStep;
+                            $stepOrdering[] = $surveyStep->id;
+                            $upcomingStep   = $surveyStep;
+                            break;
+                        }
+                    }
+                }
+
                 if ($upcomingStep->next_step_id == $surveyStep->id) {
                     if ($upcomingStep->isAnswered && !$hasUnansweredStep) {
-                        // Todo check result based next steps
-                        if ($upcomingStep->result_based_next_steps) {
-                            $currentStep = $this->getResultBasedNextStep($upcomingStep);
-                        } else {
-                            $currentStep = $surveyStep;
-                        }
+                        $currentStep = $surveyStep;
                     } else {
                         $hasUnansweredStep = true;
                     }
-
                     $stepOrdering[] = $surveyStep->id;
                     $upcomingStep   = $surveyStep;
                     break;
                 }
+
+                /* else {
+                    if ($upcomingStep->next_step_id == $surveyStep->id) {
+                        if ($upcomingStep->isAnswered && !$hasUnansweredStep) {
+                            $currentStep = $surveyStep;
+                        } else {
+                            $hasUnansweredStep = true;
+                        }
+                        $stepOrdering[] = $surveyStep->id;
+                        $upcomingStep   = $surveyStep;
+                        break;
+                    }
+                }*/
             }
         }
 
@@ -411,7 +431,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
     {
         switch ($surveyStep->survey_element->survey_element_type->key) {
             case "binary":
-//                EvaluationToolSurveyElementTypeBinary::getResultBasedNextStep($surveyStep);
+                $stepId = EvaluationToolSurveyElementTypeBinary::getResultBasedNextStep($surveyStep);
                 break;
             case "starRating":
                 $stepId = EvaluationToolSurveyElementTypeStarRating::getResultBasedNextStep($surveyStep);

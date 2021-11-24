@@ -63,7 +63,11 @@ class EvaluationToolSurveySeedController extends Controller
                 }
                 $surveySteps = $this->getStepsWithResults($surveySteps);
                 $position    = $this->surveyRunController->getPositionWithinSurvey($surveySteps);
+//                print_r($position);
             }
+
+            echo "seed round " . ($seedCount + 1) . " done" . PHP_EOL;
+
             $seedCount++;
         }
     }
