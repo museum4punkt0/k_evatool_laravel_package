@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Rules\SnakeCase;
 
@@ -95,6 +96,18 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
         return true;
     }
 
+    public static function getResultBasedNextStep(EvaluationToolSurveyStep $surveyStep)
+    {
+        if (isset($surveyStep->resultByUuid["value"])) {
+            $value = $surveyStep->resultByUuid["value"];
+            if ($value == $surveyStep->params["trueValue"]) {
+                $surveyStep->result_based_next_steps["trueNextStep"]->stepId;
+            } else if ($value == $surveyStep->params["falseValue"]) {
+                $surveyStep->result_based_next_steps["falseNextStep"]->stepId;
+            }
+        }
+        return $surveyStep->next_step_id;
+    }
     public static function seedResult($surveyStep, $uuid, $languageId, $timestamp)
     {
         $surveyResult = new EvaluationToolSurveyStepResult();
@@ -115,7 +128,7 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
     public static function statsCountResult($result, $results): void
     {
         $value = $result->result_value["value"];
-        if(in_array($value, array($result->params['trueValue'], $result->params['falseValue']))){
+        if (in_array($value, array($result->params['trueValue'], $result->params['falseValue']))) {
             $value = $result->result_value["value"];
             if (!isset($results->$value)) {
                 $results->$value = 0;
