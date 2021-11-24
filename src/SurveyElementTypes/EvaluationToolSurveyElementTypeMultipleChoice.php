@@ -6,6 +6,7 @@ use Faker\Factory;
 use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Rules\SnakeCase;
 
@@ -23,17 +24,17 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
     public function sampleParams(): array
     {
 
-        $faker         = Factory::create();
+        $faker = Factory::create();
         $minSelectable = $this->faker->numberBetween(1, 3);
         $maxSelectable = $this->faker->numberBetween($minSelectable, $minSelectable + $faker->numberBetween(1, 3));
 
         return [
-            "question"      => [
+            "question" => [
                 "de" => "Frage",
                 "en" => "Question",
                 "fr" => "Question",
             ],
-            "options"       => [
+            "options" => [
                 ["value" => "option_1", "labels" => ["de" => "option 1", "en" => "option 1", "fr" => "option 1"]],
                 ["value" => "option_2", "labels" => ["de" => "option 2", "en" => "option 2", "fr" => "option 2"]],
                 ["value" => "option_3", "labels" => ["de" => "option 3", "en" => "option 3", "fr" => "option 3"]],
@@ -83,15 +84,15 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
     public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement): array
     {
         $possibleOptions = [];
-        $options         = $surveyElement->params->options;
-        $minSelectable   = $surveyElement->params->minSelectable;
-        $maxSelectable   = $surveyElement->params->maxSelectable;
+        $options = $surveyElement->params->options;
+        $minSelectable = $surveyElement->params->minSelectable;
+        $maxSelectable = $surveyElement->params->maxSelectable;
         foreach ($options as $option) {
             array_push($possibleOptions, $option->value);
         }
 
         return [
-            'result_value.selected'   => [
+            'result_value.selected' => [
                 'required',
                 'array',
                 'min:' . $minSelectable,
@@ -99,7 +100,7 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
             ],
             'result_value.selected.*' => [
                 'in:' . implode(',', $possibleOptions),
-            ]
+            ],
         ];
     }
 
@@ -115,16 +116,16 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
     {
         $maxCount = 10;
         return [
-            'params.question'         => ['required', 'array', 'min:1'],
-            'params.options'          => ['required', 'array', 'min:1'],
-            'params.options.*'        => ['array'],
+            'params.question' => ['required', 'array', 'min:1'],
+            'params.options' => ['required', 'array', 'min:1'],
+            'params.options.*' => ['array'],
             'params.options.*.labels' => ["required", 'array'],
-            'params.options.*.value'  => [
+            'params.options.*.value' => [
                 "required",
-                new SnakeCase()
+                new SnakeCase(),
             ],
-            'languageKeys.*'          => ['required', 'exists:evaluation_tool_survey_languages,code'],
-            'params.minSelectable'    => ['integer', 'min:1', 'max:' . $maxCount],
+            'languageKeys.*' => ['required', 'exists:evaluation_tool_survey_languages,code'],
+            'params.minSelectable' => ['integer', 'min:1', 'max:' . $maxCount],
             //            'params.maxSelectable'    => ['integer', 'between:1,params.minSelectable', 'max:' . $maxCount],
         ];
     }
@@ -139,27 +140,45 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
         return true;
     }
 
+    public static function getResultBasedNextStep(EvaluationToolSurveyStep $surveyStep)
+    {
+        if (isset($surveyStep->resultByUuid["value"])) {
+            $value = $surveyStep->resultByUuid["value"];
+            $minSelectable = $surveyStep->params["minSelectable"];
+            $maxSelectable = $surveyStep->params["maxSelectable"];
+            if ($minSelectable == 1 && $maxSelectable == 1) {
+                if ($surveyStep->result_based_next_steps && !empty($surveyStep->result_based_next_steps)) {
+                    foreach ($surveyStep->result_based_next_steps as $nextStep) {
+                        if ($nextStep->value == $value) {
+                            return $nextStep->stepId;
+                        }
+                    }
+                }
+            }
+        }
+        return $surveyStep->next_step_id;
+    }
     public static function seedResult($surveyStep, $uuid, $languageId, $timestamp)
     {
-        $surveyResult                     = new EvaluationToolSurveyStepResult();
-        $surveyResult->session_id         = $uuid;
-        $surveyResult->demo               = true;
-        $surveyResult->survey_step_id     = $surveyStep->id;
+        $surveyResult = new EvaluationToolSurveyStepResult();
+        $surveyResult->session_id = $uuid;
+        $surveyResult->demo = true;
+        $surveyResult->survey_step_id = $surveyStep->id;
         $surveyResult->result_language_id = $languageId;
-        $surveyResult->answered_at        = $timestamp;
-        $surveyResult->params             = $surveyStep->survey_element->params;
+        $surveyResult->answered_at = $timestamp;
+        $surveyResult->params = $surveyStep->survey_element->params;
 
         $resultValue = new StdClass;
 
         $maxSelectable = $surveyResult->params['maxSelectable'];
         $minSelectable = $surveyResult->params['minSelectable'];
-        $optionsArray  = collect($surveyResult->params['options'])->random(rand($minSelectable, $maxSelectable));
-        $randomArray   = array();
+        $optionsArray = collect($surveyResult->params['options'])->random(rand($minSelectable, $maxSelectable));
+        $randomArray = array();
 
         foreach ($optionsArray as $value) {
             array_push($randomArray, $value['value']);
         }
-        $resultValue->selected      = $randomArray;
+        $resultValue->selected = $randomArray;
         $surveyResult->result_value = $resultValue;
 
         $surveyResult->save();
@@ -171,8 +190,8 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
         $options = $result->params["options"];
         $optionValues = array_column($options, "value");
 
-        foreach($values as $value){
-            if(in_array($value, $optionValues)){
+        foreach ($values as $value) {
+            if (in_array($value, $optionValues)) {
                 if (!isset($results->$value)) {
                     $results->$value = 0;
                 }
