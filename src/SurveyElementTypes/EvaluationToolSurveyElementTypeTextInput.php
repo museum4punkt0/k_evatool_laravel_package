@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 
 class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyElementTypeBase
 {
@@ -76,8 +77,27 @@ class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyEleme
         }
         return true;
     }
+
     public static function statsCountResult($result, $results): void
     {
         $results->todo = "EvaluationToolSurveyElementTypeTextInput::statsCountResult";
+    }
+
+    public static function seedResult($surveyStep, $uuid, $languageId, $timestamp)
+    {
+        $surveyResult                     = new EvaluationToolSurveyStepResult();
+        $surveyResult->session_id         = $uuid;
+        $surveyResult->demo               = true;
+        $surveyResult->survey_step_id     = $surveyStep->id;
+        $surveyResult->result_language_id = $languageId;
+        $surveyResult->answered_at        = $timestamp;
+        $surveyResult->params             = $surveyStep->survey_element->params;
+
+        $resultValue                = new StdClass;
+        $text                       = 'lorem ipsum dolor sit amet';
+        $resultValue->text          = $text;
+        $surveyResult->result_value = $resultValue;
+
+        $surveyResult->save();
     }
 }
