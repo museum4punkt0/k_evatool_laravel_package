@@ -3,6 +3,7 @@
 namespace Twoavy\EvaluationTool\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySeedController;
 
@@ -13,7 +14,7 @@ class SeedSurveyResultsCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'evaluation:seed_survey_results {survey_id} {count}';
+    protected $signature = 'evaluation:seed_survey_results {survey_id} {count} {{--truncate}}';
 
     /**
      * The console command description.
@@ -41,6 +42,11 @@ class SeedSurveyResultsCommand extends Command
     {
         $surveyId = $this->argument('survey_id');
         $count    = $this->argument("count");
+
+        if ($this->option('truncate')) {
+            DB::table("evaluation_tool_survey_step_results")->truncate();
+        }
+
         if (!$survey = EvaluationToolSurvey::find($surveyId)) {
             $this->info("survey not found");
             return -1;
