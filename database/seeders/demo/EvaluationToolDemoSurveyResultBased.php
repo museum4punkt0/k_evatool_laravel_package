@@ -99,12 +99,12 @@ class EvaluationToolDemoSurveyResultBased extends Seeder
         $starRatingStep = EvaluationToolSeeder::getLatestStep();
 
         EvaluationToolSurveyStepFactory::times(1)->withData("Binary", $binaryId, $surveyId)->create();
-        $starRatingStep->next_step_id = EvaluationToolSeeder::getLatestStep()->id;
+        // $starRatingStep->next_step_id = EvaluationToolSeeder::getLatestStep()->id;
         $starRatingStep->save();
         $binaryStep = EvaluationToolSeeder::getLatestStep();
 
         $conditionalSteps = [];
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             EvaluationToolSurveyStepFactory::times(1)->withData("Sub-Bewertung " . $i, $starRatingId, $surveyId)->create();
             $conditionalSteps["starRating" . $i] = EvaluationToolSeeder::getLatestStep();
         }
@@ -128,6 +128,13 @@ class EvaluationToolDemoSurveyResultBased extends Seeder
         ];
 
         $starRatingStep->save();
+
+        $conditionalSteps["starRating1"]->next_step_id = $binaryStep->id;
+        $conditionalSteps["starRating1"]->save();
+        $conditionalSteps["starRating2"]->next_step_id = $binaryStep->id;
+        $conditionalSteps["starRating2"]->save();
+        $conditionalSteps["starRating3"]->next_step_id = $binaryStep->id;
+        $conditionalSteps["starRating3"]->save();
 
         $binaryStep->result_based_next_steps = [
             "trueNextStep"  => [
