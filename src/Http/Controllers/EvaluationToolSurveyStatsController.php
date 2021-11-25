@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use stdClass;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStatsIndexRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
@@ -194,17 +195,80 @@ class EvaluationToolSurveyStatsController extends Controller
             $resultValue->stepId = $result->survey_step_id;
 
             $resultsByUuid->{$result->session_id}->results[] = $resultValue;
-
-
         }
 
         return $this->showAll(collect($resultsByUuid));
-
-
     }
 
     public function getStatsListScheme(EvaluationToolSurvey $survey): JsonResponse
     {
-        return $this->showOne($survey);
+        $steps = $survey->survey_steps;
+
+        // get first step and set as starting element
+        $firstStep = $steps->where("is_first_step")->first();
+        $stepFlow  = new Collection();
+        $stepFlow->add($this->stepForFlow($firstStep));
+
+        $stepFlow = $this->getNextSteps($firstStep, $stepFlow);
+
+        return $this->successResponse($stepFlow);
+    }
+
+    public function getNextSteps(EvaluationToolSurveyStep $step, Collection $stepFlow): Collection
+    {
+        if ($step->next_step_id) {
+            $subFlow = new Collection();
+            $nextStep = EvaluationToolSurveyStep::find($step->next_step_id);
+            $subFlow->add($this->stepForFlow($nextStep));
+            $this->getNextSteps($nextStep, $subFlow);
+            $stepFlow->add($subFlow);
+        }
+        if ($step->result_based_next_steps && !empty($step->result_based_next_steps)) {
+            $elementType = $step->survey_element->survey_element_type->key;
+
+            if ($elementType == "binary") {
+                $subFlow = new Collection();
+                if (isset($step->result_based_next_steps->trueNextStep->stepId)) {
+                    $nextStep = EvaluationToolSurveyStep::find($step->result_based_next_steps->trueNextStep->stepId);
+                    $subFlow->add($this->stepForFlow($nextStep));
+                    $this->getNextSteps($nextStep, $subFlow);
+                }
+
+                if (isset($step->result_based_next_steps->falseNextStep->stepId)) {
+                    $nextStep = EvaluationToolSurveyStep::find($step->result_based_next_steps->falseNextStep->stepId);
+                    $subFlow->add($this->stepForFlow($nextStep));
+                    $this->getNextSteps($nextStep, $subFlow);
+                }
+                $stepFlow->add($subFlow);
+            }
+            if ($elementType == "starRating") {
+                $subFlow = new Collection();
+                foreach (collect($step->result_based_next_steps)->pluck("stepId") as $step) {
+                    $nextStep = EvaluationToolSurveyStep::find($step);
+                    $subFlow->add($this->stepForFlow($nextStep));
+                    $this->getNextSteps($nextStep, $subFlow);
+                }
+                $stepFlow->add($subFlow);
+            }
+            if ($elementType == "multipleChoice") {
+                $subFlow = new Collection();
+                foreach ($step->result_based_next_steps as $step) {
+                    $nextStep = EvaluationToolSurveyStep::find($step->stepId);
+                    $subFlow->add($this->stepForFlow($nextStep));
+                    $this->getNextSteps($nextStep, $subFlow);
+                }
+                $stepFlow->add($subFlow);
+            }
+        }
+        return $stepFlow;
+    }
+
+    public function stepForFlow($step): stdClass
+    {
+        $stepForFlow              = new StdClass;
+        $stepForFlow->id          = $step->id;
+        $stepForFlow->elementType = $step->survey_element_type->key;
+
+        return $stepForFlow;
     }
 }
