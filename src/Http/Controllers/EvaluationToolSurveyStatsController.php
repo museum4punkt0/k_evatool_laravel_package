@@ -10,6 +10,7 @@ use Illuminate\Support\Collection;
 use stdClass;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStatsIndexRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStatsCache;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
@@ -21,113 +22,222 @@ class EvaluationToolSurveyStatsController extends Controller
     public function __construct()
     {
         $this->middleware("auth:api");
+
+        $this->timeSpans = [
+            "today"             => [
+                "start" => Carbon::now()->startOfDay(),
+                "end"   => Carbon::now()->endOfDay()
+            ],
+            "yesterday"         => [
+                "start" => Carbon::yesterday()->startOfDay(),
+                "end"   => Carbon::yesterday()->endOfDay()
+            ],
+            "currentWeek"       => [
+                "start" => Carbon::now()->startOfWeek(),
+                "end"   => Carbon::now()->endOfWeek()
+            ],
+            "lastWeek"          => [
+                "start" => Carbon::now()->subWeek()->startOfWeek(),
+                "end"   => Carbon::now()->subWeek()->endOfWeek()
+            ],
+            "currentMonth"      => [
+                "start" => Carbon::now()->startOfMonth(),
+                "end"   => Carbon::now()->endOfMonth()
+            ],
+            "lastMonth"         => [
+                "start" => Carbon::now()->subMonth()->startOfMonth(),
+                "end"   => Carbon::now()->subMonth()->endOfMonth()],
+            "currentYear"       => [
+                "start" => Carbon::now()->startOfYear(),
+                "end"   => Carbon::now()->endOfYear()
+            ],
+            "lastYear"          => [
+                "start" => Carbon::now()->subYear()->startOfYear(),
+                "end"   => Carbon::now()->subYear()->endOfYear()
+            ],
+            "currentSevenDays"  => [
+                "start" => Carbon::now()->subWeek(),
+                "end"   => Carbon::now()
+            ],
+            "previousSevenDays" => [
+                "start" => Carbon::now()->subWeeks(),
+                "end"   => Carbon::now()->subWeeks(2)
+            ]
+        ];
+
+        $this->cacheTimeSpans = [
+            "today" => [
+                "start"   => Carbon::now()->startOfDay(),
+                "end"     => Carbon::now()->endOfDay(),
+                "noCache" => true
+            ],
+        ];
     }
+
+    public function getCacheTimeSpans($survey)
+    {
+        $results   = EvaluationToolSurveyStepResult::whereIn("survey_step_id", $survey->survey_steps->pluck("id"));
+        $firstDate = $results->clone()->orderBy("answered_at", "ASC")->first()->answered_at;
+//        $lastDate  = $results->clone()->orderBy("answered_at", "DESC")->first()->answered_at;
+
+        if ($firstDate < Carbon::today()->startOfDay()) {
+            $this->cacheTimeSpans["week"] = [
+                "start" => Carbon::yesterday()->startOfWeek(),
+                "end"   => Carbon::yesterday()->endOfDay()
+            ];
+        }
+        if ($firstDate < Carbon::yesterday()->startOfWeek()) {
+            $this->cacheTimeSpans["month"] = [
+                "start" => Carbon::yesterday()->startOfWeek()->startOfMonth(),
+                "end"   => Carbon::yesterday()->subWeek()->endOfWeek()
+            ];
+        }
+
+        $i = 1;
+        while ($firstDate < Carbon::yesterday()->startOfWeek()->subMonths($i)->startOfMonth()) {
+            $key                        = Carbon::yesterday()->startOfWeek()->subMonths($i)->startOfMonth()->format("Y-m");
+            $this->cacheTimeSpans[$key] = [
+                "start" => Carbon::yesterday()->startOfWeek()->subMonths($i)->startOfMonth(),
+                "end"   => Carbon::yesterday()->startOfWeek()->subMonths($i)->endOfMonth()
+            ];
+            $i++;
+        }
+
+        /*foreach ($this->cacheTimeSpans as $key => $timeSpan) {
+            echo $key . ": " . $timeSpan["start"] . " - " . $timeSpan["end"] . PHP_EOL;
+        }*/
+    }
+
+    public function getStatsCache(EvaluationToolSurvey $survey): JsonResponse
+    {
+//        EvaluationToolSurveyStepResult::whereIn("survey_step_id", $survey->survey_steps->pluck("id"))->update(["cached" => false]);
+//        EvaluationToolSurveyStatsCache::where("survey_id", $survey->id)->delete();
+
+        $results = EvaluationToolSurveyStepResult::whereIn("survey_step_id", $survey->survey_steps->pluck("id"))
+            ->where("cached", false)
+            ->orderBy('answered_at', 'ASC')->take(1000)
+            ->get();
+
+
+        $dateReminder = Carbon::now()->format("Y-m-d");
+        foreach ($results->where("cached", false) as $r => $result) {
+            if ($dateReminder !== $result->answered_at) {
+                if (!$resultCache = EvaluationToolSurveyStatsCache::where("survey_id", $survey->id)
+                    ->where("date", $result->answered_at->format("Y-m-d"))
+                    ->first()
+                ) {
+                    $resultCache            = new EvaluationToolSurveyStatsCache();
+                    $resultCache->survey_id = $survey->id;
+                    $resultCache->date      = $result->answered_at;
+                    $resultCache->results   = [];
+                }
+            }
+
+            $elementType = $result->survey_step->survey_element_type->key;
+
+            $resultsResults = $resultCache->results;
+
+            if (!array_search($result->survey_step_id, array_column($resultsResults, 'stepId'))) {
+                $resultsResults[] = [
+                    "stepId"  => $result->survey_step_id,
+                    "type"    => $result->survey_step->survey_element_type->key,
+                    "results" => []
+                ];
+            }
+
+            $key = array_search($result->survey_step_id, array_column($resultsResults, 'stepId'));
+
+            $className = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . ucfirst($elementType);
+            if (class_exists($className)) {
+                if (method_exists($className, "statsCountResult")) {
+                    $resultsResults[$key]["results"] = $className::statsCountResult($result, $resultsResults[$key]["results"]);
+                }
+            }
+
+            $resultCache->results = $resultsResults;
+
+            $resultCache->save();
+            $result->cached = true;
+            $result->save();
+
+            $dateReminder = $result->answered_at->format("Y-m-d");
+        }
+
+        return $this->successResponse($results->count() . " results");
+    }
+
 
     public function getStats(EvaluationToolSurvey $survey, EvaluationToolSurveyStatsIndexRequest $request): JsonResponse
     {
-        $results = EvaluationToolSurveyStepResult::whereIn("survey_step_id", $survey->survey_steps->pluck("id"))->orderBy('session_id', 'ASC');
+        $this->getCacheTimeSpans($survey);
 
-        // check for step
-        if ($request->has("step")) {
-            if (!$step = EvaluationToolSurveyStep::find($request->step)) {
-                return $this->errorResponse("step not found", 409);
-            }
-            if ($step->survey_id != $survey->id) {
-                return $this->errorResponse("survey does not match step", 409);
-            }
-
-            $results = EvaluationToolSurveyStepResult::where("survey_step_id", $request->step)->orderBy('session_id', 'ASC');
-        }
+        $resultQuery = EvaluationToolSurveyStatsCache::where("survey_id", $survey->id);
 
         // check for start date
         if ($request->has("start")) {
-            $results->where("answered_at", ">=", $request->start);
+            $resultQuery->where("date", ">=", $request->start);
         }
 
         // check for end date
-        if ($request->has("start")) {
-            $results->where("answered_at", "<=", $request->end);
+        if ($request->has("end")) {
+            $resultQuery->where("date", "<=", $request->end);
         }
 
-        if ($request->has("demo") && $request->demo == true) {
-            $results->where("demo", true);
-        } else {
-            $results->where("demo", false);
-        }
+        $results = $resultQuery->get();
 
-        $results = $results->get();
-
-        $results = $this->parseResults($results);
-
-        return $this->successResponse($results);
-
+        return $this->showAll($results);
     }
 
     public function parseResults($results): stdClass
     {
-        $resultsByStep        = new StdClass;
-        $resultsByStep->total = 0;
-        $resultsByStep->steps = [];
+        $resultsByStep                = new StdClass;
+        $resultsByStep->totals        = new StdClass;
+        $resultsByStep->totals->total = 0;
 
-        $timeSpans = array(
-            array("yesterday", Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()),
-            array("currentWeek", Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()),
-            array("lastWeek", Carbon::now()->subWeek(1)->startOfWeek(), Carbon::now()->subWeek(1)->endOfWeek()),
-            array("currentMonth", Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()),
-            array("lastMonth", Carbon::now()->subMonth(1)->startOfMonth(), Carbon::now()->subMonth(1)->endOfMonth()),
-            array("currentYear", Carbon::now()->startOfYear(), Carbon::now()->endOfYear()),
-            array("lastYear", Carbon::now()->subYear(1)->startOfYear(), Carbon::now()->subYear(1)->endOfYear()),
-        );
+        $resultsByStep->deltas = new StdClass;
+
+        $resultsByStep->steps = [];
 
         foreach ($results as $result) {
             if (!isset($resultsByStep->steps[$result->survey_step_id])) {
-                $resultsByStep->steps[$result->survey_step_id]                        = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->stepId                = $result->survey_step_id;
-                $resultsByStep->steps[$result->survey_step_id]->total                 = 0;
-                $resultsByStep->steps[$result->survey_step_id]->today                 = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->today->total          = 0;
-                $resultsByStep->steps[$result->survey_step_id]->today->results        = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->yesterday             = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->yesterday->total      = 0;
-                $resultsByStep->steps[$result->survey_step_id]->yesterday->results    = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->currentWeek           = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->currentWeek->total    = 0;
-                $resultsByStep->steps[$result->survey_step_id]->currentWeek->results  = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->lastWeek              = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->lastWeek->total       = 0;
-                $resultsByStep->steps[$result->survey_step_id]->lastWeek->results     = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->currentMonth          = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->currentMonth->total   = 0;
-                $resultsByStep->steps[$result->survey_step_id]->currentMonth->results = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->lastMonth             = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->lastMonth->total      = 0;
-                $resultsByStep->steps[$result->survey_step_id]->lastMonth->results    = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->currentYear           = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->currentYear->total    = 0;
-                $resultsByStep->steps[$result->survey_step_id]->currentYear->results  = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->lastYear              = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->lastYear->total       = 0;
-                $resultsByStep->steps[$result->survey_step_id]->lastYear->results     = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->type                  = $result->survey_step->survey_element->survey_element_type->key;
-                $resultsByStep->steps[$result->survey_step_id]->params                = $result->survey_step->survey_element->params;
+                $resultsByStep->steps[$result->survey_step_id]          = new StdClass;
+                $resultsByStep->steps[$result->survey_step_id]->stepId  = $result->survey_step_id;
+                $resultsByStep->steps[$result->survey_step_id]->total   = 0;
+                $resultsByStep->steps[$result->survey_step_id]->results = new StdClass;
+                foreach ($this->timeSpans as $key => $timeSpan) {
+                    $resultsByStep->steps[$result->survey_step_id]->{$key}          = new StdClass;
+                    $resultsByStep->steps[$result->survey_step_id]->{$key}->total   = 0;
+                    $resultsByStep->steps[$result->survey_step_id]->{$key}->results = new StdClass;
+                }
+
+                $resultsByStep->steps[$result->survey_step_id]->type   = $result->survey_step->survey_element->survey_element_type->key;
+                $resultsByStep->steps[$result->survey_step_id]->params = $result->survey_step->survey_element->params;
             }
             $elementType = $result->survey_step->survey_element->survey_element_type->key;
             $className   = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . ucfirst($elementType);
 
-            foreach ($timeSpans as $timeSpan) {
-                if (Carbon::parse($result->answered_at)->between($timeSpan[1], $timeSpan[2])) {
-                    $key = $timeSpan[0];
+            /*foreach ($this->timeSpans as $key => $timeSpan) {
+                // per result
+                $cacheKey = $this->survey->id . "_" . $key;
+                if (Carbon::parse($result->answered_at)->between($timeSpan["start"], $timeSpan["end"])) {
                     $resultsByStep->steps[$result->survey_step_id]->$key->total++;
 
                     if (class_exists($className)) {
                         if (method_exists($className, "statsCountResult")) {
                             $className::statsCountResult($result, $resultsByStep->steps[$result->survey_step_id]->$key->results);
+                            $className::statsCountResult($result, $resultsByStep->steps[$result->survey_step_id]->results);
                         }
                     }
+
+                    // timespan total
+                    if (!isset($resultsByStep->totals->{$key})) {
+                        $resultsByStep->totals->{$key} = 0;
+                    }
+                    $resultsByStep->totals->{$key}++;
                 }
-            }
+            }*/
             $resultsByStep->steps[$result->survey_step_id]->total++;
-            $resultsByStep->total++;
+            $resultsByStep->totals->total++;
         }
 
         $resultsByStep->steps = collect($resultsByStep->steps)->values();
@@ -217,7 +327,7 @@ class EvaluationToolSurveyStatsController extends Controller
     public function getNextSteps(EvaluationToolSurveyStep $step, Collection $stepFlow): Collection
     {
         if ($step->next_step_id) {
-            $subFlow = new Collection();
+            $subFlow  = new Collection();
             $nextStep = EvaluationToolSurveyStep::find($step->next_step_id);
             $subFlow->add($this->stepForFlow($nextStep));
             $this->getNextSteps($nextStep, $subFlow);

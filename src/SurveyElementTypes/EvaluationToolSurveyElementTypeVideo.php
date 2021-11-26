@@ -109,9 +109,9 @@ class EvaluationToolSurveyElementTypeVideo extends EvaluationToolSurveyElementTy
             $surveyResult->result_language_id = $languageId;
             $surveyResult->answered_at        = $timestamp;
             $surveyResult->params             = $surveyStep->survey_element->params;
-            $surveyResult->time           = "00:00:" . intval($timeOffset * $i) . ":00";
+            $surveyResult->time               = "00:00:" . intval($timeOffset * $i) . ":00";
 
-            $videoComment = $i.' This is a great comment I have for this video.';
+            $videoComment = $i . ' This is a great comment I have for this video.';
 
             $resultValue                = new StdClass;
             $resultValue->text          = $videoComment;
@@ -119,9 +119,17 @@ class EvaluationToolSurveyElementTypeVideo extends EvaluationToolSurveyElementTy
             $surveyResult->save();
         }
     }
+
     public static function statsCountResult($result, $results): void
     {
-        $results->todo = "EvaluationToolSurveyElementTypeVideo::statsCountResult";
+//        $value = $result->result_value;
+//        echo gettype($results);
+        if (!isset($results["read"])) {
+            $results["read"] = 0;
+        }
+//        if ($value) {
+        $results["read"]++;
+//        }
     }
 
 }

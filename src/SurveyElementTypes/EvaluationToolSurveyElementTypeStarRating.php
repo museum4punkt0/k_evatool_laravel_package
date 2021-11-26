@@ -180,7 +180,7 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
         $surveyResult->save();
     }
 
-    public static function statsCountResult($result, $results): void
+    public static function statsCountResult($result, $results)
     {
         $value         = $result->result_value["rating"];
         $numberOfStars = $result->params["numberOfStars"];
@@ -188,10 +188,12 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
         // dd($numberOfStars);
 
         if ($value >= 0 && $value <= $numberOfStars) {
-            if (!isset($results->$value)) {
-                $results->$value = 0;
+            if (!isset($results[$value])) {
+                $results[$value] = 0;
             }
-            $results->$value++;
+            $results[$value]++;
         }
+
+        return $results;
     }
 }

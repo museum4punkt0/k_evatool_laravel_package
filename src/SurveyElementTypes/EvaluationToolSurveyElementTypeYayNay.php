@@ -24,7 +24,7 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
     public function sampleParams(): array
     {
 
-        $question = [];
+        $question                               = [];
         $question[$this->primaryLanguage->code] = $this->faker->words($this->faker->numberBetween(3, 20), true);
         foreach ($this->secondaryLanguages as $secondaryLanguage) {
             if ($this->faker->boolean(60)) {
@@ -33,12 +33,12 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
         }
 
         return [
-            "question" => $question,
-            "trueValue" => "accepted",
+            "question"   => $question,
+            "trueValue"  => "accepted",
             "falseValue" => "declined",
-            "trueLabel" => ["de" => "ja", "en" => "yes", "fr" => "oui"],
+            "trueLabel"  => ["de" => "ja", "en" => "yes", "fr" => "oui"],
             "falseLabel" => ["de" => "nein", "en" => "no", "fr" => "non"],
-            "assetIds" => [1, 2, 4],
+            "assetIds"   => [1, 2, 4],
         ];
     }
 
@@ -80,14 +80,14 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
 
     public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement): array
     {
-        $trueValue = $surveyElement->params->trueValue;
+        $trueValue  = $surveyElement->params->trueValue;
         $falseValue = $surveyElement->params->falseValue;
 
         return [
-            "result_value.images" => ['required', 'array'],
+            "result_value.images"         => ['required', 'array'],
             "result_value.images.*.asset" => ['required', 'in:' . implode(",", $surveyElement->params->assetIds)],
             "result_value.images.*.value" => ['required', 'in:' . $trueValue . ',' . $falseValue],
-            "asset_ids" => ['required', new DuplicatesInArray],
+            "asset_ids"                   => ['required', new DuplicatesInArray],
         ];
     }
 
@@ -108,17 +108,17 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
     public static function rules(): array
     {
         return [
-            'params.question' => 'required|array',
-            'params.assetIds' => ["required", "array", new DuplicatesInArray],
+            'params.question'   => 'required|array',
+            'params.assetIds'   => ["required", "array", new DuplicatesInArray],
             'params.assetIds.*' => [
                 "exists:evaluation_tool_assets,id",
                 new IsMediaType("image"),
             ],
             'params.question.*' => 'min:1|max:200',
-            'languageKeys.*' => 'required|exists:evaluation_tool_survey_languages,code',
-            'params.trueValue' => ["required", new SnakeCase()],
+            'languageKeys.*'    => 'required|exists:evaluation_tool_survey_languages,code',
+            'params.trueValue'  => ["required", new SnakeCase()],
             'params.falseValue' => ["required", new SnakeCase()],
-            'params.trueLabel' => ["required", "array"],
+            'params.trueLabel'  => ["required", "array"],
             'params.falseLabel' => ["required", "array"],
         ];
     }
@@ -135,49 +135,51 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
 
     public static function seedResult($surveyStep, $uuid, $languageId, $timestamp)
     {
-        $surveyResult = new EvaluationToolSurveyStepResult();
-        $surveyResult->session_id = $uuid;
-        $surveyResult->demo = true;
-        $surveyResult->survey_step_id = $surveyStep->id;
+        $surveyResult                     = new EvaluationToolSurveyStepResult();
+        $surveyResult->session_id         = $uuid;
+        $surveyResult->demo               = true;
+        $surveyResult->survey_step_id     = $surveyStep->id;
         $surveyResult->result_language_id = $languageId;
-        $surveyResult->answered_at = $timestamp;
-        $surveyResult->params = $surveyStep->survey_element->params;
-        $imagesArray = collect($surveyResult->params['assetIds']);
-        $binaryValues = array($surveyResult->params['trueValue'], $surveyResult->params['falseValue']);
+        $surveyResult->answered_at        = $timestamp;
+        $surveyResult->params             = $surveyStep->survey_element->params;
+        $imagesArray                      = collect($surveyResult->params['assetIds']);
+        $binaryValues                     = array($surveyResult->params['trueValue'], $surveyResult->params['falseValue']);
 
         $randomArray = array();
         foreach ($imagesArray as $id) {
-            $assetResult = array();
+            $assetResult          = array();
             $assetResult['asset'] = $id;
             $assetResult['value'] = $binaryValues[array_rand($binaryValues, 1)];
             array_push($randomArray, $assetResult);
         }
-        $resultValue = new StdClass;
-        $resultValue->images = $randomArray;
+        $resultValue                = new StdClass;
+        $resultValue->images        = $randomArray;
         $surveyResult->result_value = $resultValue;
 
         $surveyResult->save();
     }
-    public static function statsCountResult($result, $results): void
+
+    public static function statsCountResult($result, $results)
     {
 
-        if (!isset($results->images)) {
-            $results->images = array();
+        if (!isset($results["images"])) {
+            $results["images"] = array();
         }
         foreach ($result->result_value["images"] as $key => $image) {
             // $asset = $image["asset"];
             $value = $image["value"];
             if (in_array($value, array($result->params['trueValue'], $result->params['falseValue']))) {
-                if (!isset($results->images[$key])) {
-                    $results->images[$key] = new StdClass;
-                    // $results->images[$key]->asset = $asset;
+                if (!isset($results["images"][$key])) {
+                    $results["images"][$key] = [];
+                    // $results["images"][$key]->asset = $asset;
                 }
-                if (!isset($results->images[$key]->$value)) {
-                    $results->images[$key]->$value = 0;
+                if (!isset($results["images"][$key][$value])) {
+                    $results["images"][$key][$value] = 0;
                 }
-                $results->images[$key]->$value++;
+                $results["images"][$key][$value]++;
             }
         }
 
+        return $results;
     }
 }

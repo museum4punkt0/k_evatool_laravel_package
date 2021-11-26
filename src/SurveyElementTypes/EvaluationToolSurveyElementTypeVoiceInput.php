@@ -93,8 +93,11 @@ class EvaluationToolSurveyElementTypeVoiceInput extends EvaluationToolSurveyElem
 
         $surveyResult->save();
     }
-    public static function statsCountResult($result, $results): void
+
+    public static function statsCountResult($result, $results)
     {
-        $results->todo = "EvaluationToolSurveyElementTypeVoiceInput::statsCountResult";
+        $results["todo"] = "EvaluationToolSurveyElementTypeVoiceInput::statsCountResult";
+
+        return $results;
     }
 }

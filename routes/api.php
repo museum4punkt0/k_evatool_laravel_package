@@ -39,6 +39,7 @@ Route::prefix('api/evaluation-tool')
         Route::apiResource('surveys-results-assets', EvaluationToolSurveyResultAssetController::class);
         Route::get('surveys/{survey}/seed', [EvaluationToolSurveySeedController::class, "seedResults"]);
         Route::get('surveys/{survey}/stats', [EvaluationToolSurveyStatsController::class, "getStats"]);
+        Route::get('surveys/{survey}/stats-cache', [EvaluationToolSurveyStatsController::class, "getStatsCache"]);
         Route::get('surveys/{survey}/stats-list', [EvaluationToolSurveyStatsController::class, "getStatsList"]);
         Route::get('surveys/{survey}/stats-list-scheme', [EvaluationToolSurveyStatsController::class, "getStatsListScheme"]);
     });
