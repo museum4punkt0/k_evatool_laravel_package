@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use stdClass;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStatsIndexRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
@@ -167,6 +168,47 @@ class EvaluationToolSurveyStatsController extends Controller
     }
 
 
+    public function getStatsTrend(EvaluationToolSurvey $survey): JsonResponse
+    {
+        $results = EvaluationToolSurveyStepResult::whereIn("survey_step_id",
+            $survey->survey_steps
+                ->pluck("id"));
+
+        $currentSevenDays = $results->clone()->where("answered_at", ">", Carbon::now()->subDays(7)->startOfDay());
+        $lastSevenDays    = $results->clone()->where("answered_at", ">", Carbon::now()->subDays(14)->startOfDay())
+            ->where("answered_at", "<", Carbon::now()->subDays(8)->endOfDay());
+
+        $participantsTotal            = $results->clone()->groupBy("session_id")->select("session_id")->get()->count();
+        $participantsCurrentSevenDays = $currentSevenDays->clone()->groupBy("session_id")->select("session_id")->get()->count();
+        $participantsLastSevenDays    = $lastSevenDays->clone()->groupBy("session_id")->select("session_id")->get()->count();
+
+        $completedSurveysTotal            = $results->clone()->where("survey_finished", true)->get()->count();
+        $completedSurveysCurrentSevenDays = $currentSevenDays->clone()->where("survey_finished", true)->get()->count();
+        $completedSurveysLastSevenDays    = $lastSevenDays->clone()->where("survey_finished", true)->get()->count();
+
+        $answersTotal            = $results->count();
+        $answersCurrentSevenDays = $currentSevenDays->count();
+        $answersLastSevenDays    = $lastSevenDays->count();
+
+        $statsTrend                                 = new StdClass;
+        $statsTrend->participants                   = new StdClass;
+        $statsTrend->participants->total            = $participantsTotal;
+        $statsTrend->participants->currentSevenDays = $participantsCurrentSevenDays;
+        $statsTrend->participants->lastSevenDays    = $participantsLastSevenDays;
+
+        $statsTrend->completedSurveys                   = new StdClass;
+        $statsTrend->completedSurveys->total            = $completedSurveysTotal;
+        $statsTrend->completedSurveys->currentSevenDays = $completedSurveysCurrentSevenDays;
+        $statsTrend->completedSurveys->lastSevenDays    = $completedSurveysLastSevenDays;
+
+        $statsTrend->answers                   = new StdClass;
+        $statsTrend->answers->total            = $answersTotal;
+        $statsTrend->answers->currentSevenDays = $answersCurrentSevenDays;
+        $statsTrend->answers->lastSevenDays    = $answersLastSevenDays;
+
+        return $this->successResponse($statsTrend);
+    }
+
     public function getStats(EvaluationToolSurvey $survey, EvaluationToolSurveyStatsIndexRequest $request): JsonResponse
     {
         $this->getCacheTimeSpans($survey);
@@ -255,57 +297,66 @@ class EvaluationToolSurveyStatsController extends Controller
 
     public function getStatsList(EvaluationToolSurvey $survey, EvaluationToolSurveyStatsIndexRequest $request): JsonResponse
     {
-        $results = EvaluationToolSurveyStepResult::whereIn("survey_step_id", $survey->survey_steps->pluck("id"))->orderBy('session_id', 'ASC');
+        $resultsByUuid = Cache::remember("stats-list-" . $survey->id, Carbon::now()->addMinutes(5), function () use ($survey, $request) {
 
-        // check for start date
-        if ($request->has("start")) {
-            $results->where("answered_at", ">=", $request->start);
-        }
+            $results = EvaluationToolSurveyStepResult::whereIn("survey_step_id",
+                $survey->survey_steps
+                    ->pluck("id"))
+//                ->orderBy('session_id', 'ASC');
+                ->orderBy('answered_at', 'DESC');
 
-        // check for end date
-        if ($request->has("start")) {
-            $results->where("answered_at", "<=", $request->end);
-        }
-
-        if ($request->has("demo") && $request->demo == true) {
-            $results->where("demo", true);
-        } else {
-            $results->where("demo", false);
-        }
-
-        $results = $results->get();
-
-        $resultsByUuid = new StdClass;
-        foreach ($results as $result) {
-            if (!isset($resultsByUuid->{$result->session_id})) {
-                $resultsByUuid->{$result->session_id}                       = new StdClass;
-                $resultsByUuid->{$result->session_id}->uuid                 = $result->session_id;
-                $resultsByUuid->{$result->session_id}->firstResultTimestamp = Carbon::now()->addYears(10);
-                $resultsByUuid->{$result->session_id}->lastResultTimestamp  = Carbon::now()->subYears(10);
-                $resultsByUuid->{$result->session_id}->duration             = 0;
-                $resultsByUuid->{$result->session_id}->resultCount          = 0;
-                $resultsByUuid->{$result->session_id}->results              = [];
+            // check for start date
+            if ($request->has("start")) {
+                $results->where("answered_at", ">=", $request->start);
             }
 
-            if ($resultsByUuid->{$result->session_id}->firstResultTimestamp > $result->answered_at) {
-                $resultsByUuid->{$result->session_id}->firstResultTimestamp = $result->answered_at;
+            // check for end date
+            if ($request->has("start")) {
+                $results->where("answered_at", "<=", $request->end);
             }
 
-            if ($resultsByUuid->{$result->session_id}->lastResultTimestamp < $result->answered_at) {
-                $resultsByUuid->{$result->session_id}->lastResultTimestamp = $result->answered_at;
+            if ($request->has("demo") && $request->demo == true) {
+                $results->where("demo", true);
+            } else {
+                $results->where("demo", false);
             }
 
-            $resultsByUuid->{$result->session_id}->duration = $resultsByUuid->{$result->session_id}->lastResultTimestamp->diffInSeconds(
-                $resultsByUuid->{$result->session_id}->firstResultTimestamp);
+            $results = $results->get();
 
-            $resultsByUuid->{$result->session_id}->resultCount++;
+            $resultsByUuid = new StdClass;
+            foreach ($results as $result) {
+                if (!isset($resultsByUuid->{$result->session_id})) {
+                    $resultsByUuid->{$result->session_id}                       = new StdClass;
+                    $resultsByUuid->{$result->session_id}->uuid                 = $result->session_id;
+                    $resultsByUuid->{$result->session_id}->firstResultTimestamp = Carbon::now()->addYears(10);
+                    $resultsByUuid->{$result->session_id}->lastResultTimestamp  = Carbon::now()->subYears(10);
+                    $resultsByUuid->{$result->session_id}->duration             = 0;
+                    $resultsByUuid->{$result->session_id}->resultCount          = 0;
+                    $resultsByUuid->{$result->session_id}->results              = [];
+                }
 
-            $resultValue         = new StdClass;
-            $resultValue->value  = $result->result_value;
-            $resultValue->stepId = $result->survey_step_id;
+                if ($resultsByUuid->{$result->session_id}->firstResultTimestamp > $result->answered_at) {
+                    $resultsByUuid->{$result->session_id}->firstResultTimestamp = $result->answered_at;
+                }
 
-            $resultsByUuid->{$result->session_id}->results[] = $resultValue;
-        }
+                if ($resultsByUuid->{$result->session_id}->lastResultTimestamp < $result->answered_at) {
+                    $resultsByUuid->{$result->session_id}->lastResultTimestamp = $result->answered_at;
+                }
+
+                $resultsByUuid->{$result->session_id}->duration = $resultsByUuid->{$result->session_id}->lastResultTimestamp->diffInSeconds(
+                    $resultsByUuid->{$result->session_id}->firstResultTimestamp);
+
+                $resultsByUuid->{$result->session_id}->resultCount++;
+
+                $resultValue         = new StdClass;
+                $resultValue->value  = $result->result_value;
+                $resultValue->stepId = $result->survey_step_id;
+
+                $resultsByUuid->{$result->session_id}->results[] = $resultValue;
+            }
+
+            return $resultsByUuid;
+        });
 
         return $this->showAll(collect($resultsByUuid));
     }

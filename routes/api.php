@@ -41,6 +41,7 @@ Route::prefix('api/evaluation-tool')
         Route::get('surveys/{survey}/stats', [EvaluationToolSurveyStatsController::class, "getStats"]);
         Route::get('surveys/{survey}/stats-cache', [EvaluationToolSurveyStatsController::class, "getStatsCache"]);
         Route::get('surveys/{survey}/stats-list', [EvaluationToolSurveyStatsController::class, "getStatsList"]);
+        Route::get('surveys/{survey}/stats-trend', [EvaluationToolSurveyStatsController::class, "getStatsTrend"]);
         Route::get('surveys/{survey}/stats-list-scheme', [EvaluationToolSurveyStatsController::class, "getStatsListScheme"]);
     });
 

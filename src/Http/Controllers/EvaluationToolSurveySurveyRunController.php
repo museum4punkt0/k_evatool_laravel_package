@@ -421,6 +421,8 @@ class EvaluationToolSurveySurveyRunController extends Controller
             }
         }
 
+//        echo "current " . $currentStep->id . " finished " . $finished . PHP_EOL;
+
         return [
             "currentStep"  => $finished ? -1 : $currentStep->id,
             "stepOrdering" => $stepOrdering
