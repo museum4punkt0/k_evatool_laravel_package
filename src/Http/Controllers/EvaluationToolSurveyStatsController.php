@@ -209,6 +209,48 @@ class EvaluationToolSurveyStatsController extends Controller
         return $this->successResponse($statsTrend);
     }
 
+    public function getStatsByStep(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $step, EvaluationToolSurveyStatsIndexRequest $request): JsonResponse
+    {
+        if ($step->survey_id !== $survey->id) {
+            return $this->errorResponse("step not in survey", 409);
+        }
+
+        $resultQuery = EvaluationToolSurveyStepResult::where("survey_step_id", $step->id);
+
+        // check for start date
+        if ($request->has("start")) {
+            $resultQuery->where("answered_at", ">=", $request->start);
+        }
+
+        // check for end date
+        if ($request->has("end")) {
+            $resultQuery->where("answered_at", "<=", $request->end);
+        }
+
+        $results = $resultQuery->with(["language", "survey_step"])->get();
+
+        $elementType = $step->survey_element_type->key;
+
+        $resultSum = [];
+        $className = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . ucfirst($elementType);
+        if (class_exists($className)) {
+            if (method_exists($className, "statsCountResult")) {
+                foreach ($results as $result) {
+                    $resultSum = $className::statsCountResult($result, $resultSum);
+                }
+            }
+        }
+
+        $payload                = new StdClass;
+        $payload->total         = $results->count();
+        $payload->results       = $resultSum;
+        $payload->elementType   = $elementType;
+        $payload->elementParams = $step->survey_element->params;
+
+
+        return $this->successResponse($payload);
+    }
+
     public function getStats(EvaluationToolSurvey $survey, EvaluationToolSurveyStatsIndexRequest $request): JsonResponse
     {
         $this->getCacheTimeSpans($survey);
