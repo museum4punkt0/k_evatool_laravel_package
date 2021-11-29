@@ -22,7 +22,7 @@ class EvaluationToolSurveyStepResultObserver
     public function created(EvaluationToolSurveyStepResult $surveyStepResult)
     {
         // get position in survey and set suvrey finished if applicable
-        $runController = new EvaluationToolSurveySurveyRunController();
+        /*$runController = new EvaluationToolSurveySurveyRunController();
         $surveyStep    = EvaluationToolSurveyStep::find($surveyStepResult->survey_step_id);
         $survey        = $surveyStep->survey;
         $surveySteps   = $survey->survey_steps;
@@ -37,7 +37,7 @@ class EvaluationToolSurveyStepResultObserver
         if ($surveyPosition["currentStep"] == -1) {
             $surveyStepResult->survey_finished = true;
             $surveyStepResult->save();
-        }
+        }*/
     }
 
     /**
