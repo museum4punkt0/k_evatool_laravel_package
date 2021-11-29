@@ -235,11 +235,20 @@ class EvaluationToolSurveyStatsController extends Controller
 
         $this->getCacheTimeSpans($survey);
 
-        $resultsPayload                      = [];
-        $resultsPayload["timespan"]          = new StdClass;
-        $resultsPayload["timespan"]->start   = $request->start;
-        $resultsPayload["timespan"]->end     = $request->end;
-        $resultsPayload["timespan"]->results = [];
+        $resultsPayload = [];
+
+        if ($request->has("start") && $request->has("end")) {
+            $resultsPayload["timespan"]          = new StdClass;
+            $resultsPayload["timespan"]->start   = $request->start;
+            $resultsPayload["timespan"]->end     = $request->end;
+            $resultsPayload["timespan"]->results = [];
+        }
+
+        $resultsPayload["total"]          = new StdClass;
+        $resultsPayload["total"]->start   = $request->start;
+        $resultsPayload["total"]->end     = $request->end;
+        $resultsPayload["total"]->results = [];
+
         foreach ($this->cacheTimeSpans as $key => $timespan) {
             $resultsPayload[$key]          = new StdClass;
             $resultsPayload[$key]->start   = $timespan["start"];
@@ -251,9 +260,16 @@ class EvaluationToolSurveyStatsController extends Controller
         $className = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . ucfirst($elementType);
         if (class_exists($className)) {
             if (method_exists($className, "statsCountResult")) {
-                foreach ($resultsSpan as $result) {
-                    $resultsPayload["timespan"]->results = $className::statsCountResult($result, $resultsPayload["timespan"]->results);
+                if ($request->has("start") && $request->has("end")) {
+                    foreach ($resultsSpan as $result) {
+                        $resultsPayload["timespan"]->results = $className::statsCountResult($result, $resultsPayload["timespan"]->results);
+                    }
                 }
+
+                foreach ($results as $result) {
+                    $resultsPayload["total"]->results = $className::statsCountResult($result, $resultsPayload["total"]->results);
+                }
+
                 foreach ($results as $result) {
                     foreach ($this->cacheTimeSpans as $key => $timespan) {
                         if ($result->answered_at->between($timespan["start"], $timespan["end"])) {
@@ -261,12 +277,17 @@ class EvaluationToolSurveyStatsController extends Controller
                         }
                     }
                 }
+            }
+        }
 
+        foreach ($this->cacheTimeSpans as $key => $timespan) {
+            if (empty($resultsPayload[$key]->results)) {
+                unset($resultsPayload[$key]);
             }
         }
 
         $payload                = new StdClass;
-        $payload->total         = $results->count();
+//        $payload->total         = $results->count();
         $payload->results       = $resultsPayload;
         $payload->elementType   = $elementType;
         $payload->elementParams = $step->survey_element->params;
