@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
+use Faker\Factory;
 
 class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyElementTypeBase
 {
@@ -80,7 +81,11 @@ class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyEleme
 
     public static function statsCountResult($result, $results)
     {
-        $results["todo"] = "EvaluationToolSurveyElementTypeTextInput::statsCountResult";
+        if (!isset($results["texts"])) {
+            $results["texts"] = [];
+        }
+        $text = $result->result_value["text"];
+        $results["texts"][] = $text;//"EvaluationToolSurveyElementTypeTextInput::statsCountResult";
 
         return $results;
     }
@@ -95,8 +100,9 @@ class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyEleme
         $surveyResult->answered_at        = $timestamp;
         $surveyResult->params             = $surveyStep->survey_element->params;
 
+        $faker = Factory::create('de_DE');
         $resultValue                = new StdClass;
-        $text                       = 'lorem ipsum dolor sit amet';
+        $text                       = $faker->realText(400);
         $resultValue->text          = $text;
         $surveyResult->result_value = $resultValue;
 
