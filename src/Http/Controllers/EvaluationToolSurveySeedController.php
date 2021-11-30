@@ -56,8 +56,8 @@ class EvaluationToolSurveySeedController extends Controller
                 $step = EvaluationToolSurveyStep::find($position["currentStep"]);
                 echo "current step: " . $position["currentStep"] . " - " . $step->survey_element->survey_element_type->key . PHP_EOL;
 
-                $success = $this->seedSurveyStepResult($step, $languageId);
-                if (!$success) {
+                $seedResult = $this->seedSurveyStepResult($step, $languageId);
+                if (!$seedResult) {
                     echo "seed method not found" . PHP_EOL . PHP_EOL;
                     break;
                 }
@@ -66,13 +66,18 @@ class EvaluationToolSurveySeedController extends Controller
 //                print_r($position);
             }
 
+            if ($position["currentStep"] == -1) {
+                $seedResult->survey_finished = true;
+                $seedResult->save();
+            }
+
             echo "seed round " . ($seedCount + 1) . " done" . PHP_EOL;
 
             $seedCount++;
         }
     }
 
-    public function seedSurveyStepResult(EvaluationToolSurveyStep $surveyStep, $languageId): bool
+    public function seedSurveyStepResult(EvaluationToolSurveyStep $surveyStep, $languageId)
     {
         $elementType = $surveyStep->survey_element->survey_element_type->key;
 
@@ -80,8 +85,7 @@ class EvaluationToolSurveySeedController extends Controller
         if (class_exists($className)) {
             if (method_exists($className, "seedResult")) {
                 $this->timestamp->addSeconds(rand(5, 60));
-                $className::seedResult($surveyStep, $this->uuid, $languageId, $this->timestamp);
-                return true;
+                return $className::seedResult($surveyStep, $this->uuid, $languageId, $this->timestamp);
             }
             return false;
         }

@@ -101,5 +101,7 @@ class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyEleme
         $surveyResult->result_value = $resultValue;
 
         $surveyResult->save();
+
+        return $surveyResult;
     }
 }

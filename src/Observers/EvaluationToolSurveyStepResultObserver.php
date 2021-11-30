@@ -22,22 +22,24 @@ class EvaluationToolSurveyStepResultObserver
     public function created(EvaluationToolSurveyStepResult $surveyStepResult)
     {
         // get position in survey and set suvrey finished if applicable
-        /*$runController = new EvaluationToolSurveySurveyRunController();
-        $surveyStep    = EvaluationToolSurveyStep::find($surveyStepResult->survey_step_id);
-        $survey        = $surveyStep->survey;
-        $surveySteps   = $survey->survey_steps;
+        if (app()->runningInConsole()) {
+            $runController = new EvaluationToolSurveySurveyRunController();
+            $surveyStep    = EvaluationToolSurveyStep::find($surveyStepResult->survey_step_id);
+            $survey        = $surveyStep->survey;
+            $surveySteps   = $survey->survey_steps;
 
-        foreach ($surveySteps as $surveyStep) {
-            $resultsByUuid            = $runController->getResultsByUuid($surveyStep, $surveyStepResult->session_id);
-            $surveyStep->resultByUuid = $resultsByUuid->result;
-            $surveyStep->isAnswered   = $resultsByUuid->isAnswered;
+            foreach ($surveySteps as $surveyStep) {
+                $resultsByUuid            = $runController->getResultsByUuid($surveyStep, $surveyStepResult->session_id);
+                $surveyStep->resultByUuid = $resultsByUuid->result;
+                $surveyStep->isAnswered   = $resultsByUuid->isAnswered;
+            }
+            $surveyPosition = $runController->getPositionWithinSurvey($survey->survey_steps);
+
+            if ($surveyPosition["currentStep"] == -1) {
+                $surveyStepResult->survey_finished = true;
+                $surveyStepResult->save();
+            }
         }
-        $surveyPosition = $runController->getPositionWithinSurvey($survey->survey_steps);
-
-        if ($surveyPosition["currentStep"] == -1) {
-            $surveyStepResult->survey_finished = true;
-            $surveyStepResult->save();
-        }*/
     }
 
     /**

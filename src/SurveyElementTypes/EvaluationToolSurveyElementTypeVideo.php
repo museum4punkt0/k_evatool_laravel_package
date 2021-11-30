@@ -118,6 +118,7 @@ class EvaluationToolSurveyElementTypeVideo extends EvaluationToolSurveyElementTy
             $surveyResult->result_value = $resultValue;
             $surveyResult->save();
         }
+        return $surveyResult;
     }
 
     public static function statsCountResult($result, $results): void
