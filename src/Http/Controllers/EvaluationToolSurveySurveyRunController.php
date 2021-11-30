@@ -239,6 +239,8 @@ class EvaluationToolSurveySurveyRunController extends Controller
             return $this->errorResponse("survey step result not found", 409);
         }*/
 
+        (new EvaluationToolSurveyStepResultAssetController)->createStepResultAsset($request->audio, $request->surveyStepResultId);
+
         $fileContent = $request->audio;
         $fileContent = str_replace('data:audio/wav;base64,', '', $fileContent);
         $hash        = substr(md5($fileContent), 0, 6);

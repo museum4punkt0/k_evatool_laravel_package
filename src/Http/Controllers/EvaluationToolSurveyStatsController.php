@@ -4,7 +4,6 @@ namespace Twoavy\EvaluationTool\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -98,8 +97,9 @@ class EvaluationToolSurveyStatsController extends Controller
         while ($firstDate < Carbon::yesterday()->startOfWeek()->subMonths($i)->startOfMonth()) {
             $key                        = Carbon::yesterday()->startOfWeek()->subMonths($i)->startOfMonth()->format("Y-m");
             $this->cacheTimeSpans[$key] = [
-                "start" => Carbon::yesterday()->startOfWeek()->subMonths($i)->startOfMonth(),
-                "end"   => Carbon::yesterday()->startOfWeek()->subMonths($i)->endOfMonth()
+                "start"    => Carbon::yesterday()->startOfWeek()->subMonths($i)->startOfMonth(),
+                "end"      => Carbon::yesterday()->startOfWeek()->subMonths($i)->endOfMonth(),
+                "cachable" => true
             ];
             $i++;
         }
@@ -286,7 +286,7 @@ class EvaluationToolSurveyStatsController extends Controller
             }
         }
 
-        $payload                = new StdClass;
+        $payload = new StdClass;
 //        $payload->total         = $results->count();
         $payload->results       = $resultsPayload;
         $payload->elementType   = $elementType;

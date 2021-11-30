@@ -7,10 +7,10 @@ use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyLanguageControlle
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyElementController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyElementTypeController;
+use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyStepResultAssetTranscriptionController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyStatsController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyResultController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyStepSurveyStepResultController;
-use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyResultAssetController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyRunController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyStepController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySeedController;
@@ -36,7 +36,7 @@ Route::prefix('api/evaluation-tool')
         Route::apiResource('surveys.steps', EvaluationToolSurveySurveyStepController::class);
         Route::apiResource('surveys.results', EvaluationToolSurveySurveyResultController::class);
         Route::apiResource('surveys.steps.results', EvaluationToolSurveySurveyStepSurveyStepResultController::class);
-        Route::apiResource('surveys-results-assets', EvaluationToolSurveyResultAssetController::class);
+        Route::apiResource('survey-step-result-assets.transcriptions', EvaluationToolSurveyStepResultAssetTranscriptionController::class)->only("store");
         Route::get('surveys/{survey}/seed', [EvaluationToolSurveySeedController::class, "seedResults"]);
         Route::get('surveys/{survey}/stats', [EvaluationToolSurveyStatsController::class, "getStats"]);
         Route::get('surveys/{survey}/stats/{step}', [EvaluationToolSurveyStatsController::class, "getStatsByStep"]);

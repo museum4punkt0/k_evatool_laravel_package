@@ -18,7 +18,7 @@ class EvaluationToolSurveyResultAssetController extends Controller
 
     public function __construct()
     {
-        $this->middleware("auth:api")->except(["index", "show", "store", "update", "destroy"]);
+        $this->middleware("auth:api");
         $this->audioDisk = Storage::disk("evaluation_tool_audio");
     }
 

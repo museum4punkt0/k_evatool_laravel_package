@@ -3,7 +3,10 @@
 namespace Twoavy\EvaluationTool\SurveyElementTypes;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use StdClass;
+use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyStepResultAssetController;
+use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyRunController;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 
@@ -75,7 +78,7 @@ class EvaluationToolSurveyElementTypeVoiceInput extends EvaluationToolSurveyElem
         return true;
     }
 
-    public static function seedResult($surveyStep, $uuid, $languageId, $timestamp)
+    public static function seedResult($surveyStep, $uuid, $languageId, $timestamp): EvaluationToolSurveyStepResult
     {
         $surveyResult                     = new EvaluationToolSurveyStepResult();
         $surveyResult->session_id         = $uuid;
@@ -85,13 +88,15 @@ class EvaluationToolSurveyElementTypeVoiceInput extends EvaluationToolSurveyElem
         $surveyResult->answered_at        = $timestamp;
         $surveyResult->params             = $surveyStep->survey_element->params;
 
-        $randomAudio = 'data:audio/wav;base64,AAAAHGZ0eXBpc281AAAAAWlzb21pc281aGxzZ';
-
         $resultValue                = new StdClass;
-        $resultValue->audio         = $randomAudio;
         $surveyResult->result_value = $resultValue;
 
         $surveyResult->save();
+
+        $audioFile = collect(Storage::disk("evaluation_tool_demo_result_assets")->files())->random(1)[0];
+        $audioData = base64_encode(Storage::disk("evaluation_tool_demo_result_assets")->get($audioFile));
+        (new EvaluationToolSurveyStepResultAssetController)->createStepResultAsset($audioData, $surveyResult->id, $surveyResult->id);
+
 
         return $surveyResult;
     }
