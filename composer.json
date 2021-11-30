@@ -7,6 +7,7 @@
         "ankitpokhrel/tus-php": "^2.1",
         "cocur/slugify": "^4.0",
         "codeinc/human-readable-file-size": "^1.0",
+        "donatello-za/rake-php-plus": "^1.0",
         "fakerphp/faker": "^1.15",
         "google/cloud-speech": "^1.4",
         "illuminate/bus": "^8.0",
