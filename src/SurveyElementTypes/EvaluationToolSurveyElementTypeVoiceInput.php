@@ -4,6 +4,7 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use StdClass;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyStepResultAssetController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyRunController;
@@ -95,7 +96,7 @@ class EvaluationToolSurveyElementTypeVoiceInput extends EvaluationToolSurveyElem
 
         $audioFile = collect(Storage::disk("evaluation_tool_demo_result_assets")->files())->random(1)[0];
         $audioData = base64_encode(Storage::disk("evaluation_tool_demo_result_assets")->get($audioFile));
-        (new EvaluationToolSurveyStepResultAssetController)->createStepResultAsset($audioData, $surveyResult->id, $surveyResult->id);
+        (new EvaluationToolSurveyStepResultAssetController)->createStepResultAsset($audioData, $surveyResult->id, Str::uuid());
 
 
         return $surveyResult;
