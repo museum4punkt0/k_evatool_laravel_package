@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use stdClass;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStatsIndexRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
@@ -26,51 +27,51 @@ class EvaluationToolSurveyStatsController extends Controller
         $this->middleware("auth:api");
 
         $this->timeSpans = [
-            "today" => [
+            "today"             => [
                 "start" => Carbon::now()->startOfDay(),
-                "end" => Carbon::now()->endOfDay(),
+                "end"   => Carbon::now()->endOfDay(),
             ],
-            "yesterday" => [
+            "yesterday"         => [
                 "start" => Carbon::yesterday()->startOfDay(),
-                "end" => Carbon::yesterday()->endOfDay(),
+                "end"   => Carbon::yesterday()->endOfDay(),
             ],
-            "currentWeek" => [
+            "currentWeek"       => [
                 "start" => Carbon::now()->startOfWeek(),
-                "end" => Carbon::now()->endOfWeek(),
+                "end"   => Carbon::now()->endOfWeek(),
             ],
-            "lastWeek" => [
+            "lastWeek"          => [
                 "start" => Carbon::now()->subWeek()->startOfWeek(),
-                "end" => Carbon::now()->subWeek()->endOfWeek(),
+                "end"   => Carbon::now()->subWeek()->endOfWeek(),
             ],
-            "currentMonth" => [
+            "currentMonth"      => [
                 "start" => Carbon::now()->startOfMonth(),
-                "end" => Carbon::now()->endOfMonth(),
+                "end"   => Carbon::now()->endOfMonth(),
             ],
-            "lastMonth" => [
+            "lastMonth"         => [
                 "start" => Carbon::now()->subMonth()->startOfMonth(),
-                "end" => Carbon::now()->subMonth()->endOfMonth()],
-            "currentYear" => [
+                "end"   => Carbon::now()->subMonth()->endOfMonth()],
+            "currentYear"       => [
                 "start" => Carbon::now()->startOfYear(),
-                "end" => Carbon::now()->endOfYear(),
+                "end"   => Carbon::now()->endOfYear(),
             ],
-            "lastYear" => [
+            "lastYear"          => [
                 "start" => Carbon::now()->subYear()->startOfYear(),
-                "end" => Carbon::now()->subYear()->endOfYear(),
+                "end"   => Carbon::now()->subYear()->endOfYear(),
             ],
-            "currentSevenDays" => [
+            "currentSevenDays"  => [
                 "start" => Carbon::now()->subWeek(),
-                "end" => Carbon::now(),
+                "end"   => Carbon::now(),
             ],
             "previousSevenDays" => [
                 "start" => Carbon::now()->subWeeks(),
-                "end" => Carbon::now()->subWeeks(2),
+                "end"   => Carbon::now()->subWeeks(2),
             ],
         ];
 
         $this->cacheTimeSpans = [
             "today" => [
-                "start" => Carbon::now()->startOfDay(),
-                "end" => Carbon::now()->endOfDay(),
+                "start"   => Carbon::now()->startOfDay(),
+                "end"     => Carbon::now()->endOfDay(),
                 "noCache" => true,
             ],
         ];
@@ -78,29 +79,29 @@ class EvaluationToolSurveyStatsController extends Controller
 
     public function getCacheTimeSpans($survey)
     {
-        $results = EvaluationToolSurveyStepResult::whereIn("survey_step_id", $survey->survey_steps->pluck("id"));
+        $results   = EvaluationToolSurveyStepResult::whereIn("survey_step_id", $survey->survey_steps->pluck("id"));
         $firstDate = $results->clone()->orderBy("answered_at", "ASC")->first()->answered_at;
 //        $lastDate  = $results->clone()->orderBy("answered_at", "DESC")->first()->answered_at;
 
         if ($firstDate < Carbon::today()->startOfDay()) {
             $this->cacheTimeSpans["week"] = [
                 "start" => Carbon::yesterday()->startOfWeek(),
-                "end" => Carbon::yesterday()->endOfDay(),
+                "end"   => Carbon::yesterday()->endOfDay(),
             ];
         }
         if ($firstDate < Carbon::yesterday()->startOfWeek()) {
             $this->cacheTimeSpans["month"] = [
                 "start" => Carbon::yesterday()->startOfWeek()->startOfMonth(),
-                "end" => Carbon::yesterday()->subWeek()->endOfWeek(),
+                "end"   => Carbon::yesterday()->subWeek()->endOfWeek(),
             ];
         }
 
         $i = 1;
         while ($firstDate < Carbon::yesterday()->startOfWeek()->subMonths($i)->startOfMonth()) {
-            $key = Carbon::yesterday()->startOfWeek()->subMonths($i)->startOfMonth()->format("Y-m");
+            $key                        = Carbon::yesterday()->startOfWeek()->subMonths($i)->startOfMonth()->format("Y-m");
             $this->cacheTimeSpans[$key] = [
-                "start" => Carbon::yesterday()->startOfWeek()->subMonths($i)->startOfMonth(),
-                "end" => Carbon::yesterday()->startOfWeek()->subMonths($i)->endOfMonth(),
+                "start"    => Carbon::yesterday()->startOfWeek()->subMonths($i)->startOfMonth(),
+                "end"      => Carbon::yesterday()->startOfWeek()->subMonths($i)->endOfMonth(),
                 "cachable" => true,
             ];
             $i++;
@@ -128,10 +129,10 @@ class EvaluationToolSurveyStatsController extends Controller
                     ->where("date", $result->answered_at->format("Y-m-d"))
                     ->first()
                 ) {
-                    $resultCache = new EvaluationToolSurveyStatsCache();
+                    $resultCache            = new EvaluationToolSurveyStatsCache();
                     $resultCache->survey_id = $survey->id;
-                    $resultCache->date = $result->answered_at;
-                    $resultCache->results = [];
+                    $resultCache->date      = $result->answered_at;
+                    $resultCache->results   = [];
                 }
             }
 
@@ -141,8 +142,8 @@ class EvaluationToolSurveyStatsController extends Controller
 
             if (!array_search($result->survey_step_id, array_column($resultsResults, 'stepId'))) {
                 $resultsResults[] = [
-                    "stepId" => $result->survey_step_id,
-                    "type" => $result->survey_step->survey_element_type->key,
+                    "stepId"  => $result->survey_step_id,
+                    "type"    => $result->survey_step->survey_element_type->key,
                     "results" => [],
                 ];
             }
@@ -175,49 +176,49 @@ class EvaluationToolSurveyStatsController extends Controller
                 ->pluck("id"));
 
         $currentSevenDays = $results->clone()->where("answered_at", ">", Carbon::now()->subDays(7)->startOfDay());
-        $lastSevenDays = $results->clone()->where("answered_at", ">", Carbon::now()->subDays(14)->startOfDay())
+        $lastSevenDays    = $results->clone()->where("answered_at", ">", Carbon::now()->subDays(14)->startOfDay())
             ->where("answered_at", "<", Carbon::now()->subDays(8)->endOfDay());
 
-        $participantsTotal = $results->clone()->groupBy("session_id")->select("session_id")->get()->count();
+        $participantsTotal            = $results->clone()->groupBy("session_id")->select("session_id")->get()->count();
         $participantsCurrentSevenDays = $currentSevenDays->clone()->groupBy("session_id")->select("session_id")->get()->count();
-        $participantsLastSevenDays = $lastSevenDays->clone()->groupBy("session_id")->select("session_id")->get()->count();
+        $participantsLastSevenDays    = $lastSevenDays->clone()->groupBy("session_id")->select("session_id")->get()->count();
 
-        $completedSurveysTotal = $results->clone()->where("survey_finished", true)->get()->count();
+        $completedSurveysTotal            = $results->clone()->where("survey_finished", true)->get()->count();
         $completedSurveysCurrentSevenDays = $currentSevenDays->clone()->where("survey_finished", true)->get()->count();
-        $completedSurveysLastSevenDays = $lastSevenDays->clone()->where("survey_finished", true)->get()->count();
+        $completedSurveysLastSevenDays    = $lastSevenDays->clone()->where("survey_finished", true)->get()->count();
 
-        $answersTotal = $results->count();
+        $answersTotal            = $results->count();
         $answersCurrentSevenDays = $currentSevenDays->count();
-        $answersLastSevenDays = $lastSevenDays->count();
+        $answersLastSevenDays    = $lastSevenDays->count();
 
-        $statsTrend = new StdClass;
-        $statsTrend->participants = new StdClass;
-        $statsTrend->participants->total = $participantsTotal;
+        $statsTrend                                 = new StdClass;
+        $statsTrend->participants                   = new StdClass;
+        $statsTrend->participants->total            = $participantsTotal;
         $statsTrend->participants->currentSevenDays = $participantsCurrentSevenDays;
-        $statsTrend->participants->lastSevenDays = $participantsLastSevenDays;
+        $statsTrend->participants->lastSevenDays    = $participantsLastSevenDays;
 
-        $statsTrend->completedSurveys = new StdClass;
-        $statsTrend->completedSurveys->total = $completedSurveysTotal;
+        $statsTrend->completedSurveys                   = new StdClass;
+        $statsTrend->completedSurveys->total            = $completedSurveysTotal;
         $statsTrend->completedSurveys->currentSevenDays = $completedSurveysCurrentSevenDays;
-        $statsTrend->completedSurveys->lastSevenDays = $completedSurveysLastSevenDays;
+        $statsTrend->completedSurveys->lastSevenDays    = $completedSurveysLastSevenDays;
 
-        $statsTrend->answers = new StdClass;
-        $statsTrend->answers->total = $answersTotal;
+        $statsTrend->answers                   = new StdClass;
+        $statsTrend->answers->total            = $answersTotal;
         $statsTrend->answers->currentSevenDays = $answersCurrentSevenDays;
-        $statsTrend->answers->lastSevenDays = $answersLastSevenDays;
+        $statsTrend->answers->lastSevenDays    = $answersLastSevenDays;
 
         return $this->successResponse($statsTrend);
     }
 
     public function getTextAnalysis($results)
     {
-        $analysis = new StdClass;
+        $analysis      = new StdClass;
         $languageCodes = array_keys($results["texts"]);
         foreach ($languageCodes as $languageCode) {
             $language = EvaluationToolSurveyLanguage::where('code', $languageCode)->first();
-            $text = implode($results["texts"][$languageCode]);
-            $hash = md5($text);
-            return Cache::remember("analysis_".$hash, Carbon::now()->addHour(), function () use($text, $analysis, $languageCode, $language){
+            $text     = implode($results["texts"][$languageCode]);
+            $hash     = md5($text);
+            return Cache::remember("analysis_" . $hash, Carbon::now()->addHour(), function () use ($text, $analysis, $languageCode, $language) {
                 $analysis->$languageCode = new StdClass;
                 switch ($language->code) {
                     case "de":
@@ -237,16 +238,17 @@ class EvaluationToolSurveyStatsController extends Controller
 
                 }
 
-                $phrases = $rake->sortByScore('desc')->scores();
+                $phrases  = $rake->sortByScore('desc')->scores();
                 $keywords = $rake->keywords();
 
-                $analysis->$languageCode->phrases = $phrases;
+                $analysis->$languageCode->phrases  = $phrases;
                 $analysis->$languageCode->keywords = $keywords;
                 return $analysis;
             });
         }
 
     }
+
     public function getStatsByStep(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $step, EvaluationToolSurveyStatsIndexRequest $request): JsonResponse
     {
         if ($step->survey_id !== $survey->id) {
@@ -267,7 +269,7 @@ class EvaluationToolSurveyStatsController extends Controller
         }
 
         $resultsSpan = $resultQuerySpan->get();
-        $results = $resultQuery->get();
+        $results     = $resultQuery->get();
 
         $elementType = $step->survey_element_type->key;
 
@@ -276,21 +278,21 @@ class EvaluationToolSurveyStatsController extends Controller
         $resultsPayload = [];
 
         if ($request->has("start") && $request->has("end")) {
-            $resultsPayload["timespan"] = new StdClass;
-            $resultsPayload["timespan"]->start = $request->start;
-            $resultsPayload["timespan"]->end = $request->end;
+            $resultsPayload["timespan"]          = new StdClass;
+            $resultsPayload["timespan"]->start   = $request->start;
+            $resultsPayload["timespan"]->end     = $request->end;
             $resultsPayload["timespan"]->results = [];
         }
 
-        $resultsPayload["total"] = new StdClass;
-        $resultsPayload["total"]->start = $request->start;
-        $resultsPayload["total"]->end = $request->end;
+        $resultsPayload["total"]          = new StdClass;
+        $resultsPayload["total"]->start   = $request->start;
+        $resultsPayload["total"]->end     = $request->end;
         $resultsPayload["total"]->results = [];
 
         foreach ($this->cacheTimeSpans as $key => $timespan) {
-            $resultsPayload[$key] = new StdClass;
-            $resultsPayload[$key]->start = $timespan["start"];
-            $resultsPayload[$key]->end = $timespan["end"];
+            $resultsPayload[$key]          = new StdClass;
+            $resultsPayload[$key]->start   = $timespan["start"];
+            $resultsPayload[$key]->end     = $timespan["end"];
             $resultsPayload[$key]->results = [];
         }
 
@@ -320,27 +322,27 @@ class EvaluationToolSurveyStatsController extends Controller
         foreach ($this->cacheTimeSpans as $key => $timespan) {
             if (empty($resultsPayload[$key]->results)) {
                 unset($resultsPayload[$key]);
-            }else{
+            } else {
                 if ($elementType == "textInput") {
-                    $analysis = $this->getTextAnalysis($resultsPayload[$key]->results);
+                    $analysis                                  = $this->getTextAnalysis($resultsPayload[$key]->results);
                     $resultsPayload[$key]->results["analysis"] = $analysis;
                 }
 
             }
         }
         if ($elementType == "textInput") {
-            $analysis = $this->getTextAnalysis($resultsPayload["total"]->results);
+            $analysis                                     = $this->getTextAnalysis($resultsPayload["total"]->results);
             $resultsPayload["total"]->results["analysis"] = $analysis;
 
             // timespan
-            $analysis = $this->getTextAnalysis($resultsPayload["timespan"]->results);
+            $analysis                                        = $this->getTextAnalysis($resultsPayload["timespan"]->results);
             $resultsPayload["timespan"]->results["analysis"] = $analysis;
         }
 
         $payload = new StdClass;
 //        $payload->total         = $results->count();
-        $payload->results = $resultsPayload;
-        $payload->elementType = $elementType;
+        $payload->results       = $resultsPayload;
+        $payload->elementType   = $elementType;
         $payload->elementParams = $step->survey_element->params;
 
         return $this->successResponse($payload);
@@ -369,8 +371,8 @@ class EvaluationToolSurveyStatsController extends Controller
 
     public function parseResults($results): stdClass
     {
-        $resultsByStep = new StdClass;
-        $resultsByStep->totals = new StdClass;
+        $resultsByStep                = new StdClass;
+        $resultsByStep->totals        = new StdClass;
         $resultsByStep->totals->total = 0;
 
         $resultsByStep->deltas = new StdClass;
@@ -379,21 +381,21 @@ class EvaluationToolSurveyStatsController extends Controller
 
         foreach ($results as $result) {
             if (!isset($resultsByStep->steps[$result->survey_step_id])) {
-                $resultsByStep->steps[$result->survey_step_id] = new StdClass;
-                $resultsByStep->steps[$result->survey_step_id]->stepId = $result->survey_step_id;
-                $resultsByStep->steps[$result->survey_step_id]->total = 0;
+                $resultsByStep->steps[$result->survey_step_id]          = new StdClass;
+                $resultsByStep->steps[$result->survey_step_id]->stepId  = $result->survey_step_id;
+                $resultsByStep->steps[$result->survey_step_id]->total   = 0;
                 $resultsByStep->steps[$result->survey_step_id]->results = new StdClass;
                 foreach ($this->timeSpans as $key => $timeSpan) {
-                    $resultsByStep->steps[$result->survey_step_id]->{$key} = new StdClass;
-                    $resultsByStep->steps[$result->survey_step_id]->{$key}->total = 0;
+                    $resultsByStep->steps[$result->survey_step_id]->{$key}          = new StdClass;
+                    $resultsByStep->steps[$result->survey_step_id]->{$key}->total   = 0;
                     $resultsByStep->steps[$result->survey_step_id]->{$key}->results = new StdClass;
                 }
 
-                $resultsByStep->steps[$result->survey_step_id]->type = $result->survey_step->survey_element->survey_element_type->key;
+                $resultsByStep->steps[$result->survey_step_id]->type   = $result->survey_step->survey_element->survey_element_type->key;
                 $resultsByStep->steps[$result->survey_step_id]->params = $result->survey_step->survey_element->params;
             }
             $elementType = $result->survey_step->survey_element->survey_element_type->key;
-            $className = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . ucfirst($elementType);
+            $className   = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . ucfirst($elementType);
 
             /*foreach ($this->timeSpans as $key => $timeSpan) {
             // per result
@@ -427,14 +429,14 @@ class EvaluationToolSurveyStatsController extends Controller
     public function checkBetweenDates($date, $start, $end)
     {
         $startDate = Carbon::createFromFormat('Y-m-d', '2020-11-01');
-        $endDate = Carbon::createFromFormat('Y-m-d', '2020-11-30');
+        $endDate   = Carbon::createFromFormat('Y-m-d', '2020-11-30');
 
         $check = Carbon::now()->between($startDate, $endDate);
     }
 
     public function getStatsList(EvaluationToolSurvey $survey, EvaluationToolSurveyStatsIndexRequest $request): JsonResponse
     {
-        $resultsByUuid = Cache::remember("stats-list-" . $survey->id, Carbon::now()->addMinutes(5), function () use ($survey, $request) {
+        $resultsByUuid = Cache::remember("stats-list-" . $survey->id, Carbon::now()->addSeconds(15), function () use ($survey, $request) {
 
             $results = EvaluationToolSurveyStepResult::whereIn("survey_step_id",
                 $survey->survey_steps
@@ -462,14 +464,15 @@ class EvaluationToolSurveyStatsController extends Controller
 
             $resultsByUuid = new StdClass;
             foreach ($results as $result) {
+                $elementType = $result->survey_step->survey_element_type->key;
                 if (!isset($resultsByUuid->{$result->session_id})) {
-                    $resultsByUuid->{$result->session_id} = new StdClass;
-                    $resultsByUuid->{$result->session_id}->uuid = $result->session_id;
+                    $resultsByUuid->{$result->session_id}                       = new StdClass;
+                    $resultsByUuid->{$result->session_id}->uuid                 = $result->session_id;
                     $resultsByUuid->{$result->session_id}->firstResultTimestamp = Carbon::now()->addYears(10);
-                    $resultsByUuid->{$result->session_id}->lastResultTimestamp = Carbon::now()->subYears(10);
-                    $resultsByUuid->{$result->session_id}->duration = 0;
-                    $resultsByUuid->{$result->session_id}->resultCount = 0;
-                    $resultsByUuid->{$result->session_id}->results = [];
+                    $resultsByUuid->{$result->session_id}->lastResultTimestamp  = Carbon::now()->subYears(10);
+                    $resultsByUuid->{$result->session_id}->duration             = 0;
+                    $resultsByUuid->{$result->session_id}->resultCount          = 0;
+                    $resultsByUuid->{$result->session_id}->results              = [];
                 }
 
                 if ($resultsByUuid->{$result->session_id}->firstResultTimestamp > $result->answered_at) {
@@ -485,8 +488,21 @@ class EvaluationToolSurveyStatsController extends Controller
 
                 $resultsByUuid->{$result->session_id}->resultCount++;
 
-                $resultValue = new StdClass;
+                $resultValue        = new StdClass;
                 $resultValue->value = $result->result_value;
+
+                // handle voice input
+                if ($elementType == "voiceInput") {
+                    if ($asset = $result->result_asset) {
+                        $assetUrl = Storage::disk("evaluation_tool_audio")->url($asset->filename);
+
+                        $resultValue->value = [
+                            "url"                 => $assetUrl,
+                            "apiTranscription"    => $asset->audio_transcription ? $asset->audio_transcription->api_transcription : null,
+                            "manualTranscription" => $asset->audio_transcription ? $asset->audio_transcription->manual_transcription : null
+                        ];
+                    }
+                }
                 $resultValue->stepId = $result->survey_step_id;
 
                 $resultsByUuid->{$result->session_id}->results[] = $resultValue;
@@ -504,7 +520,7 @@ class EvaluationToolSurveyStatsController extends Controller
 
         // get first step and set as starting element
         $firstStep = $steps->where("is_first_step")->first();
-        $stepFlow = new Collection();
+        $stepFlow  = new Collection();
         $stepFlow->add($this->stepForFlow($firstStep));
 
         $stepFlow = $this->getNextSteps($firstStep, $stepFlow);
@@ -515,7 +531,7 @@ class EvaluationToolSurveyStatsController extends Controller
     public function getNextSteps(EvaluationToolSurveyStep $step, Collection $stepFlow): Collection
     {
         if ($step->next_step_id) {
-            $subFlow = new Collection();
+            $subFlow  = new Collection();
             $nextStep = EvaluationToolSurveyStep::find($step->next_step_id);
             $subFlow->add($this->stepForFlow($nextStep));
             $this->getNextSteps($nextStep, $subFlow);
@@ -563,8 +579,8 @@ class EvaluationToolSurveyStatsController extends Controller
 
     public function stepForFlow($step): stdClass
     {
-        $stepForFlow = new StdClass;
-        $stepForFlow->id = $step->id;
+        $stepForFlow              = new StdClass;
+        $stepForFlow->id          = $step->id;
         $stepForFlow->elementType = $step->survey_element_type->key;
 
         return $stepForFlow;

@@ -55,6 +55,7 @@ class EvaluationToolServiceProvider extends ServiceProvider
         $this->app->config["filesystems.disks.evaluation_tool_audio"] = [
             'driver' => 'local',
             'root'   => storage_path('app/evaluation-tool/audio'),
+            'url'    => env('APP_URL') . "/evaluation-tool-audio",
         ];
 
         // add tus server

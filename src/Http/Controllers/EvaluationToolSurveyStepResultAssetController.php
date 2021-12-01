@@ -21,7 +21,7 @@ class EvaluationToolSurveyStepResultAssetController extends Controller
         $this->audioDisk = Storage::disk("evaluation_tool_audio");
     }
 
-    public function createStepResultAsset($audioData, $surveyStepResultId, $modifier = "")
+    public function createStepResultAsset($audioData, $surveyStepResultId, $modifier = ""): EvaluationToolSurveyStepResultAsset
     {
         $fileContent = $audioData;
         $fileContent = str_replace('data:audio/wav;base64,', '', $fileContent) . $modifier;
@@ -39,5 +39,7 @@ class EvaluationToolSurveyStepResultAssetController extends Controller
         $resultAsset->meta                  = EvaluationToolAssetController::getFileMetaData($this->audioDisk->path($filename));
         $resultAsset->survey_step_result_id = $surveyStepResultId;
         $resultAsset->save();
+
+        return $resultAsset;
     }
 }

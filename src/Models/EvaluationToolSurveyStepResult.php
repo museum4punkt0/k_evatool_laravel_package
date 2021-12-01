@@ -45,9 +45,20 @@ class EvaluationToolSurveyStepResult extends Model
         "answered_at"
     ];
 
+    protected $with = [
+        "result_asset",
+        "survey_step",
+        "language"
+    ];
+
     public function survey_step(): HasOne
     {
         return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep", "id", "survey_step_id");
+    }
+
+    public function result_asset(): HasOne
+    {
+        return $this->hasOne(EvaluationToolSurveyStepResultAsset::class, "survey_step_result_id");
     }
 
     public function language(): HasOne

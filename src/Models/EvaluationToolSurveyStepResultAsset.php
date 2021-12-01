@@ -31,9 +31,16 @@ class EvaluationToolSurveyStepResultAsset extends Model
         "survey_step_result_id"
     ];
 
-    protected $casts =[
+    protected $casts = [
         "meta" => "object"
     ];
+
+    protected $with = ["audio_transcription"];
+
+    public function audio_transcription(): HasOne
+    {
+        return $this->hasOne(EvaluationToolAudioTranscription::class, "id", "transcription_id");
+    }
 
     public function created_by_user(): HasOne
     {
