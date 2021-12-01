@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Cache;
 use stdClass;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStatsIndexRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStatsCache;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
@@ -98,9 +99,9 @@ class EvaluationToolSurveyStatsController extends Controller
         while ($firstDate < Carbon::yesterday()->startOfWeek()->subMonths($i)->startOfMonth()) {
             $key = Carbon::yesterday()->startOfWeek()->subMonths($i)->startOfMonth()->format("Y-m");
             $this->cacheTimeSpans[$key] = [
-                "start"    => Carbon::yesterday()->startOfWeek()->subMonths($i)->startOfMonth(),
-                "end"      => Carbon::yesterday()->startOfWeek()->subMonths($i)->endOfMonth(),
-                "cachable" => true
+                "start" => Carbon::yesterday()->startOfWeek()->subMonths($i)->startOfMonth(),
+                "end" => Carbon::yesterday()->startOfWeek()->subMonths($i)->endOfMonth(),
+                "cachable" => true,
             ];
             $i++;
         }
@@ -280,16 +281,20 @@ class EvaluationToolSurveyStatsController extends Controller
                     foreach ($this->cacheTimeSpans as $key => $timespan) {
                         if ($result->answered_at->between($timespan["start"], $timespan["end"])) {
                             if ($elementType == "textInput") {
-                                // dd($resultsPayload[$key]->results["texts"]);
-                                $text = implode($resultsPayload[$key]->results["texts"]);
+                                $languageCodes = array_keys($resultsPayload[$key]->results["texts"]);
+                                foreach ($languageCodes as $languageCode) {
+                                    $language = EvaluationToolSurveyLanguage::where('code', $languageCode)->first();
+                                    $text = implode($resultsPayload[$key]->results["texts"][$languageCode]);
 
-                                $rake = RakePlus::create($text, 'de_DE');
-                                $phrases = $rake->sortByScore('desc')->scores();
-                                $keywords = $rake->keywords();
+                                    $rake = RakePlus::create($text, $language->sub_code);
+                                    $phrases = $rake->sortByScore('desc')->scores();
+                                    $keywords = $rake->keywords();
 
-                                $resultsPayload[$key]->analysis = new StdClass;
-                                $resultsPayload[$key]->analysis->phrases = $phrases;
-                                $resultsPayload[$key]->analysis->keywords = $keywords;
+                                    $resultsPayload[$key]->$languageCode = new StdClass;
+                                    $resultsPayload[$key]->$languageCode->analysis = new StdClass;
+                                    $resultsPayload[$key]->$languageCode->analysis->phrases = $phrases;
+                                    $resultsPayload[$key]->$languageCode->analysis->keywords = $keywords;
+                                }
                             }
                         }
                     }

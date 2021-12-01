@@ -7,6 +7,7 @@ use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Faker\Factory;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 
 class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyElementTypeBase
 {
@@ -81,11 +82,15 @@ class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyEleme
 
     public static function statsCountResult($result, $results)
     {
+        $language = EvaluationToolSurveyLanguage::find($result->result_language_id);
         if (!isset($results["texts"])) {
             $results["texts"] = [];
         }
+        if (!isset($results["texts"][$language->code])) {
+            $results["texts"][$language->code] = [];
+        }
         $text = $result->result_value["text"];
-        $results["texts"][] = $text;//"EvaluationToolSurveyElementTypeTextInput::statsCountResult";
+        $results["texts"][$language->code][] = $text;
 
         return $results;
     }
@@ -99,8 +104,9 @@ class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyEleme
         $surveyResult->result_language_id = $languageId;
         $surveyResult->answered_at        = $timestamp;
         $surveyResult->params             = $surveyStep->survey_element->params;
+        $language = EvaluationToolSurveyLanguage::find($languageId);
 
-        $faker = Factory::create('de_DE');
+        $faker = Factory::create($language->sub_code);
         $resultValue                = new StdClass;
         $text                       = $faker->realText(400);
         $resultValue->text          = $text;
