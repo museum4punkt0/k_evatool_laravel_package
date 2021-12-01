@@ -209,6 +209,42 @@ class EvaluationToolSurveyStatsController extends Controller
         return $this->successResponse($statsTrend);
     }
 
+    public function getTextAnalysis($results)
+    {
+        $analysis = new StdClass;
+        $languageCodes = array_keys($results["texts"]);
+        foreach ($languageCodes as $languageCode) {
+            $language = EvaluationToolSurveyLanguage::where('code', $languageCode)->first();
+            $text = implode($results["texts"][$languageCode]);
+
+            $analysis->$languageCode = new StdClass;
+            switch ($language->code) {
+                case "de":
+                    $rake = RakePlus::create($text, "de_DE");
+                    break;
+                case "en":
+                    $rake = RakePlus::create($text, "en_US");
+                    break;
+                case "fr":
+                    $rake = RakePlus::create($text, "fr_FR");
+                    break;
+                case "it":
+                    $rake = RakePlus::create($text, "it_IT");
+                    break;
+                default:
+                    $analysis->$languageCode->errors = ["sorry, there is no rake analysis available for this language"];
+
+            }
+
+            $phrases = $rake->sortByScore('desc')->scores();
+            $keywords = $rake->keywords();
+
+            $analysis->$languageCode->phrases = $phrases;
+            $analysis->$languageCode->keywords = $keywords;
+            return $analysis;
+        }
+
+    }
     public function getStatsByStep(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $step, EvaluationToolSurveyStatsIndexRequest $request): JsonResponse
     {
         if ($step->survey_id !== $survey->id) {
@@ -277,41 +313,20 @@ class EvaluationToolSurveyStatsController extends Controller
                     }
                 }
 
+                // get stats
                 foreach ($results as $result) {
-                    foreach ($this->cacheTimeSpans as $key => $timespan) {
-                        if ($result->answered_at->between($timespan["start"], $timespan["end"])) {
-                            if ($elementType == "textInput") {
-                                $languageCodes = array_keys($resultsPayload[$key]->results["texts"]);
-                                foreach ($languageCodes as $languageCode) {
-                                    $language = EvaluationToolSurveyLanguage::where('code', $languageCode)->first();
-                                    $text = implode($resultsPayload[$key]->results["texts"][$languageCode]);
-
-                                    $resultsPayload[$key]->$languageCode = new StdClass;
-                                    $resultsPayload[$key]->$languageCode->analysis = new StdClass;
-                                    switch ($language->code) {
-                                        case "de":
-                                            $rake = RakePlus::create($text, "de_DE");
-                                            break;
-                                        case "en":
-                                            $rake = RakePlus::create($text, "en_US");
-                                            break;
-                                        case "fr":
-                                            $rake = RakePlus::create($text, "fr_FR");
-                                            break;
-                                        case "it":
-                                            $rake = RakePlus::create($text, "it_IT");
-                                            break;
-                                        default:
-                                            $resultsPayload[$key]->$languageCode->analysis->errors = ["sorry, there is no rake analysis available for this language"];
-
-                                    }
-
-                                    $phrases = $rake->sortByScore('desc')->scores();
-                                    $keywords = $rake->keywords();
-
-                                    $resultsPayload[$key]->$languageCode->analysis->phrases = $phrases;
-                                    $resultsPayload[$key]->$languageCode->analysis->keywords = $keywords;
-                                }
+                    if ($elementType == "textInput") {
+                        // total
+                        $analysis = $this->getTextAnalysis($resultsPayload["total"]->results);
+                        $resultsPayload["total"]->results["analysis"] = $analysis;
+                        // timespan
+                        $analysis = $this->getTextAnalysis($resultsPayload["timespan"]->results);
+                        $resultsPayload["timespan"]->results["analysis"] = $analysis;
+                        // timespans
+                        foreach ($this->cacheTimeSpans as $key => $timespan) {
+                            if ($result->answered_at->between($timespan["start"], $timespan["end"])) {
+                                $analysis = $this->getTextAnalysis($resultsPayload[$key]->results);
+                                $resultsPayload[$key]->results["analysis"] = $analysis;
                             }
                         }
                     }
