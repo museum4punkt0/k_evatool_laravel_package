@@ -216,32 +216,34 @@ class EvaluationToolSurveyStatsController extends Controller
         foreach ($languageCodes as $languageCode) {
             $language = EvaluationToolSurveyLanguage::where('code', $languageCode)->first();
             $text = implode($results["texts"][$languageCode]);
+            $hash = md5($text);
+            return Cache::remember("analysis_".$hash, Carbon::now()->addHour(), function () use($text, $analysis, $languageCode, $language){
+                $analysis->$languageCode = new StdClass;
+                switch ($language->code) {
+                    case "de":
+                        $rake = RakePlus::create($text, "de_DE");
+                        break;
+                    case "en":
+                        $rake = RakePlus::create($text, "en_US");
+                        break;
+                    case "fr":
+                        $rake = RakePlus::create($text, "fr_FR");
+                        break;
+                    case "it":
+                        $rake = RakePlus::create($text, "it_IT");
+                        break;
+                    default:
+                        $analysis->$languageCode->errors = ["sorry, there is no rake analysis available for this language"];
 
-            $analysis->$languageCode = new StdClass;
-            switch ($language->code) {
-                case "de":
-                    $rake = RakePlus::create($text, "de_DE");
-                    break;
-                case "en":
-                    $rake = RakePlus::create($text, "en_US");
-                    break;
-                case "fr":
-                    $rake = RakePlus::create($text, "fr_FR");
-                    break;
-                case "it":
-                    $rake = RakePlus::create($text, "it_IT");
-                    break;
-                default:
-                    $analysis->$languageCode->errors = ["sorry, there is no rake analysis available for this language"];
+                }
 
-            }
+                $phrases = $rake->sortByScore('desc')->scores();
+                $keywords = $rake->keywords();
 
-            $phrases = $rake->sortByScore('desc')->scores();
-            $keywords = $rake->keywords();
-
-            $analysis->$languageCode->phrases = $phrases;
-            $analysis->$languageCode->keywords = $keywords;
-            return $analysis;
+                $analysis->$languageCode->phrases = $phrases;
+                $analysis->$languageCode->keywords = $keywords;
+                return $analysis;
+            });
         }
 
     }
@@ -312,33 +314,27 @@ class EvaluationToolSurveyStatsController extends Controller
                         }
                     }
                 }
-
-                // get stats
-                foreach ($results as $result) {
-                    if ($elementType == "textInput") {
-                        // total
-                        $analysis = $this->getTextAnalysis($resultsPayload["total"]->results);
-                        $resultsPayload["total"]->results["analysis"] = $analysis;
-                        // timespan
-                        $analysis = $this->getTextAnalysis($resultsPayload["timespan"]->results);
-                        $resultsPayload["timespan"]->results["analysis"] = $analysis;
-                        // timespans
-                        foreach ($this->cacheTimeSpans as $key => $timespan) {
-                            if ($result->answered_at->between($timespan["start"], $timespan["end"])) {
-                                $analysis = $this->getTextAnalysis($resultsPayload[$key]->results);
-                                $resultsPayload[$key]->results["analysis"] = $analysis;
-                            }
-                        }
-                    }
-                }
-
             }
         }
 
         foreach ($this->cacheTimeSpans as $key => $timespan) {
             if (empty($resultsPayload[$key]->results)) {
                 unset($resultsPayload[$key]);
+            }else{
+                if ($elementType == "textInput") {
+                    $analysis = $this->getTextAnalysis($resultsPayload[$key]->results);
+                    $resultsPayload[$key]->results["analysis"] = $analysis;
+                }
+
             }
+        }
+        if ($elementType == "textInput") {
+            $analysis = $this->getTextAnalysis($resultsPayload["total"]->results);
+            $resultsPayload["total"]->results["analysis"] = $analysis;
+
+            // timespan
+            $analysis = $this->getTextAnalysis($resultsPayload["timespan"]->results);
+            $resultsPayload["timespan"]->results["analysis"] = $analysis;
         }
 
         $payload = new StdClass;
