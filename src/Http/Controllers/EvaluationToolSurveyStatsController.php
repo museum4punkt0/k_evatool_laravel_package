@@ -286,12 +286,29 @@ class EvaluationToolSurveyStatsController extends Controller
                                     $language = EvaluationToolSurveyLanguage::where('code', $languageCode)->first();
                                     $text = implode($resultsPayload[$key]->results["texts"][$languageCode]);
 
-                                    $rake = RakePlus::create($text, $language->sub_code);
+                                    $resultsPayload[$key]->$languageCode = new StdClass;
+                                    $resultsPayload[$key]->$languageCode->analysis = new StdClass;
+                                    switch ($language->code) {
+                                        case "de":
+                                            $rake = RakePlus::create($text, "de_DE");
+                                            break;
+                                        case "en":
+                                            $rake = RakePlus::create($text, "en_US");
+                                            break;
+                                        case "fr":
+                                            $rake = RakePlus::create($text, "fr_FR");
+                                            break;
+                                        case "it":
+                                            $rake = RakePlus::create($text, "it_IT");
+                                            break;
+                                        default:
+                                            $resultsPayload[$key]->$languageCode->analysis->errors = ["sorry, there is no rake analysis available for this language"];
+
+                                    }
+
                                     $phrases = $rake->sortByScore('desc')->scores();
                                     $keywords = $rake->keywords();
 
-                                    $resultsPayload[$key]->$languageCode = new StdClass;
-                                    $resultsPayload[$key]->$languageCode->analysis = new StdClass;
                                     $resultsPayload[$key]->$languageCode->analysis->phrases = $phrases;
                                     $resultsPayload[$key]->$languageCode->analysis->keywords = $keywords;
                                 }
