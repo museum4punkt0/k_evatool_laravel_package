@@ -456,8 +456,6 @@ class EvaluationToolSurveyStatsController extends Controller
 
             if ($request->has("demo") && $request->demo == true) {
                 $results->where("demo", true);
-            } else {
-                $results->where("demo", false);
             }
 
             $results = $results->get();
@@ -465,6 +463,7 @@ class EvaluationToolSurveyStatsController extends Controller
             $resultsByUuid = new StdClass;
             foreach ($results as $result) {
                 $elementType = $result->survey_step->survey_element_type->key;
+
                 if (!isset($resultsByUuid->{$result->session_id})) {
                     $resultsByUuid->{$result->session_id}                       = new StdClass;
                     $resultsByUuid->{$result->session_id}->uuid                 = $result->session_id;
@@ -498,20 +497,59 @@ class EvaluationToolSurveyStatsController extends Controller
 
                         $resultValue->value = [
                             "url"                 => $assetUrl,
+                            "language"            => $result->language->code,
                             "apiTranscription"    => $asset->audio_transcription ? $asset->audio_transcription->api_transcription : null,
                             "manualTranscription" => $asset->audio_transcription ? $asset->audio_transcription->manual_transcription : null
                         ];
                     }
                 }
+
+                if ($elementType == "textInput") {
+                    $resultValue->value = [
+                        "text"     => $result->result_value->text ?? null,
+                        "language" => $result->language->code,
+                    ];
+                }
+
                 $resultValue->stepId = $result->survey_step_id;
 
-                $resultsByUuid->{$result->session_id}->results[] = $resultValue;
+                if ($elementType == "video") {
+                    if (!isset($resultsByUuid->{$result->session_id}->results[$result->survey_step_id])) {
+                        $resultsByUuid->{$result->session_id}->results[$result->survey_step_id] = [];
+                    }
+
+                    $preparedResult = [
+                        "time"     => $result->time,
+                        "language" => $result->language->code,
+                        "result"   => $result->result_value
+                    ];
+
+                    if ($asset = $result->result_asset) {
+                        $assetUrl = Storage::disk("evaluation_tool_audio")->url($asset->filename);
+
+                        $preparedResult["url"]                 = $assetUrl;
+                        $preparedResult["apiTranscription"]    = $asset->audio_transcription ? $asset->audio_transcription->api_transcription : null;
+                        $preparedResult["manualTranscription"] = $asset->audio_transcription ? $asset->audio_transcription->manual_transcription : null;
+                    }
+
+                    $resultsByUuid->{$result->session_id}->results[$result->survey_step_id][] = $preparedResult;
+
+                } else {
+                    $resultsByUuid->{$result->session_id}->results[$result->survey_step_id] = $resultValue;
+                }
             }
 
             return $resultsByUuid;
         });
 
-        return $this->showAll(collect($resultsByUuid));
+        // collect and flatten results (remove keys)
+        $resultsByUuid = collect($resultsByUuid)->map(function($resultSetByUuid) {
+            $resultSetByUuid->results = collect($resultSetByUuid->results)->flatten(1);
+            return $resultSetByUuid;
+        });
+
+
+        return $this->showAll($resultsByUuid);
     }
 
     public function getStatsListScheme(EvaluationToolSurvey $survey): JsonResponse

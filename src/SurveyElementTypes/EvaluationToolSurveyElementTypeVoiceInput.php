@@ -114,12 +114,13 @@ class EvaluationToolSurveyElementTypeVoiceInput extends EvaluationToolSurveyElem
 
     public static function statsCountResult($result, $results)
     {
-        $asset    = $result->result_asset;
-        if($asset) {
+        $asset = $result->result_asset;
+        if ($asset) {
             $assetUrl = Storage::disk("evaluation_tool_audio")->url($asset->filename);
 
             $results[] = [
                 "url"                 => $assetUrl,
+                "language"            => $result->language->code,
                 "apiTranscription"    => $asset->audio_transcription ? $asset->audio_transcription->api_transcription : null,
                 "manualTranscription" => $asset->audio_transcription ? $asset->audio_transcription->manual_transcription : null
             ];
