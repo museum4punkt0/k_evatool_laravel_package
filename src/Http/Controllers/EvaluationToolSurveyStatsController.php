@@ -259,7 +259,11 @@ class EvaluationToolSurveyStatsController extends Controller
         }
 
         $resultQuery = EvaluationToolSurveyStepResult::where("survey_step_id", $step->id)->with(["language", "survey_step"]);
-
+        if ($request->has("demo") && $request->demo == true) {
+            $resultQuery->where("demo", true);
+        }else{
+            $resultQuery->where("demo", false);
+        }
         $resultQuerySpan = $resultQuery->clone();
         // check for start date
         if ($request->has("start")) {
@@ -270,6 +274,7 @@ class EvaluationToolSurveyStatsController extends Controller
         if ($request->has("end")) {
             $resultQuerySpan->where("answered_at", "<=", $request->end);
         }
+
 
         $resultsSpan = $resultQuerySpan->get();
         $results = $resultQuery->get();
@@ -439,7 +444,10 @@ class EvaluationToolSurveyStatsController extends Controller
 
     public function getStatsList(EvaluationToolSurvey $survey, EvaluationToolSurveyStatsIndexRequest $request): JsonResponse
     {
-        $resultsByUuid = Cache::remember("stats-list-" . $survey->id, Carbon::now()->addSeconds(15), function () use ($survey, $request) {
+        $requestValues = $request->all();
+        ksort($requestValues);
+        $cacheKey = md5($survey->id.json_encode($requestValues));
+        $resultsByUuid = Cache::remember("stats-list-" . $cacheKey, Carbon::now()->addSeconds(15), function () use ($survey, $request) {
 
             $results = EvaluationToolSurveyStepResult::whereIn("survey_step_id",
                 $survey->survey_steps
@@ -459,6 +467,8 @@ class EvaluationToolSurveyStatsController extends Controller
 
             if ($request->has("demo") && $request->demo == true) {
                 $results->where("demo", true);
+            }else{
+                $results->where("demo", false);
             }
 
             $results = $results->get();
