@@ -10,6 +10,7 @@ use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Rules\IsMediaType;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 
 class EvaluationToolSurveyElementTypeVideo extends EvaluationToolSurveyElementTypeBase
 {
@@ -121,16 +122,19 @@ class EvaluationToolSurveyElementTypeVideo extends EvaluationToolSurveyElementTy
         return $surveyResult;
     }
 
-    public static function statsCountResult($result, $results): void
+    public static function statsCountResult($result, $results)
     {
-//        $value = $result->result_value;
-//        echo gettype($results);
-        if (!isset($results["read"])) {
-            $results["read"] = 0;
+        $language = EvaluationToolSurveyLanguage::find($result->result_language_id);
+        if (!isset($results["comments"])) {
+            $results["comments"] = [];
         }
-//        if ($value) {
-        $results["read"]++;
-//        }
+        if (!isset($results["comments"][$language->code])) {
+            $results["comments"][$language->code] = [];
+        }
+        $text = $result->result_value["text"];
+        $results["comments"][$language->code][] = $text;
+
+        return $results;
     }
 
 }
