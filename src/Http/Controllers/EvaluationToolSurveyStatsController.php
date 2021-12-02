@@ -267,12 +267,12 @@ class EvaluationToolSurveyStatsController extends Controller
         $resultQuerySpan = $resultQuery->clone();
         // check for start date
         if ($request->has("start")) {
-            $resultQuerySpan->where("answered_at", ">=", $request->start);
+            $resultQuerySpan->where("answered_at", ">=", Carbon::createFromFormat("Y-m-d", $request->start)->startOfDay());
         }
 
         // check for end date
         if ($request->has("end")) {
-            $resultQuerySpan->where("answered_at", "<=", $request->end);
+            $resultQuerySpan->where("answered_at", "<=", Carbon::createFromFormat("Y-m-d", $request->end)->endOfDay());
         }
 
 
@@ -319,7 +319,7 @@ class EvaluationToolSurveyStatsController extends Controller
 
                 foreach ($results as $result) {
                     foreach ($this->cacheTimeSpans as $key => $timespan) {
-                        if ($result->answered_at->between($timespan["start"], $timespan["end"])) {
+                        if ($result->answered_at->between(Carbon::createFromFormat("Y-m-d", $timespan["start"])->startOfDay(), Carbon::createFromFormat("Y-m-d", $timespan["end"])->endOfDay())) {
                             $resultsPayload[$key]->results = $className::statsCountResult($result, $resultsPayload[$key]->results);
                         }
                     }
@@ -364,12 +364,12 @@ class EvaluationToolSurveyStatsController extends Controller
 
         // check for start date
         if ($request->has("start")) {
-            $resultQuery->where("date", ">=", $request->start);
+            $resultQuery->where("date", ">=", Carbon::createFromFormat("Y-m-d", $request->start)->startOfDay());
         }
 
         // check for end date
         if ($request->has("end")) {
-            $resultQuery->where("date", "<=", $request->end);
+            $resultQuery->where("date", "<=", Carbon::createFromFormat("Y-m-d", $request->end)->endOfDay());
         }
 
         $results = $resultQuery->get();
@@ -457,12 +457,12 @@ class EvaluationToolSurveyStatsController extends Controller
 
             // check for start date
             if ($request->has("start")) {
-                $results->where("answered_at", ">=", $request->start);
+                $results->where("answered_at", ">=", Carbon::createFromFormat("Y-m-d", $request->start)->startOfDay());
             }
 
             // check for end date
-            if ($request->has("start")) {
-                $results->where("answered_at", "<=", $request->end);
+            if ($request->has("end")) {
+                $results->where("answered_at", "<=", Carbon::createFromFormat("Y-m-d", $request->end)->endOfDay());
             }
 
             if ($request->has("demo") && $request->demo == true) {

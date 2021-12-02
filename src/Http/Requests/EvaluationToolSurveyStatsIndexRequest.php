@@ -36,7 +36,7 @@ class EvaluationToolSurveyStatsIndexRequest extends FormRequest
         return [
             "demo"    => "boolean",
             "uuid"    => "uuid",
-            "start"   => "date_format:Y-m-d|before:now||before:end",
+            "start"   => "date_format:Y-m-d|before:now|before:end",
             "end"     => "date_format:Y-m-d|before:now|after:start",
             "compare" => "boolean",
             "step"    => Rule::exists("evaluation_tool_survey_steps", "id"),
