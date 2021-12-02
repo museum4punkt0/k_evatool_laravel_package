@@ -218,7 +218,7 @@ class EvaluationToolSurveyStatsController extends Controller
             $language = EvaluationToolSurveyLanguage::where('code', $languageCode)->first();
             $text     = implode($results["texts"][$languageCode]);
             $hash     = md5($text);
-            return Cache::remember("analysis_" . $hash, Carbon::now()->addHour(), function () use ($text, $analysis, $languageCode, $language) {
+            // return Cache::remember("analysis_" . $hash, Carbon::now()->addHour(), function () use ($text, $analysis, $languageCode, $language) {
                 $analysis->$languageCode = new StdClass;
                 switch ($language->code) {
                     case "de":
@@ -243,10 +243,9 @@ class EvaluationToolSurveyStatsController extends Controller
 
                 $analysis->$languageCode->phrases  = $phrases;
                 $analysis->$languageCode->keywords = $keywords;
-                return $analysis;
-            });
+            // });
         }
-
+        return $analysis;
     }
 
     public function getStatsByStep(EvaluationToolSurvey $survey, EvaluationToolSurveyStep $step, EvaluationToolSurveyStatsIndexRequest $request): JsonResponse
