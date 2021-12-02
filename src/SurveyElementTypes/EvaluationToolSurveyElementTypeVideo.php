@@ -134,6 +134,7 @@ class EvaluationToolSurveyElementTypeVideo extends EvaluationToolSurveyElementTy
         $text = $result->result_value["text"];
         $time = $result->time;
         $value = new StdClass;
+        $value->sessionId = $result->session_id;
         $value->time = $time;
         $value->text = $text;
         $results["comments"][$language->code][] = $value;
