@@ -319,7 +319,7 @@ class EvaluationToolSurveyStatsController extends Controller
 
                 foreach ($results as $result) {
                     foreach ($this->cacheTimeSpans as $key => $timespan) {
-                        if ($result->answered_at->between(Carbon::createFromFormat("Y-m-d", $timespan["start"])->startOfDay(), Carbon::createFromFormat("Y-m-d", $timespan["end"])->endOfDay())) {
+                        if ($result->answered_at->between($timespan["start"], $timespan["end"])) {
                             $resultsPayload[$key]->results = $className::statsCountResult($result, $resultsPayload[$key]->results);
                         }
                     }
