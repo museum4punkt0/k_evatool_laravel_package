@@ -519,7 +519,7 @@ class EvaluationToolSurveyStatsController extends Controller
 
                 if ($elementType == "textInput") {
                     $resultValue->value = [
-                        "text" => $result->result_value->text ?? null,
+                        "text" => $result->result_value['text'] ?? null,
                         "language" => $result->language->code,
                     ];
                 }
