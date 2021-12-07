@@ -23,6 +23,7 @@ class EvaluationToolSurveyStepResultCombinedTransformer extends TransformerAbstr
             "uuid"                 => request()->uuid,
             "surveyElementType"    => (string)$surveyStep->survey_element->survey_element_type->key,
             "params"               => $this->loadAssets($surveyStep->survey_element->params, $surveyStep->survey_element->survey_element_type->key),
+            "stepParams"           => $surveyStep->params,
             "resultsCount"         => $surveyStep->survey_step_results_count,
             "demoResultsCount"     => $surveyStep->survey_step_demo_results_count,
             "resultByUuid"         => $surveyStep->resultByUuid,
