@@ -14,7 +14,7 @@ use Twoavy\EvaluationTool\Rules\Timecode;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeVideo;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepTransformer;
 
-class EvaluationToolSurveyStatsIndexRequest extends FormRequest
+class EvaluationToolSurveyStatsExportRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -34,13 +34,14 @@ class EvaluationToolSurveyStatsIndexRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "demo"    => "boolean",
-            "uuid"    => "uuid",
-            "start"   => "date_format:Y-m-d|before:now|before_or_equal:end",
-            "end"     => "date_format:Y-m-d|before:now|after_or_equal:start",
-            "compare" => "boolean",
-            "step"    => Rule::exists("evaluation_tool_survey_steps", "id"),
-            "group"   => "boolean"
+            "demo"       => "boolean",
+            "start"      => "date_format:Y-m-d|before:now|before_or_equal:end",
+            "end"        => "date_format:Y-m-d|before:now|after_or_equal:start",
+            "execute"    => "boolean",
+            "exportType" => [
+                "requiredIf:execute,true",
+                Rule::in(["xlsx", "json", "csv"])
+            ]
         ];
     }
 }

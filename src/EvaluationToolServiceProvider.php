@@ -42,6 +42,11 @@ class EvaluationToolServiceProvider extends ServiceProvider
             'root'   => storage_path('app/evaluation-tool/uploads'),
         ];
 
+        $this->app->config["filesystems.disks.evaluation_tool_exports"] = [
+            'driver' => 'local',
+            'root'   => storage_path('app/evaluation-tool/exports')
+        ];
+
         $this->app->config["filesystems.disks.evaluation_tool_demo_assets"] = [
             'driver' => 'local',
             'root'   => base_path('packages/twoavy/evaluation-tool/assets'),

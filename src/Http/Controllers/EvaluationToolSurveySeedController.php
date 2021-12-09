@@ -43,7 +43,6 @@ class EvaluationToolSurveySeedController extends Controller
             $languageId = $survey->languages->random(1)->first()->id;
 
             $this->timestamp = Carbon::now()->subMinutes(rand(5, 60 * 24 * 30 * 18));
-            $this->timestamp = Carbon::now()->subMinutes(rand(5, 60 * 24));
 
             $surveySteps = $survey->survey_steps->filter(function ($value) {
                 return is_null($value->parent_step_id);
@@ -64,7 +63,6 @@ class EvaluationToolSurveySeedController extends Controller
                 }
                 $surveySteps = $this->getStepsWithResults($surveySteps);
                 $position    = $this->surveyRunController->getPositionWithinSurvey($surveySteps);
-//                print_r($position);
             }
 
             if ($position["currentStep"] == -1) {

@@ -7,6 +7,7 @@ use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyLanguageControlle
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyElementController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyElementTypeController;
+use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyStatsExportController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyStepResultAssetTranscriptionController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyStatsController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyResultController;
@@ -37,6 +38,8 @@ Route::prefix('api/evaluation-tool')
         Route::apiResource('surveys.results', EvaluationToolSurveySurveyResultController::class);
         Route::apiResource('surveys.steps.results', EvaluationToolSurveySurveyStepSurveyStepResultController::class);
         Route::apiResource('survey-step-result-assets.transcriptions', EvaluationToolSurveyStepResultAssetTranscriptionController::class)->only("store");
+        Route::post('surveys/{survey}/stats-export', [EvaluationToolSurveyStatsExportController::class, "getStatsExport"]);
+        Route::post('surveys/{survey}/stats-download', [EvaluationToolSurveyStatsExportController::class, "downloadStatsExport"]);
         Route::get('surveys/{survey}/seed', [EvaluationToolSurveySeedController::class, "seedResults"]);
         Route::get('surveys/{survey}/stats', [EvaluationToolSurveyStatsController::class, "getStats"]);
         Route::get('surveys/{survey}/stats/{step}', [EvaluationToolSurveyStatsController::class, "getStatsByStep"]);
