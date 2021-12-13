@@ -156,6 +156,9 @@ class EvaluationToolSurveySurveyRunController extends Controller
         // store audio asset
         if ($surveyStep->survey_element_type->key == "voiceInput") {
             if (isset($request->result_value)) {
+                if (!isset($request->result_value["audio"])) {
+                    abort(409, "no audio present");
+                }
                 $this->createAudioAsset($request->result_value["audio"], $surveyStepResult);
             }
         }
