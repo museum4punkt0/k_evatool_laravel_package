@@ -109,7 +109,7 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
         return EvaluationToolHelper::checkMissingLanguages($element, $keysToCheck);
     }
 
-    public static function seedResult($surveyStep, $uuid, $languageId, $timestamp)
+    public static function seedResult($surveyStep, $uuid, $languageId, $timestamp): EvaluationToolSurveyStepResult
     {
         $surveyResult                     = new EvaluationToolSurveyStepResult();
         $surveyResult->session_id         = $uuid;

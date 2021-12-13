@@ -121,7 +121,7 @@ class EvaluationToolSurveyController extends Controller
      */
     public function duplicateSurvey(EvaluationToolSurvey $survey): JsonResponse
     {
-        // Todo: Implemenct replication of surbey and survey steps
+        // Todo: Implement replication of survey and survey steps
 //        $duplicateSurvey = $survey->replicate()->makeHidden(["survey_steps_count", "survey_results_count"]);
 //        $duplicateSurvey->push();
 

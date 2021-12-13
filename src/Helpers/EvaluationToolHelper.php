@@ -111,39 +111,59 @@ class EvaluationToolHelper
         // iterate all keys
         foreach ($keysToCheck as $keyToCheck) {
             // iterate all surveys
-            $missing[$keyToCheck] = $element->surveys->map(function ($survey) use ($element, $keyToCheck) {
-
-                $languageCodes = $survey->languages;
-
-                // set survey id and all codes
-                $missingIn = [
-                    "surveyId" => $survey->id,
-                    "codes"    => $languageCodes->pluck("code")->flatten()
-                ];
-
-                $index = 0;
-                // check if params is set and is object
-                if (isset($element->params->{$keyToCheck}) && is_object($element->params->{$keyToCheck})) {
-                    // loop through params
-                    foreach ($element->params->{$keyToCheck} as $key => $text) {
-                        // check if code exists in collection and only return when no match
-                        $languageCodes = $languageCodes->filter(function ($value) use ($key) {
-                            return $value->code !== $key;
-                        });
-                        $index++;
+            // check for array
+            if (strpos($keyToCheck, ".*.") !== false) {
+                list($key1, $key2) = explode(".*.", $keyToCheck);
+                foreach ($element->params->{$key1} as $i => $subElement) {
+                    if (isset($subElement->{$key2})) {
+                        $missing[$key1 . "." . $i . "." . $key2] = self::getMissingLanguages($element, $subElement->{$key2}, $keyToCheck);
                     }
-                    $missingIn["codes"] = $languageCodes->pluck("code")->flatten();
                 }
-
-                // return null if array im empty
-                if (empty($missingIn["codes"]->toArray())) {
-                    return null;
+            } // check for sub key
+            elseif (strpos($keyToCheck, ".") !== false) {
+                list($key1, $key2) = explode(".", $keyToCheck);
+                if (isset($element->params->{$key1}->{$key2})) {
+                    $missing[$key1 . "." . $key2] = self::getMissingLanguages($element, $element->params->{$key1}->{$key2}, $keyToCheck);
                 }
-
-                return $missingIn;
-            })->filter()->values(); // this filters all "null" values
+            } else {
+                if (isset($element->params->{$keyToCheck})) {
+                    $missing[$keyToCheck] = self::getMissingLanguages($element, $element->params->{$keyToCheck}, $keyToCheck);
+                }
+            }
         }
 
         return $missing;
+    }
+
+    public static function getMissingLanguages($element, $lookIn, $keyToCheck)
+    {
+        return $element->surveys->map(function ($survey) use ($element, $keyToCheck, $lookIn) {
+
+            $languageCodes = $survey->languages;
+
+            $missingIn = [
+                "surveyId" => $survey->id,
+                //                "codes"    => $languageCodes->pluck("code")->flatten()
+            ];
+
+            $index = 0;
+
+            foreach ($lookIn as $key => $text) {
+                // check if code exists in collection and only return when no match
+                $languageCodes = $languageCodes->filter(function ($value) use ($key) {
+                    return $value->code !== $key;
+                });
+                $index++;
+            }
+            $missingIn["codes"] = $languageCodes->pluck("code")->flatten();
+
+            // return null if array im empty
+            if (empty($missingIn["codes"]->toArray())) {
+                return null;
+            }
+
+            return $missingIn;
+
+        })->filter()->values();
     }
 }

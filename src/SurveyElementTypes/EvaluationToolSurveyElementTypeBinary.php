@@ -4,6 +4,7 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 
 use Illuminate\Http\Request;
 use StdClass;
+use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
@@ -110,7 +111,14 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
         return $surveyStep->next_step_id;
     }
 
-    public static function seedResult($surveyStep, $uuid, $languageId, $timestamp)
+    public static function validateSurveyBasedLanguages(EvaluationToolSurveyElement $element): array
+    {
+        $keysToCheck = ["question", "trueLabel", "falseLabel"];
+
+        return EvaluationToolHelper::checkMissingLanguages($element, $keysToCheck);
+    }
+
+    public static function seedResult($surveyStep, $uuid, $languageId, $timestamp): EvaluationToolSurveyStepResult
     {
         $surveyResult                     = new EvaluationToolSurveyStepResult();
         $surveyResult->session_id         = $uuid;
