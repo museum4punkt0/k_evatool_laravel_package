@@ -7,12 +7,15 @@ use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Rules\SnakeCase;
 
 class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurveyElementTypeBase
 {
+
+    const PARAMS_KEYS = ["question", "options.*.labels"];
 
     public function __construct()
     {
@@ -162,9 +165,7 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
 
     public static function validateSurveyBasedLanguages(EvaluationToolSurveyElement $element): array
     {
-        $keysToCheck = ["options.*.labels", "question"];
-
-        return EvaluationToolHelper::checkMissingLanguages($element, $keysToCheck);
+        return EvaluationToolHelper::checkMissingLanguages($element, self::PARAMS_KEYS);
     }
 
     public static function seedResult($surveyStep, $uuid, $languageId, $timestamp): EvaluationToolSurveyStepResult
@@ -212,5 +213,10 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
         }
 
         return $results;
+    }
+
+    public static function checkCompleteLanguages($request)
+    {
+        EvaluationToolHelper::checkCompleteLanguages($request, self::PARAMS_KEYS);
     }
 }

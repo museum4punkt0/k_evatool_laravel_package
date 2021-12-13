@@ -4,6 +4,7 @@ namespace Twoavy\EvaluationTool\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyElementTransformer;
 
@@ -23,8 +24,13 @@ class EvaluationToolSurveyElementStoreRequest extends FormRequest
                 if (method_exists($this->className, "prepareRequest")) {
                     $this->className::prepareRequest($request);
                 }
+                if (method_exists($this->className, "checkCompleteLanguages")) {
+                    $this->className::checkCompleteLanguages($request);
+                }
             }
         }
+
+//        print_r($request->all());
     }
 
     /**
@@ -46,22 +52,17 @@ class EvaluationToolSurveyElementStoreRequest extends FormRequest
     public
     function rules(): array
     {
-        // TODO: rules
         $rules = [
             "name"                => "required|min:2|max:100",
             "survey_element_type" => [
                 "required",
                 "exists:evaluation_tool_survey_element_types,key"
             ]
-            // "description" => "max:500",
-            // "published"   => "boolean",
         ];
 
         if (class_exists($this->className)) {
             return array_merge($rules, $this->className::rules());
         }
         return $rules;
-
-
     }
 }

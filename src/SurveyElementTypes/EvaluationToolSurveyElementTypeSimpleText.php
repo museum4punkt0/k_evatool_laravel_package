@@ -139,4 +139,9 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
         }
         return $results;
     }
+
+    public static function checkCompleteLanguages($request)
+    {
+        EvaluationToolHelper::checkCompleteLanguages($request, ["text"]);
+    }
 }

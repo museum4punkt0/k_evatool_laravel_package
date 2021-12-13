@@ -13,6 +13,8 @@ use Twoavy\EvaluationTool\Rules\SnakeCase;
 class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElementTypeBase
 {
 
+    const PARAMS_KEYS = ["question", "lowestValueLabel", "middleValueLabel", "highestValueLabel"];
+
     public function __construct()
     {
         parent::__construct();
@@ -165,7 +167,7 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
 
     public static function validateSurveyBasedLanguages(EvaluationToolSurveyElement $element): array
     {
-        $keysToCheck = ["question", "lowestValueLabel", "middleValueLabel", "highestValueLabel"];
+        $keysToCheck = self::PARAMS_KEYS;
 
         return EvaluationToolHelper::checkMissingLanguages($element, $keysToCheck);
     }
@@ -205,5 +207,10 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
         }
 
         return $results;
+    }
+
+    public static function checkCompleteLanguages($request)
+    {
+        EvaluationToolHelper::checkCompleteLanguages($request, self::PARAMS_KEYS);
     }
 }

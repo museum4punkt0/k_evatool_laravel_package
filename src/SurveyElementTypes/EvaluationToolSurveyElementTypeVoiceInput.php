@@ -7,14 +7,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use StdClass;
+use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyStepResultAssetController;
-use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyRunController;
 use Twoavy\EvaluationTool\Models\EvaluationToolAudioTranscription;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 
 class EvaluationToolSurveyElementTypeVoiceInput extends EvaluationToolSurveyElementTypeBase
 {
+
+    const PARAMS_KEYS = ["question"];
 
     public function __construct()
     {
@@ -81,6 +83,11 @@ class EvaluationToolSurveyElementTypeVoiceInput extends EvaluationToolSurveyElem
         return true;
     }
 
+    public static function validateSurveyBasedLanguages(EvaluationToolSurveyElement $element): array
+    {
+        return EvaluationToolHelper::checkMissingLanguages($element, self::PARAMS_KEYS);
+    }
+
     public static function seedResult($surveyStep, $uuid, $languageId, $timestamp): EvaluationToolSurveyStepResult
     {
         $surveyResult                     = new EvaluationToolSurveyStepResult();
@@ -127,5 +134,10 @@ class EvaluationToolSurveyElementTypeVoiceInput extends EvaluationToolSurveyElem
         }
 
         return $results;
+    }
+
+    public static function checkCompleteLanguages($request)
+    {
+        EvaluationToolHelper::checkCompleteLanguages($request, self::PARAMS_KEYS);
     }
 }

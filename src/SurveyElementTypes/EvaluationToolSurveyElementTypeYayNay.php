@@ -4,6 +4,7 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 
 use Illuminate\Http\Request;
 use StdClass;
+use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Rules\DuplicatesInArray;
@@ -12,6 +13,8 @@ use Twoavy\EvaluationTool\Rules\SnakeCase;
 
 class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementTypeBase
 {
+
+    const PARAMS_KEYS = ["question", "trueLabel", "falseLabel"];
 
     public function __construct()
     {
@@ -133,7 +136,12 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
         return true;
     }
 
-    public static function seedResult($surveyStep, $uuid, $languageId, $timestamp)
+    public static function validateSurveyBasedLanguages(EvaluationToolSurveyElement $element): array
+    {
+        return EvaluationToolHelper::checkMissingLanguages($element, self::PARAMS_KEYS);
+    }
+
+    public static function seedResult($surveyStep, $uuid, $languageId, $timestamp): EvaluationToolSurveyStepResult
     {
         $surveyResult                     = new EvaluationToolSurveyStepResult();
         $surveyResult->session_id         = $uuid;
@@ -183,5 +191,10 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
         }
 
         return $results;
+    }
+
+    public static function checkCompleteLanguages($request)
+    {
+        EvaluationToolHelper::checkCompleteLanguages($request, self::PARAMS_KEYS);
     }
 }

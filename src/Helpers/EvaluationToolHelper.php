@@ -166,4 +166,56 @@ class EvaluationToolHelper
 
         })->filter()->values();
     }
+
+    public static function checkCompleteLanguages($request, $keysToCheck)
+    {
+        $languageCodes = EvaluationToolSurveyLanguage::all()->pluck("code");
+
+        $fullCount      = 0;
+        $languagesCount = [];
+        foreach ($languageCodes as $languageCode) {
+            $languagesCount[$languageCode] = 0;
+        }
+
+        foreach ($keysToCheck as $key) {
+            if (strpos($key, ".*.") !== false) {
+                list($key1, $key2) = explode(".*.", $key);
+                if (isset($request->params[$key1])) {
+                    $fullCount += count($request->params[$key1]);
+                    foreach ($request->params[$key1] as $keyParam) {
+                        if (isset($keyParam[$key2])) {
+                            foreach ($keyParam[$key2] as $languageCode => $value) {
+                                if (!in_array($languageCode, $languageCodes->toArray())) {
+                                    abort(422, "invalid language code (" . $languageCode . ")");
+                                }
+                                $languagesCount[$languageCode]++;
+                            }
+                        }
+                    }
+                }
+            } elseif (strpos($key, ".") !== false) {
+                list($key1, $key2) = explode(".", $key);
+            } else {
+                if (isset($request->params[$key])) {
+                    foreach ($request->params[$key] as $languageCode => $value) {
+                        if (!in_array($languageCode, $languageCodes->toArray())) {
+                            abort(422, "invalid language code (" . $languageCode . ")");
+                        }
+                        $languagesCount[$languageCode]++;
+                    }
+                }
+                $fullCount++;
+            }
+        }
+
+        $maxCount = 0;
+        foreach ($languagesCount as $languageCount) {
+            if ($maxCount < $languageCount)
+                $maxCount = $languageCount;
+        }
+
+        if ($maxCount < $fullCount) {
+            abort(422, "at least one language must be provided with all keys");
+        }
+    }
 }

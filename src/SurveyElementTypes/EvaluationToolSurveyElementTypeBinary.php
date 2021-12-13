@@ -13,6 +13,8 @@ use Twoavy\EvaluationTool\Rules\SnakeCase;
 class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementTypeBase
 {
 
+    const PARAMS_KEYS = ["question", "trueLabel", "falseLabel"];
+
     public function __construct()
     {
         parent::__construct();
@@ -113,7 +115,7 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
 
     public static function validateSurveyBasedLanguages(EvaluationToolSurveyElement $element): array
     {
-        $keysToCheck = ["question", "trueLabel", "falseLabel"];
+        $keysToCheck = self::PARAMS_KEYS;
 
         return EvaluationToolHelper::checkMissingLanguages($element, $keysToCheck);
     }
@@ -149,5 +151,10 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
             $results[$value]++;
         }
         return $results;
+    }
+
+    public static function checkCompleteLanguages($request)
+    {
+        EvaluationToolHelper::checkCompleteLanguages($request, self::PARAMS_KEYS);
     }
 }

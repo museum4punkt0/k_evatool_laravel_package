@@ -4,6 +4,7 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 
 use Illuminate\Http\Request;
 use StdClass;
+use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Rules\Emoji;
@@ -11,6 +12,8 @@ use Twoavy\EvaluationTool\Rules\SnakeCase;
 
 class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTypeBase
 {
+
+    const PARAMS_KEYS = ["question"];
 
     public function __construct()
     {
@@ -121,7 +124,12 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
         return true;
     }
 
-    public static function seedResult($surveyStep, $uuid, $languageId, $timestamp)
+    public static function validateSurveyBasedLanguages(EvaluationToolSurveyElement $element): array
+    {
+        return EvaluationToolHelper::checkMissingLanguages($element, self::PARAMS_KEYS);
+    }
+
+    public static function seedResult($surveyStep, $uuid, $languageId, $timestamp): EvaluationToolSurveyStepResult
     {
         $surveyResult = new EvaluationToolSurveyStepResult();
         $surveyResult->session_id = $uuid;
@@ -156,5 +164,10 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
             $results[$value]++;
         }
         return $results;
+    }
+
+    public static function checkCompleteLanguages($request)
+    {
+        EvaluationToolHelper::checkCompleteLanguages($request, self::PARAMS_KEYS);
     }
 }
