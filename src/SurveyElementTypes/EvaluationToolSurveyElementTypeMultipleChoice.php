@@ -78,6 +78,8 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
             }
         }
 
+
+        $request->request->add(['optionsCount' => count($request->params['options'])]);
         $request->request->add(['languageKeys' => $languageKeys]);
     }
 
@@ -118,10 +120,12 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
      */
     public static function rules(): array
     {
+//        print_r(request()->all());
+
         $maxCount = 10;
         return [
             'params.question'         => ['required', 'array', 'min:1'],
-            'params.options'          => ['required', 'array', 'min:1'],
+            'params.options'          => ['required', 'array', 'min:2', 'max:' . $maxCount],
             'params.options.*'        => ['array'],
             'params.options.*.labels' => ["required", 'array'],
             'params.options.*.value'  => [
@@ -129,8 +133,8 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
                 new SnakeCase(),
             ],
             'languageKeys.*'          => ['required', 'exists:evaluation_tool_survey_languages,code'],
-            'params.minSelectable'    => ['integer', 'min:1', 'max:' . $maxCount],
-            //            'params.maxSelectable'    => ['integer', 'between:1,params.minSelectable', 'max:' . $maxCount],
+            'params.minSelectable'    => ['integer', 'min:1', 'lte:params.maxSelectable', 'lt:optionsCount'],
+            'params.maxSelectable'    => ['integer', 'gte:params.minSelectable', 'lte:optionsCount']
         ];
     }
 
