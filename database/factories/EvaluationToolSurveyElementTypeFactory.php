@@ -107,12 +107,12 @@ class EvaluationToolSurveyElementTypeFactory extends Factory
                 'name'         => 'Star rating',
                 'descriptions' => [
                     "title"       => [
-                        "de" => "Sterne-Bewertung",
-                        "en" => "Star rating"
+                        "de" => "Skalen",
+                        "en" => "Scales"
                     ],
                     "description" => [
-                        "de" => "Zur Abfrage einer Tendent über ein Sterne-System.",
-                        "en" => "Get tendency through a star-based rating system"
+                        "de" => "Zur Abfrage einer Tendenz über ein Skalen-System.",
+                        "en" => "Get tendency through a scale system"
                     ]
                 ],
                 'params'       => EvaluationToolSurveyElementTypeStarRating::typeParams(),

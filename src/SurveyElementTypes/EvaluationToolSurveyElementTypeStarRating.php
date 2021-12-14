@@ -3,6 +3,7 @@
 namespace Twoavy\EvaluationTool\SurveyElementTypes;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use StdClass;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
@@ -113,6 +114,10 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
                 "required",
                 new SnakeCase(),
             ],
+            "params.displayType"         => [
+                "required",
+                Rule::in(["stars", "grades", "neutral"])
+            ]
         ];
     }
 
