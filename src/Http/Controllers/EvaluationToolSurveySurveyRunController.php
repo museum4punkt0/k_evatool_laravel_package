@@ -195,8 +195,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
         $hash            = substr(md5($audioData), 0, 6);
         $filenameBase    = "recording_" . date('ymd_His') . "_" . $hash;
         $filenameInterim = $filenameBase . "_interim.wav";
-        $filename        = $filenameBase . ".wav";
-        $filenameMp3     = $filenameBase . ".mp3";
+        $filename        = $filenameBase . ".mp3";
 
         // store interim file
         $this->audioDisk->put($filenameInterim, base64_decode($audioData));
@@ -204,14 +203,9 @@ class EvaluationToolSurveySurveyRunController extends Controller
         // get paths
         $sourcePath    = $this->audioDisk->path($filenameInterim);
         $targetPath    = $this->audioDisk->path($filename);
-        $targetPathMp3 = $this->audioDisk->path($filenameMp3);
-
-        // convert file to wave
-        $command = "ffmpeg -i " . $sourcePath . " -acodec pcm_s16le -ar 44100 " . $targetPath;
-        exec($command);
 
         // convert file to mp3
-        $command = "ffmpeg -i " . $sourcePath . " -vn -ar 44100 -b:a 128k " . $targetPathMp3;
+        $command = "ffmpeg -i " . $sourcePath . " -vn -b:a 128k " . $targetPath;
         exec($command);
 
         // delete interim file
