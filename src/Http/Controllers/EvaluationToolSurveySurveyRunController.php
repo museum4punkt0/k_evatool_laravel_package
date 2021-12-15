@@ -191,15 +191,36 @@ class EvaluationToolSurveySurveyRunController extends Controller
 
     public function createAudioAsset($audioData, EvaluationToolSurveyStepResult $result)
     {
-        $audioData = str_replace('data:audio/wav;base64,', '', $audioData);
-        $hash      = substr(md5($audioData), 0, 6);
-        $filename  = "recording_" . date('ymd_His') . "_" . $hash . ".wav";
+        $audioData       = str_replace('data:audio/wav;base64,', '', $audioData);
+        $hash            = substr(md5($audioData), 0, 6);
+        $filenameBase    = "recording_" . date('ymd_His') . "_" . $hash;
+        $filenameInterim = $filenameBase . "_interim.wav";
+        $filename        = $filenameBase . ".wav";
+        $filenameMp3     = $filenameBase . ".mp3";
 
-        // store file
-        $this->audioDisk->put($filename, base64_decode($audioData));
+        // store interim file
+        $this->audioDisk->put($filenameInterim, base64_decode($audioData));
 
+        // get paths
+        $sourcePath    = $this->audioDisk->path($filenameInterim);
+        $targetPath    = $this->audioDisk->path($filename);
+        $targetPathMp3 = $this->audioDisk->path($filenameMp3);
+
+        // convert file to wave
+        $command = "ffmpeg -i " . $sourcePath . " -acodec pcm_s16le -ar 44100 " . $targetPath;
+        exec($command);
+
+        // convert file to mp3
+        $command = "ffmpeg -i " . $sourcePath . " -vn -ar 44100 -b:a 128k " . $targetPathMp3;
+        exec($command);
+
+        // delete interim file
+        $this->audioDisk->delete($filenameInterim);
+
+        //get file hash
         $fileHash = hash_file('md5', $this->audioDisk->path($filename));
 
+        // create file
         if (!$resultAsset = EvaluationToolSurveyStepResultAsset::where("hash", $fileHash)->first()) {
             $resultAsset                        = new EvaluationToolSurveyStepResultAsset();
             $resultAsset->filename              = $filename;
