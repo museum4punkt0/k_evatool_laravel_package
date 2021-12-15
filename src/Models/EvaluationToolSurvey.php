@@ -48,7 +48,8 @@ class EvaluationToolSurvey extends Model
     // relations that are included with their element count
     protected $withCount = [
         "survey_steps",
-        "survey_results"
+        "survey_results",
+        "survey_demo_results"
     ];
 
     /**
@@ -69,7 +70,20 @@ class EvaluationToolSurvey extends Model
             "survey_id",
             "survey_step_id",
             "id",
-            "id");
+            "id")->where("demo", false);
+    }
+
+    /**
+     * @return HasManyThrough
+     */
+    public function survey_demo_results(): HasManyThrough
+    {
+        return $this->hasManyThrough(EvaluationToolSurveyStepResult::class,
+            EvaluationToolSurveyStep::class,
+            "survey_id",
+            "survey_step_id",
+            "id",
+            "id")->where("demo", true);
     }
 
     public function created_by_user(): HasOne
