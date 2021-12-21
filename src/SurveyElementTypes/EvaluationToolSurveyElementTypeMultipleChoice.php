@@ -122,7 +122,7 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
     {
 //        print_r(request()->all());
 
-        $maxCount = 10;
+        $maxCount = 20;
         return [
             'params.question'         => ['required', 'array', 'min:1'],
             'params.question.*'       => ['max:200'],
