@@ -125,7 +125,7 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
         $maxCount = 20;
         return [
             'params.question'         => ['required', 'array', 'min:1'],
-            'params.question.*'       => ['max:200'],
+            'params.question.*'       => self::QUESTION_RULES,
             'params.options'          => ['required', 'array', 'min:2', 'max:' . $maxCount],
             'params.options.*'        => ['array'],
             'params.options.*.labels' => ["required", 'array'],

@@ -117,7 +117,7 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
                 "exists:evaluation_tool_assets,id",
                 new IsMediaType("image"),
             ],
-            'params.question.*' => 'min:1|max:200',
+            'params.question.*' => self::QUESTION_RULES,
             'languageKeys.*'    => 'required|exists:evaluation_tool_survey_languages,code',
             'params.trueValue'  => ["required", new SnakeCase()],
             'params.falseValue' => ["required", new SnakeCase()],

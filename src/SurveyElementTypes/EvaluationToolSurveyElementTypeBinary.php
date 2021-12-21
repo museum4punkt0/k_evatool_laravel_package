@@ -77,7 +77,7 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
     {
         return [
             'params.question'   => 'required|array',
-            'params.question.*' => 'max:200',
+            'params.question.*' => self::QUESTION_RULES,
             'languageKeys.*'    => 'required|exists:evaluation_tool_survey_languages,code',
             'params.trueValue'  => ["required", "min:1", "max:20", new SnakeCase()],
             'params.falseValue' => ["required", "min:1", "max:20", new SnakeCase()],

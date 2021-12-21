@@ -14,10 +14,11 @@ use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
  * @property $primaryLanguage
  * @property $secondaryLanguages
  */
-
 class EvaluationToolSurveyElementTypeBase
 {
     use ResponseTrait;
+
+    const QUESTION_RULES = ["max:500"];
 
     public function __construct()
     {

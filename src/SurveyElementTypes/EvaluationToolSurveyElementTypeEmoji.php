@@ -88,7 +88,7 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
     {
         return [
             'params.question' => ['required', 'array', 'min:1'],
-            'params.question.*' => ['max:200'],
+            'params.question.*' => self::QUESTION_RULES,
             'params.emojis' => [
                 'required',
                 'array',
