@@ -60,7 +60,8 @@ class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyEleme
     public static function rules(): array
     {
         return [
-            'params.question' => ['required', 'array', 'min:1'],
+            'params.question'   => ['required', 'array', 'min:1'],
+            'params.question.*' => ['max:200'],
         ];
     }
 
@@ -89,7 +90,7 @@ class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyEleme
         if (!isset($results["texts"][$language->code])) {
             $results["texts"][$language->code] = [];
         }
-        $text = $result->result_value["text"];
+        $text                                = $result->result_value["text"];
         $results["texts"][$language->code][] = $text;
 
         return $results;
@@ -104,9 +105,9 @@ class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyEleme
         $surveyResult->result_language_id = $languageId;
         $surveyResult->answered_at        = $timestamp;
         $surveyResult->params             = $surveyStep->survey_element->params;
-        $language = EvaluationToolSurveyLanguage::find($languageId);
+        $language                         = EvaluationToolSurveyLanguage::find($languageId);
 
-        $faker = Factory::create($language->sub_code);
+        $faker                      = Factory::create($language->sub_code);
         $resultValue                = new StdClass;
         $text                       = $faker->realText(400);
         $resultValue->text          = $text;

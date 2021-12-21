@@ -97,7 +97,7 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
                 'max:10',
             ],
             'params.question'            => 'required|array',
-            'params.question.*'          => 'min:1|max:200',
+            'params.question.*'          => 'max:200',
             'languageKeys.*'             => 'required|exists:evaluation_tool_survey_languages,code',
             'params.allowHalfSteps'      => 'boolean',
             'params.highestValueLabel'   => 'array',

@@ -50,19 +50,6 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
 
     public static function prepareRequest(Request $request)
     {
-        /*$meanings = [];
-        $types = [];
-        if ($request->has("params.emojis")) {
-        foreach ($request->params["emojis"] as $emoji) {
-        $meanings[] = $emoji["meaning"];
-        $types[] = $emoji["type"];
-        }
-        }
-        $request->request->add([
-        "meanings" => $meanings,
-        "types" => $types,
-        ]);*/
-
         $languageKeys = [];
 
         if ($request->has('params.question')) {
@@ -101,7 +88,7 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
     {
         return [
             'params.question' => ['required', 'array', 'min:1'],
-            'params.question.*' => ['required', 'min:1', 'max:200'],
+            'params.question.*' => ['max:200'],
             'params.emojis' => [
                 'required',
                 'array',

@@ -58,7 +58,8 @@ class EvaluationToolSurveyElementTypeVoiceInput extends EvaluationToolSurveyElem
     public static function rules(): array
     {
         return [
-            'params.question' => ['required', 'array', 'min:1'],
+            'params.question'   => ['required', 'array', 'min:1'],
+            'params.question.*' => ['max:200'],
         ];
     }
 
