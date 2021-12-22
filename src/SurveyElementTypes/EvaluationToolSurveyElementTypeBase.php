@@ -18,7 +18,8 @@ class EvaluationToolSurveyElementTypeBase
 {
     use ResponseTrait;
 
-    const QUESTION_RULES = ["max:500"];
+    const QUESTION_RULES = ["max:1500"];
+    const TEXT_RULES = ["max:1500"];
 
     public function __construct()
     {

@@ -81,7 +81,7 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
         $maxCount = 10;
         return [
             'params.text'    => ['required', 'array', 'min:1'],
-            'params.text.*'  => ["max:500"],
+            'params.text.*'  => self::TEXT_RULES,
             'languageKeys.*' => ['required', 'exists:evaluation_tool_survey_languages,code'],
         ];
     }
