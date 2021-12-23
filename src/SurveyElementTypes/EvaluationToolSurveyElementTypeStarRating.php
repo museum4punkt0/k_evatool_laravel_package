@@ -15,6 +15,7 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
 {
 
     const PARAMS_KEYS = ["question", "lowestValueLabel", "middleValueLabel", "highestValueLabel"];
+    const LABEL_RULES = ["max:50"];
 
     public function __construct()
     {
@@ -101,11 +102,11 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
             'languageKeys.*'             => 'required|exists:evaluation_tool_survey_languages,code',
             'params.allowHalfSteps'      => 'boolean',
             'params.highestValueLabel'   => 'array',
-            'params.highestValueLabel.*' => 'min:1|max:50',
+            'params.highestValueLabel.*' => self::LABEL_RULES,
             'params.middleValueLabel'    => 'array',
-            'params.middleValueLabel.*'  => 'min:1|max:50',
+            'params.middleValueLabel.*'  => self::LABEL_RULES,
             'params.lowestValueLabel'    => 'array',
-            'params.lowestValueLabel.*'  => 'min:1|max:50',
+            'params.lowestValueLabel.*'  => self::LABEL_RULES,
             "params.meaningLowestValue"  => [
                 "required",
                 new SnakeCase(),

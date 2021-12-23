@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
-use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Rules\SnakeCase;
@@ -135,9 +134,7 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
                 "required",
                 new SnakeCase(),
             ],
-            'params.options.*.commentable' => [
-                "boolean",
-            ],
+            'params.options.*.commentable' => ['boolean'],
             'languageKeys.*'               => ['required', 'exists:evaluation_tool_survey_languages,code'],
             'params.minSelectable'         => ['integer', 'min:1', 'lte:params.maxSelectable', 'lt:optionsCount'],
             'params.maxSelectable'         => ['integer', 'gte:params.minSelectable', 'lte:optionsCount']
@@ -156,14 +153,14 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
 
     public static function getResultBasedNextStep(EvaluationToolSurveyStep $surveyStep)
     {
-        if (isset($surveyStep->resultByUuid["value"])) {
-            $value         = $surveyStep->resultByUuid["value"];
-            $minSelectable = $surveyStep->params["minSelectable"];
-            $maxSelectable = $surveyStep->params["maxSelectable"];
+        if (isset($surveyStep->resultByUuid["selected"])) {
+            $value         = $surveyStep->resultByUuid["selected"];
+            $minSelectable = $surveyStep->survey_element->params->minSelectable;
+            $maxSelectable = $surveyStep->survey_element->params->maxSelectable;
             if ($minSelectable == 1 && $maxSelectable == 1) {
                 if ($surveyStep->result_based_next_steps && !empty($surveyStep->result_based_next_steps)) {
                     foreach ($surveyStep->result_based_next_steps as $nextStep) {
-                        if ($nextStep->value == $value) {
+                        if ($nextStep->value == $value[0]["value"]) {
                             return $nextStep->stepId;
                         }
                     }

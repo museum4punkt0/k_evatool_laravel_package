@@ -17,6 +17,7 @@ use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResultAsset;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeBinary;
+use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeMultipleChoice;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeStarRating;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepResultCombinedTransformer;
@@ -173,7 +174,8 @@ class EvaluationToolSurveySurveyRunController extends Controller
      */
     function checkPreviousStepAnswer(EvaluationToolSurveyStep $surveyStep, $sessionId): bool
     {
-        if (!$previousStep = EvaluationToolSurveyStep::where("next_step_id", $surveyStep->id)
+        // Todo: Check if previous step was answered correctly
+        /*if (!$previousStep = EvaluationToolSurveyStep::where("next_step_id", $surveyStep->id)
             ->first()) {
             return true;
         }
@@ -183,8 +185,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
                 "session_id"     => $sessionId
             ])->first()) {
             return false;
-        }
-
+        }*/
 
         return true;
     }
@@ -457,6 +458,9 @@ class EvaluationToolSurveySurveyRunController extends Controller
                 break;
             case "starRating":
                 $stepId = EvaluationToolSurveyElementTypeStarRating::getResultBasedNextStep($surveyStep);
+                break;
+            case "multipleChoice":
+                $stepId = EvaluationToolSurveyElementTypeMultipleChoice::getResultBasedNextStep($surveyStep);
                 break;
             default:
                 break;
