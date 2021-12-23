@@ -97,14 +97,17 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
         }
 
         return [
-            'result_value.selected'   => [
+            'result_value.selected'           => [
                 'required',
                 'array',
                 'min:' . $minSelectable,
                 'max:' . $maxSelectable,
             ],
-            'result_value.selected.*' => [
+            'result_value.selected.*.value'   => [
                 'in:' . implode(',', $possibleOptions),
+            ],
+            'result_value.selected.*.comment' => [
+                'max:200',
             ],
         ];
     }
@@ -123,18 +126,21 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
 
         $maxCount = 20;
         return [
-            'params.question'         => ['required', 'array', 'min:1'],
-            'params.question.*'       => self::QUESTION_RULES,
-            'params.options'          => ['required', 'array', 'min:2', 'max:' . $maxCount],
-            'params.options.*'        => ['array'],
-            'params.options.*.labels' => ["required", 'array'],
-            'params.options.*.value'  => [
+            'params.question'              => ['required', 'array', 'min:1'],
+            'params.question.*'            => self::QUESTION_RULES,
+            'params.options'               => ['required', 'array', 'min:2', 'max:' . $maxCount],
+            'params.options.*'             => ['array'],
+            'params.options.*.labels'      => ["required", 'array'],
+            'params.options.*.value'       => [
                 "required",
                 new SnakeCase(),
             ],
-            'languageKeys.*'          => ['required', 'exists:evaluation_tool_survey_languages,code'],
-            'params.minSelectable'    => ['integer', 'min:1', 'lte:params.maxSelectable', 'lt:optionsCount'],
-            'params.maxSelectable'    => ['integer', 'gte:params.minSelectable', 'lte:optionsCount']
+            'params.options.*.commentable' => [
+                "boolean",
+            ],
+            'languageKeys.*'               => ['required', 'exists:evaluation_tool_survey_languages,code'],
+            'params.minSelectable'         => ['integer', 'min:1', 'lte:params.maxSelectable', 'lt:optionsCount'],
+            'params.maxSelectable'         => ['integer', 'gte:params.minSelectable', 'lte:optionsCount']
         ];
     }
 
