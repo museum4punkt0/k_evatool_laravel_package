@@ -39,8 +39,8 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
             "question"   => $question,
             "trueValue"  => "accepted",
             "falseValue" => "declined",
-            "trueLabel"  => ["de" => "ja", "en" => "yes", "fr" => "oui"],
-            "falseLabel" => ["de" => "nein", "en" => "no", "fr" => "non"],
+            "trueLabel"  => ["de" => "ja", "en" => "yes"],
+            "falseLabel" => ["de" => "nein", "en" => "no"],
             "assetIds"   => [1, 2, 4],
         ];
     }

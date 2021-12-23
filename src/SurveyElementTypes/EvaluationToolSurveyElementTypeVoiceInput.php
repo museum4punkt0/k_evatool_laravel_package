@@ -31,8 +31,7 @@ class EvaluationToolSurveyElementTypeVoiceInput extends EvaluationToolSurveyElem
         return [
             "question" => [
                 "de" => "Frage",
-                "en" => "Question",
-                "fr" => "Question",
+                "en" => "Question"
             ]
         ];
     }

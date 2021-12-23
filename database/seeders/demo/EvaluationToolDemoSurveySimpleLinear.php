@@ -34,8 +34,7 @@ class EvaluationToolDemoSurveySimpleLinear extends Seeder
         EvaluationToolSurveyElementFactory::times(1)->multipleChoice([
             "question"      => [
                 "de" => "Eine auf deutsch formulierte Frage",
-                "en" => "A question presented in English",
-                "fr" => "une question en francais",
+                "en" => "A question presented in English"
             ],
             "options"       => [
                 [
@@ -43,16 +42,14 @@ class EvaluationToolDemoSurveySimpleLinear extends Seeder
                     'value'  => 'option_1',
                     'labels' => [
                         "de" => "Option 1",
-                        "en" => "Option 1",
-                        "fr" => "Option 1",
+                        "en" => "Option 1"
                     ],
                 ],
                 [
                     'value'  => 'option2',
                     'labels' => [
                         "de" => "Option 2",
-                        "en" => "Option 2",
-                        "fr" => "Option 2",
+                        "en" => "Option 2"
                     ],
                 ],
             ],

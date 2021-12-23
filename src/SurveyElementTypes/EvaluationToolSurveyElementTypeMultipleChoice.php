@@ -35,13 +35,12 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
         return [
             "question"      => [
                 "de" => "Frage",
-                "en" => "Question",
-                "fr" => "Question",
+                "en" => "Question"
             ],
             "options"       => [
-                ["value" => "option_1", "labels" => ["de" => "option 1", "en" => "option 1", "fr" => "option 1"]],
-                ["value" => "option_2", "labels" => ["de" => "option 2", "en" => "option 2", "fr" => "option 2"]],
-                ["value" => "option_3", "labels" => ["de" => "option 3", "en" => "option 3", "fr" => "option 3"]],
+                ["value" => "option_1", "labels" => ["de" => "option 1", "en" => "option 1"]],
+                ["value" => "option_2", "labels" => ["de" => "option 2", "en" => "option 2"]],
+                ["value" => "option_3", "labels" => ["de" => "option 3", "en" => "option 3"]],
             ],
             "minSelectable" => $minSelectable,
             "maxSelectable" => $maxSelectable,
