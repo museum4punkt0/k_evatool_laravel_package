@@ -7,6 +7,7 @@ use Illuminate\Validation\Rule;
 use StdClass;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Rules\SnakeCase;
@@ -225,5 +226,24 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
     public static function checkCompleteLanguages($request)
     {
         EvaluationToolHelper::checkCompleteLanguages($request, self::PARAMS_KEYS);
+    }
+
+    public static function getExportData(EvaluationToolSurveyElement $element, EvaluationToolSurveyLanguage $language)
+    {
+        $numberOfOptions        = 1;
+        $exportData             = [];
+        $exportData["elements"] = [
+            "value" => $element->survey_element_type->key,
+            "span"  => $numberOfOptions,
+        ];
+        $exportData["question"] = [
+            "value" => $element->params->question->{$language->code},
+            "span"  => $numberOfOptions,
+        ];
+        $exportData["options"]  = [
+            "value" => $element->params->numberOfStars,
+            "span"  => $numberOfOptions,
+        ];
+        return $exportData;
     }
 }

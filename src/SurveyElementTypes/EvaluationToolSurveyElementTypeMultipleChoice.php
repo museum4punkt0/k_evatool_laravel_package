@@ -233,4 +233,23 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
     {
         EvaluationToolHelper::checkCompleteLanguages($request, self::PARAMS_KEYS);
     }
+
+    public static function getExportData(EvaluationToolSurveyElement $element, EvaluationToolSurveyLanguage $language)
+    {
+        $numberOfOptions        = 1;
+        $exportData             = [];
+        $exportData["elements"] = [
+            "value" => $element->survey_element_type->key,
+            "span"  => $numberOfOptions,
+        ];
+        $exportData["question"] = [
+            "value" => $element->params->question->{$language->code},
+            "span"  => $numberOfOptions,
+        ];
+        $exportData["options"]  = [
+            "value" => "nope",
+            "span"  => $numberOfOptions,
+        ];
+        return $exportData;
+    }
 }

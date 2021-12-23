@@ -13,6 +13,7 @@ use StdClass;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStatsDownloadRequest;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStatsExportRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 
@@ -73,11 +74,28 @@ class EvaluationToolSurveyStatsExportController extends Controller
                 $spreadsheet = new Spreadsheet();
                 $sheet       = $spreadsheet->getActiveSheet();
 
-                foreach ($results as $result) {
-                    $sheet->setCellValue('A' . $i, $result->session_id);
-                    $sheet->setCellValue('B' . $i, $result->survey_step->survey_element_type->key);
-                    $sheet->setCellValue('C' . $i, json_encode($result->result_value));
-                    $i++;
+                $preparedResults = $this->prepareResultsForExcel($results, $survey);
+
+                $r = 1;
+                foreach ($preparedResults as $resultRow) {
+                    $c = 1;
+                    foreach ($resultRow as $cellItem) {
+                        $sheet->setCellValueByColumnAndRow($c, $r, $cellItem["value"]);
+                        if (isset($cellItem["span"]) && $cellItem["span"] > 1) {
+                            $sheet->mergeCellsByColumnAndRow($c, $r, ($c + $cellItem["span"] + 1), $r);
+                        }
+                        $c++;
+                    }
+                    $r++;
+//                    $sheet->setCellValue('A' . $i, $result->session_id);
+//                    $sheet->setCellValue('B' . $i, $result->survey_step->survey_element_type->key);
+//                    $sheet->setCellValue('C' . $i, json_encode($result->result_value));
+
+                }
+
+                foreach (range('A', $sheet->getHighestDataColumn()) as $col) {
+                    $sheet->getColumnDimension($col)
+                        ->setAutoSize(true);
                 }
 
                 $writer = new Xlsx($spreadsheet);
@@ -85,7 +103,7 @@ class EvaluationToolSurveyStatsExportController extends Controller
             }
 
             if ($request->exportType == "csv") {
-                $filename .= ".csv";
+                $filename .= " . csv";
 
                 $spreadsheet = new Spreadsheet();
                 $sheet       = $spreadsheet->getActiveSheet();
@@ -159,5 +177,47 @@ class EvaluationToolSurveyStatsExportController extends Controller
 
         return response()->json(base64_encode($this->disk->get($request->filename)));
 
+    }
+
+    public function prepareResultsForExcel($results, EvaluationToolSurvey $survey): array
+    {
+
+        $language = EvaluationToolSurveyLanguage::all()->first();
+
+        $headers = [
+            "title" =>
+                [
+                    [
+                        "value" => $survey->name,
+                        "span"  => 1
+                    ]
+                ],
+            "slug"  => [
+                [
+                    "value" => $survey->slug,
+                    "span"  => 1
+                ]
+            ]
+        ];
+
+        $headers["elements"] = [];
+        $headers["question"] = [];
+        $headers["options"]  = [];
+
+        foreach ($survey->survey_steps as $step) {
+
+            $elementType = ucfirst($step->survey_element_type->key);
+            $className   = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . $elementType;
+            if (class_exists($className)) {
+                if (method_exists($className, "getExportData")) {
+                    $exportData = $className::getExportData($step->survey_element, $language);
+                    foreach ($exportData as $key => $row) {
+                        $headers[$key][] = $row;
+                    }
+                }
+            }
+        }
+
+        return $headers;
     }
 }
