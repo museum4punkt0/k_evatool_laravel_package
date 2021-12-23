@@ -3,7 +3,7 @@
 namespace Twoavy\EvaluationTool\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Request;
+use Twoavy\EvaluationTool\Rules\SnakeCase;
 
 class EvaluationToolSurveyStoreRequest extends FormRequest
 {
@@ -20,14 +20,13 @@ class EvaluationToolSurveyStoreRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @param Request $request
      * @return array
      */
-    public function rules(Request $request): array
+    public function rules(): array
     {
         return [
-            "name"        => "required|min:2|max:100",
-            "slug"        => "max:100",
+            "name"        => "required|min:3|max:100",
+            "slug"        => ["min:3", "max:100", new SnakeCase()],
             "description" => "max:500",
             "published"   => "boolean",
             "languages"   => "array",
