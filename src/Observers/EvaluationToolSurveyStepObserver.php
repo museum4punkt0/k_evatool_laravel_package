@@ -68,8 +68,22 @@ class EvaluationToolSurveyStepObserver
      */
     public function deleted(EvaluationToolSurveyStep $surveyStep)
     {
+        // check if first step
+        $isFirstStep = false;
+        if ($surveyStep->is_first_step) {
+            $isFirstStep = true;
+        }
+
         $surveyStep->is_first_step = null;
         $surveyStep->save();
+
+        // reassign first step
+        if ($isFirstStep) {
+            if ($firstStep = EvaluationToolSurveyStep::where("survey_id", $surveyStep->survey_id)->first()) {
+                $firstStep->is_first_step = true;
+                $firstStep->save();
+            }
+        }
 
         $survey = EvaluationToolSurvey::find($surveyStep->survey_id);
         if (isset($survey->admin_layout) && is_array($survey->admin_layout)) {
