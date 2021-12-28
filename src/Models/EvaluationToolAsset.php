@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\Models;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
@@ -32,6 +33,8 @@ class EvaluationToolAsset extends Model
 
     protected $appends = ["urls"];
 
+    protected $with = ["survey_elements"];
+
     public function getUrlsAttribute(): array
     {
         $disk = Storage::disk("evaluation_tool_assets");
@@ -43,6 +46,16 @@ class EvaluationToolAsset extends Model
             $urls["thumbnail"] = $disk->url("thumbnail/" . $this->filename);
         }
         return $urls;
+    }
+
+    public function survey_elements(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            EvaluationToolSurveyElement::class,
+            "evaluation_tool_asset_survey_element",
+            "evaluation_tool_asset_id",
+            "evaluation_tool_survey_element_id",
+        );
     }
 
     public function created_by_user(): HasOne

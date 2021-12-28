@@ -77,7 +77,6 @@ class EvaluationToolAssetController extends Controller
     }
 
     /**
-     * @throws InvalidManipulation
      * @throws FileNotFoundException
      */
     public function createTusAsset($tusData)
@@ -152,8 +151,11 @@ class EvaluationToolAssetController extends Controller
         return $metaDataPrepared;
     }
 
-    public function destroy(EvaluationToolAsset $asset)
+    public function destroy(EvaluationToolAsset $asset): JsonResponse
     {
+        if ($asset->survey_elements()->count() > 0) {
+            return $this->errorResponse("cannot be deleted, asset in use", 409);
+        }
         $asset->delete();
         return $this->showOne($asset);
     }

@@ -18,21 +18,22 @@ class EvaluationToolAssetTransformer extends TransformerAbstract
     {
 
         return [
-            "id"        => (int)$surveyAsset->id,
-            "filename"  => (string)$surveyAsset->filename,
-            "hash"      => (string)$surveyAsset->hash,
-            "mime"      => (string)$surveyAsset->mime,
-            "size"      => (int)$surveyAsset->size,
-            "sizeHuman" => HumanReadableFileSize::getHumanSize($surveyAsset->size),
-            "urls"      => (array)$surveyAsset->urls,
-            "meta"      => $surveyAsset->meta,
-            "createdAt" => $surveyAsset->created_at,
-            "createdBy" => $surveyAsset->created_by_user ? $surveyAsset->created_by_user->name : null,
-            "updatedAt" => $surveyAsset->updated_at,
-            "updatedBy" => $surveyAsset->updated_by_user ? $surveyAsset->updated_by_user->name : null,
-            "deletedAt" => $surveyAsset->deleted_at,
-            "deletedBy" => $surveyAsset->deleted_by_user ? $surveyAsset->deleted_by_user->name : null,
-            "links"     => [
+            "id"             => (int)$surveyAsset->id,
+            "filename"       => (string)$surveyAsset->filename,
+            "hash"           => (string)$surveyAsset->hash,
+            "mime"           => (string)$surveyAsset->mime,
+            "size"           => (int)$surveyAsset->size,
+            "sizeHuman"      => HumanReadableFileSize::getHumanSize($surveyAsset->size),
+            "urls"           => (array)$surveyAsset->urls,
+            "meta"           => $surveyAsset->meta,
+            "surveyElements" => (int)$surveyAsset->survey_elements->count(),
+            "createdAt"      => $surveyAsset->created_at,
+            "createdBy"      => $surveyAsset->created_by_user ? $surveyAsset->created_by_user->name : null,
+            "updatedAt"      => $surveyAsset->updated_at,
+            "updatedBy"      => $surveyAsset->updated_by_user ? $surveyAsset->updated_by_user->name : null,
+            "deletedAt"      => $surveyAsset->deleted_at,
+            "deletedBy"      => $surveyAsset->deleted_by_user ? $surveyAsset->deleted_by_user->name : null,
+            "links"          => [
                 [
                     "rel"  => "self",
                     "href" => route("assets.show", $surveyAsset->id)

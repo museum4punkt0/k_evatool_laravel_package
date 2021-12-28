@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\Models;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -66,6 +67,16 @@ class EvaluationToolSurveyElement extends Model
             "id",
             "survey_id"
         )->distinct();
+    }
+
+    public function assets(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            EvaluationToolAsset::class,
+            "evaluation_tool_asset_survey_element",
+            "evaluation_tool_survey_element_id",
+            "evaluation_tool_asset_id",
+        );
     }
 
     public function created_by_user(): HasOne
