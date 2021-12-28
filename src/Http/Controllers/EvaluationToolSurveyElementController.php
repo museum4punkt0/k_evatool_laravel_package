@@ -4,7 +4,9 @@ namespace Twoavy\EvaluationTool\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyElementStoreRequest;
+use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 
@@ -27,7 +29,8 @@ class EvaluationToolSurveyElementController extends Controller
         $surveyElements = EvaluationToolSurveyElement::all();
         return $this->showAll($surveyElements);
     }
-     /**
+
+    /**
      *  Retrieve a single survey element
      *
      * @param EvaluationToolSurveyElement $surveyElement
@@ -83,5 +86,33 @@ class EvaluationToolSurveyElementController extends Controller
 
         $surveyElement->delete();
         return $this->showOne($surveyElement->refresh());
+    }
+
+    public static function readSurveyElementAssets()
+    {
+        DB::table("evaluation_tool_asset_survey_element")->truncate();
+        EvaluationToolSurveyElement::all()->each(function ($surveyElement) {
+            self::assignAssets($surveyElement);
+        });
+    }
+
+    public static function assignAssets($surveyElement)
+    {
+
+        // yay nay
+        if ($surveyElement->survey_element_type_id == 5) {
+            $surveyElement->assets()->detach();
+            if (isset($surveyElement->params->assetIds) && is_array($surveyElement->params->assetIds) && !empty($surveyElement->params->assetIds)) {
+                $surveyElement->assets()->attach($surveyElement->params->assetIds);
+            }
+        }
+
+        // video
+        if ($surveyElement->survey_element_type_id == 7) {
+            $surveyElement->assets()->detach();
+            if (isset($surveyElement->params->videoAssetId) && EvaluationToolAsset::find($surveyElement->params->videoAssetId)) {
+                $surveyElement->assets()->attach($surveyElement->params->videoAssetId);
+            }
+        }
     }
 }

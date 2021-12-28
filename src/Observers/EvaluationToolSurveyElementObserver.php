@@ -2,6 +2,7 @@
 
 namespace Twoavy\EvaluationTool\Observers;
 
+use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyElementController;
 use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElementType;
@@ -66,20 +67,6 @@ class EvaluationToolSurveyElementObserver
 
     public function assignAssets($surveyElement)
     {
-        // yay nay
-        if ($surveyElement->survey_element_type_id == 5) {
-            $surveyElement->assets()->detach();
-            if (isset($surveyElement->params->assetIds) && is_array($surveyElement->params->assetIds) && !empty($surveyElement->params->assetIds)) {
-                $surveyElement->assets()->attach($surveyElement->params->assetIds);
-            }
-        }
-
-        // video
-        if ($surveyElement->survey_element_type_id == 7) {
-            $surveyElement->assets()->detach();
-            if (isset($surveyElement->params->videoAssetId) && EvaluationToolAsset::find($surveyElement->params->videoAssetId)) {
-                $surveyElement->assets()->attach($surveyElement->params->videoAssetId);
-            }
-        }
+        EvaluationToolSurveyElementController::assignAssets($surveyElement);
     }
 }

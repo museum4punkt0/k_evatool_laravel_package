@@ -6,6 +6,7 @@ use Illuminate\Auth\Events\Authenticated;
 use TusPhp\Events\TusEvent;
 use TusPhp\Tus\Server as TusServer;
 use Illuminate\Support\ServiceProvider;
+use Twoavy\EvaluationTool\Console\Commands\SurveyElementAssets;
 use Twoavy\EvaluationTool\Console\Commands\TestCommand;
 use Twoavy\EvaluationTool\Console\Commands\TypesCommand;
 use Twoavy\EvaluationTool\Console\Commands\SeedSurveyResultsCommand;
@@ -111,7 +112,8 @@ class EvaluationToolServiceProvider extends ServiceProvider
             $this->commands([
                 TestCommand::class,
                 TypesCommand::class,
-                SeedSurveyResultsCommand::class
+                SeedSurveyResultsCommand::class,
+                SurveyElementAssets::class
             ]);
         }
     }
