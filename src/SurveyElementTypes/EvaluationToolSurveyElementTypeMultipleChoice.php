@@ -160,7 +160,7 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
             if ($minSelectable == 1 && $maxSelectable == 1) {
                 if ($surveyStep->result_based_next_steps && !empty($surveyStep->result_based_next_steps)) {
                     foreach ($surveyStep->result_based_next_steps as $nextStep) {
-                        if ($nextStep->value == $value[0]["value"]) {
+                        if ($nextStep->value == $value[0]) {
                             return $nextStep->stepId;
                         }
                     }
