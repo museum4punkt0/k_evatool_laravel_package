@@ -211,11 +211,12 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
         $optionValues = array_column($options, "value");
 
         foreach ($values as $value) {
-            if (in_array($value, $optionValues)) {
-                if (!isset($results[$value])) {
-                    $results[$value] = 0;
+
+            if (in_array($value["value"], $optionValues)) {
+                if (!isset($results[$value["value"]])) {
+                    $results[$value["value"]] = 0;
                 }
-                $results[$value]++;
+                $results[$value["value"]]++;
             }
         }
 
