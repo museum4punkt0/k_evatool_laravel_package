@@ -160,7 +160,7 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
             if ($minSelectable == 1 && $maxSelectable == 1) {
                 if ($surveyStep->result_based_next_steps && !empty($surveyStep->result_based_next_steps)) {
                     foreach ($surveyStep->result_based_next_steps as $nextStep) {
-                        if ($nextStep->value == $value[0]) {
+                        if ($nextStep->value == $value[0]["value"]) {
                             return $nextStep->stepId;
                         }
                     }
@@ -193,7 +193,7 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
         $randomArray   = array();
 
         foreach ($optionsArray as $value) {
-            array_push($randomArray, $value['value']);
+            array_push($randomArray, ["value" => $value['value']]);
         }
 
         $resultValue->selected      = $randomArray;
