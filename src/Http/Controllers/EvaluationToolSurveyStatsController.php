@@ -175,9 +175,12 @@ class EvaluationToolSurveyStatsController extends Controller
 
     public function getStatsTrend(EvaluationToolSurvey $survey): JsonResponse
     {
+        $demo = request()->has("demo") && request()->demo == true;
+
+
         $results = EvaluationToolSurveyStepResult::whereIn("survey_step_id",
             $survey->survey_steps
-                ->pluck("id"));
+                ->pluck("id"))->where('demo', $demo);
 
         $currentSevenDays = $results->clone()->where("answered_at", ">", Carbon::now()->subDays(7)->startOfDay());
         $lastSevenDays = $results->clone()->where("answered_at", ">", Carbon::now()->subDays(14)->startOfDay())
@@ -261,7 +264,7 @@ class EvaluationToolSurveyStatsController extends Controller
         $resultQuery = EvaluationToolSurveyStepResult::where("survey_step_id", $step->id)->with(["language", "survey_step"]);
         if ($request->has("demo") && $request->demo == true) {
             $resultQuery->where("demo", true);
-        }else{
+        } else {
             $resultQuery->where("demo", false);
         }
         $resultQuerySpan = $resultQuery->clone();
@@ -274,7 +277,6 @@ class EvaluationToolSurveyStatsController extends Controller
         if ($request->has("end")) {
             $resultQuerySpan->where("answered_at", "<=", Carbon::createFromFormat("Y-m-d", $request->end)->endOfDay());
         }
-
 
         $resultsSpan = $resultQuerySpan->get();
         $results = $resultQuery->get();
@@ -446,7 +448,7 @@ class EvaluationToolSurveyStatsController extends Controller
     {
         $requestValues = $request->all();
         ksort($requestValues);
-        $cacheKey = md5($survey->id.json_encode($requestValues));
+        $cacheKey = md5($survey->id . json_encode($requestValues));
         $resultsByUuid = Cache::remember("stats-list-" . $cacheKey, Carbon::now()->addSeconds(15), function () use ($survey, $request) {
 
             $results = EvaluationToolSurveyStepResult::whereIn("survey_step_id",
@@ -467,7 +469,7 @@ class EvaluationToolSurveyStatsController extends Controller
 
             if ($request->has("demo") && $request->demo == true) {
                 $results->where("demo", true);
-            }else{
+            } else {
                 $results->where("demo", false);
             }
 
