@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Rules\Emoji;
 use Twoavy\EvaluationTool\Rules\SnakeCase;
@@ -162,5 +163,33 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
     public static function checkCompleteLanguages($request)
     {
         EvaluationToolHelper::checkCompleteLanguages($request, self::PARAMS_KEYS);
+    }
+
+    public static function getExportData(EvaluationToolSurveyElement $element, EvaluationToolSurveyLanguage $language): array
+    {
+        $numberOfOptions = count($element->params->emojis);
+        $exportData      = [];
+
+        $exportData["elements"]   = [];
+        $exportData["elements"][] = [
+            "value" => $element->survey_element_type->key,
+            "span"  => $numberOfOptions,
+        ];
+
+        $exportData["question"]   = [];
+        $exportData["question"][] = [
+            "value" => $element->params->question->{$language->code},
+            "span"  => $numberOfOptions,
+        ];
+
+        $exportData["options"] = [];
+        foreach ($element->params->emojis as $emoji) {
+            $exportData["options"][] = [
+                "value" => $emoji->meaning,
+                "span"  => 1
+            ];
+        }
+
+        return $exportData;
     }
 }

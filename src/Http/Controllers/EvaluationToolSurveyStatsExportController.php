@@ -76,15 +76,23 @@ class EvaluationToolSurveyStatsExportController extends Controller
 
                 $preparedResults = $this->prepareResultsForExcel($results, $survey);
 
+//                echo response()->json($preparedResults)->getContent();
+
                 $r = 1;
                 foreach ($preparedResults as $resultRow) {
                     $c = 1;
                     foreach ($resultRow as $cellItem) {
-                        $sheet->setCellValueByColumnAndRow($c, $r, $cellItem["value"]);
-                        if (isset($cellItem["span"]) && $cellItem["span"] > 1) {
-                            $sheet->mergeCellsByColumnAndRow($c, $r, ($c + $cellItem["span"] + 1), $r);
+                        foreach ($cellItem as $cellSubItem) {
+//                            print_r($cellSubItem);
+                            $sheet->setCellValueByColumnAndRow($c, $r, $cellSubItem["value"]);
+                            if (isset($cellSubItem["span"]) && $cellSubItem["span"] > 1) {
+//                                echo "merge " . $cellSubItem["span"] . " " . $r . ":" . $c . ":" . ($c + $cellSubItem["span"] - 1) . PHP_EOL;
+                                $sheet->mergeCellsByColumnAndRow($c, $r, ($c + $cellSubItem["span"] - 1), $r);
+                                $c = $c + $cellSubItem["span"];
+                            } else {
+                                $c++;
+                            }
                         }
-                        $c++;
                     }
                     $r++;
 //                    $sheet->setCellValue('A' . $i, $result->session_id);
@@ -185,17 +193,20 @@ class EvaluationToolSurveyStatsExportController extends Controller
         $language = EvaluationToolSurveyLanguage::all()->first();
 
         $headers = [
-            "title" =>
+            "title" => [
                 [
                     [
                         "value" => $survey->name,
                         "span"  => 1
                     ]
                 ],
+            ],
             "slug"  => [
                 [
-                    "value" => $survey->slug,
-                    "span"  => 1
+                    [
+                        "value" => $survey->slug,
+                        "span"  => 1
+                    ]
                 ]
             ]
         ];
@@ -205,7 +216,6 @@ class EvaluationToolSurveyStatsExportController extends Controller
         $headers["options"]  = [];
 
         foreach ($survey->survey_steps as $step) {
-
             $elementType = ucfirst($step->survey_element_type->key);
             $className   = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . $elementType;
             if (class_exists($className)) {

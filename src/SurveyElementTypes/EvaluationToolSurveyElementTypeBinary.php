@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Rules\SnakeCase;
@@ -166,5 +167,36 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
     public static function checkCompleteLanguages($request)
     {
         EvaluationToolHelper::checkCompleteLanguages($request, self::PARAMS_KEYS);
+    }
+
+    public static function getExportData(EvaluationToolSurveyElement $element, EvaluationToolSurveyLanguage $language): array
+    {
+        $numberOfOptions = 2;
+        $exportData      = [];
+
+        $exportData["elements"]   = [];
+        $exportData["elements"][] = [
+            "value" => $element->survey_element_type->key,
+            "span"  => $numberOfOptions,
+        ];
+
+        $exportData["question"]   = [];
+        $exportData["question"][] = [
+            "value" => $element->params->question->{$language->code},
+            "span"  => $numberOfOptions,
+        ];
+
+        $exportData["options"]   = [];
+        $exportData["options"][] = [
+            "value" => $element->params->trueValue,
+            "span"  => 1
+        ];
+        $exportData["options"][] = [
+            "value" => $element->params->falseValue,
+            "span"  => 1
+        ];
+
+
+        return $exportData;
     }
 }

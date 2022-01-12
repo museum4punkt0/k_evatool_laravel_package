@@ -116,4 +116,30 @@ class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyEleme
 
         return $surveyResult;
     }
+
+    public static function getExportData(EvaluationToolSurveyElement $element, EvaluationToolSurveyLanguage $language): array
+    {
+        $numberOfOptions = 1;
+        $exportData      = [];
+
+        $exportData["elements"]   = [];
+        $exportData["elements"][] = [
+            "value" => $element->survey_element_type->key,
+            "span"  => $numberOfOptions,
+        ];
+
+        $exportData["question"]   = [];
+        $exportData["question"][] = [
+            "value" => $element->params->question->{$language->code},
+            "span"  => $numberOfOptions,
+        ];
+
+        $exportData["options"]   = [];
+        $exportData["options"][] = [
+            "value" => "textinput",
+            "span"  => $numberOfOptions,
+        ];
+
+        return $exportData;
+    }
 }

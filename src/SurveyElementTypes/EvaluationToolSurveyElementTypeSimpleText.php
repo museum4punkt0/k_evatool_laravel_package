@@ -146,22 +146,29 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
         EvaluationToolHelper::checkCompleteLanguages($request, ["text"]);
     }
 
-    public static function getExportData(EvaluationToolSurveyElement $element, EvaluationToolSurveyLanguage $language)
+    public static function getExportData(EvaluationToolSurveyElement $element, EvaluationToolSurveyLanguage $language): array
     {
-        $numberOfOptions        = 1;
-        $exportData             = [];
-        $exportData["elements"] = [
+        $numberOfOptions = 1;
+        $exportData      = [];
+
+        $exportData["elements"]   = [];
+        $exportData["elements"][] = [
             "value" => $element->survey_element_type->key,
             "span"  => $numberOfOptions,
         ];
-        $exportData["question"] = [
+
+        $exportData["question"]   = [];
+        $exportData["question"][] = [
             "value" => $element->params->text->{$language->code},
             "span"  => $numberOfOptions,
         ];
-        $exportData["options"]  = [
-            "value" => "nope",
+
+        $exportData["options"]   = [];
+        $exportData["options"][] = [
+            "value" => "read",
             "span"  => $numberOfOptions,
         ];
+
         return $exportData;
     }
 }
