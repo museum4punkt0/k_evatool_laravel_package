@@ -28,15 +28,15 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
         return [
             "emojis" => [
                 [
-                    "type" => "😊",
+                    "type"    => "😊",
                     "meaning" => "great",
                 ],
                 [
-                    "type" => "😠",
+                    "type"    => "😠",
                     "meaning" => "angry",
                 ],
                 [
-                    "type" => "😎",
+                    "type"    => "😎",
                     "meaning" => "cool",
                 ],
             ],
@@ -65,7 +65,7 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
 
     public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement): array
     {
-        $emojis = $surveyElement->params->emojis;
+        $emojis   = $surveyElement->params->emojis;
         $meanings = [];
         foreach ($emojis as $value) {
             array_push($meanings, $value->meaning);
@@ -87,17 +87,17 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
     public static function rules(): array
     {
         return [
-            'params.question' => ['required', 'array', 'min:1'],
-            'params.question.*' => self::QUESTION_RULES,
-            'params.emojis' => [
+            'params.question'         => ['required', 'array', 'min:1'],
+            'params.question.*'       => self::QUESTION_RULES,
+            'params.emojis'           => [
                 'required',
                 'array',
                 'min:1',
                 'max:10',
             ],
-            "params.emojis.*.type" => ["min:1", "max:20", new Emoji()],
+            "params.emojis.*.type"    => ["min:1", "max:20", new Emoji()],
             "params.emojis.*.meaning" => ["min:1", "max:20", new SnakeCase()],
-            'languageKeys.*' => ['required', 'exists:evaluation_tool_survey_languages,code'],
+            'languageKeys.*'          => ['required', 'exists:evaluation_tool_survey_languages,code'],
         ];
     }
 
@@ -118,36 +118,41 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
 
     public static function seedResult($surveyStep, $uuid, $languageId, $timestamp): EvaluationToolSurveyStepResult
     {
-        $surveyResult = new EvaluationToolSurveyStepResult();
-        $surveyResult->session_id = $uuid;
-        $surveyResult->demo = true;
-        $surveyResult->survey_step_id = $surveyStep->id;
+        $surveyResult                     = new EvaluationToolSurveyStepResult();
+        $surveyResult->session_id         = $uuid;
+        $surveyResult->demo               = true;
+        $surveyResult->survey_step_id     = $surveyStep->id;
         $surveyResult->result_language_id = $languageId;
-        $surveyResult->answered_at = $timestamp;
-        $surveyResult->params = $surveyStep->survey_element->params;
-        $emojisArray = collect($surveyResult->params['emojis'])->random();
+        $surveyResult->answered_at        = $timestamp;
+        $surveyResult->params             = $surveyStep->survey_element->params;
+        $emojisArray                      = collect($surveyResult->params['emojis'])->random();
 
-        $resultValue = new StdClass;
-        $resultValue->meaning = $emojisArray['meaning'];
+        $resultValue                = new StdClass;
+        $resultValue->meaning       = $emojisArray['meaning'];
         $surveyResult->result_value = $resultValue;
 
         $surveyResult->save();
 
         return $surveyResult;
     }
+
     public static function statsCountResult($result, $results)
     {
         $value = $result->result_value["meaning"];
-        $meanings = [];
-        foreach ($result->params["emojis"] as $emoji) {
-            $meanings[] = $emoji["meaning"];
+
+        // get element and option values
+        $element  = $result->survey_step->survey_element;
+        $emojis   = $element->params->emojis;
+        $meanings = array_column($emojis, "meaning");
+
+        // fill all values with 0 if not already set
+        foreach ($meanings as $meaning) {
+            if (!isset($results[$meaning])) {
+                $results[$meaning] = 0;
+            }
         }
 
         if (in_array($value, $meanings)) {
-            $value = $result->result_value["meaning"];
-            if (!isset($results[$value])) {
-                $results[$value] = 0;
-            }
             $results[$value]++;
         }
         return $results;

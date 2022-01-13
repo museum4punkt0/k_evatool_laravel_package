@@ -206,16 +206,22 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
 
     public static function statsCountResult($result, $results)
     {
-        $values       = $result->result_value["selected"];
-        $options      = $result->params["options"];
+        $values = $result->result_value["selected"];
+
+        // get element and option values
+        $element      = $result->survey_step->survey_element;
+        $options      = $element->params->options;
         $optionValues = array_column($options, "value");
 
-        foreach ($values as $value) {
+        // fill all values with 0 if not already set
+        foreach ($optionValues as $optionValue) {
+            if (!isset($results[$optionValue])) {
+                $results[$optionValue] = 0;
+            }
+        }
 
+        foreach ($values as $value) {
             if (in_array($value["value"], $optionValues)) {
-                if (!isset($results[$value["value"]])) {
-                    $results[$value["value"]] = 0;
-                }
                 $results[$value["value"]]++;
             }
         }
