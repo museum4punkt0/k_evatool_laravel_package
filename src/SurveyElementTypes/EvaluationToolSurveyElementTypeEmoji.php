@@ -140,7 +140,7 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
     {
         $value = $result->result_value["meaning"];
 
-        // get element and option values
+        // get element and meaning values
         $element  = $result->survey_step->survey_element;
         $emojis   = $element->params->emojis;
         $meanings = array_column($emojis, "meaning");
@@ -155,6 +155,7 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
         if (in_array($value, $meanings)) {
             $results[$value]++;
         }
+
         return $results;
     }
 

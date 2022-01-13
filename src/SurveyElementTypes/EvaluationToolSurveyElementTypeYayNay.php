@@ -172,21 +172,32 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
     public static function statsCountResult($result, $results)
     {
 
-        if (!isset($results["images"])) {
-            $results["images"] = array();
+        $element    = $result->survey_step->survey_element;
+        $assetIds   = $element->params->assetIds;
+        $trueValue  = $element->params->trueValue;
+        $falseValue = $element->params->falseValue;
+
+        // fill all values with 0 if not already set
+        if (!isset($results)) {
+            $results = [];
         }
-        foreach ($result->result_value["images"] as $key => $image) {
-            // $asset = $image["asset"];
+
+        foreach ($assetIds as $assetId) {
+            if (!in_array($assetId, array_column($results, 'assetId'))) {
+                $results[] = [
+                    "assetId"   => $assetId,
+                    $trueValue  => 0,
+                    $falseValue => 0
+                ];
+            }
+        }
+
+        foreach ($result->result_value["images"] as $image) {
             $value = $image["value"];
+
             if (in_array($value, array($result->params['trueValue'], $result->params['falseValue']))) {
-                if (!isset($results["images"][$key])) {
-                    $results["images"][$key] = [];
-                    // $results["images"][$key]->asset = $asset;
-                }
-                if (!isset($results["images"][$key][$value])) {
-                    $results["images"][$key][$value] = 0;
-                }
-                $results["images"][$key][$value]++;
+                $index = array_search($image["asset"], array_column($results, 'assetId'));
+                $results[$index][$value]++;
             }
         }
 

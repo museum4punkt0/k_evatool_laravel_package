@@ -143,11 +143,21 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
     public static function statsCountResult($result, $results)
     {
         $value = $result->result_value["value"];
-        if (in_array($value, array($result->params['trueValue'], $result->params['falseValue']))) {
-            $value = $result->result_value["value"];
-            if (!isset($results[$value])) {
-                $results[$value] = 0;
-            }
+
+        // get element and meaning values
+        $element    = $result->survey_step->survey_element;
+        $trueValue  = $element->params->trueValue;
+        $falseValue = $element->params->falseValue;
+
+        if (!isset($results[$trueValue])) {
+            $results[$trueValue] = 0;
+        }
+
+        if (!isset($results[$falseValue])) {
+            $results[$falseValue] = 0;
+        }
+
+        if (in_array($value, array($trueValue, $falseValue))) {
             $results[$value]++;
         }
         return $results;

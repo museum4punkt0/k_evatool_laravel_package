@@ -200,15 +200,22 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
 
     public static function statsCountResult($result, $results)
     {
-        $value         = $result->result_value["rating"];
-        $numberOfStars = $result->params["numberOfStars"];
-        // dd($result);
-        // dd($numberOfStars);
+        $value = $result->result_value["rating"];
+
+        // get element and meaning values
+        $element       = $result->survey_step->survey_element;
+        $numberOfStars = $element->params->numberOfStars;
+
+        // initialize all options to 0
+        $i = 1;
+        while ($i <= $numberOfStars) {
+            if (!isset($results[$i])) {
+                $results[$i] = 0;
+            }
+            $i++;
+        }
 
         if ($value >= 0 && $value <= $numberOfStars) {
-            if (!isset($results[$value])) {
-                $results[$value] = 0;
-            }
             $results[$value]++;
         }
 
