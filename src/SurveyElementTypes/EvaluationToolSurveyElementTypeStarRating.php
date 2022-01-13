@@ -228,29 +228,34 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
         EvaluationToolHelper::checkCompleteLanguages($request, self::PARAMS_KEYS);
     }
 
-    public static function getExportData(EvaluationToolSurveyElement $element, EvaluationToolSurveyLanguage $language): array
+    public static function getExportDataHeaders(EvaluationToolSurveyStep $step, EvaluationToolSurveyLanguage $language, $position = 1): array
     {
         $numberOfOptions = 1;
         $exportData      = [];
 
         $exportData["elements"]   = [];
         $exportData["elements"][] = [
-            "value" => $element->survey_element_type->key,
+            "value" => $step->survey_element->survey_element_type->key,
             "span"  => $numberOfOptions,
         ];
 
         $exportData["question"]   = [];
         $exportData["question"][] = [
-            "value" => $element->params->question->{$language->code},
+            "value" => $step->survey_element->params->question->{$language->code},
             "span"  => $numberOfOptions,
         ];
 
         $exportData["options"]   = [];
         $exportData["options"][] = [
-            "value" => $element->params->numberOfStars,
+            "value" => $step->survey_element->params->numberOfStars,
             "span"  => $numberOfOptions,
         ];
 
         return $exportData;
+    }
+
+    public static function getExportDataResult(EvaluationToolSurveyElement $element, EvaluationToolSurveyLanguage $language, $result, $position): array
+    {
+        return ["value" => $result->id, "position" => $position];
     }
 }

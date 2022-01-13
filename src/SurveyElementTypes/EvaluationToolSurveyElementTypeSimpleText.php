@@ -8,6 +8,7 @@ use StdClass;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 
 class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElementTypeBase
@@ -146,20 +147,20 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
         EvaluationToolHelper::checkCompleteLanguages($request, ["text"]);
     }
 
-    public static function getExportData(EvaluationToolSurveyElement $element, EvaluationToolSurveyLanguage $language): array
+    public static function getExportDataHeaders(EvaluationToolSurveyStep $step, EvaluationToolSurveyLanguage $language): array
     {
         $numberOfOptions = 1;
         $exportData      = [];
 
         $exportData["elements"]   = [];
         $exportData["elements"][] = [
-            "value" => $element->survey_element_type->key,
+            "value" => $step->survey_element->survey_element_type->key,
             "span"  => $numberOfOptions,
         ];
 
         $exportData["question"]   = [];
         $exportData["question"][] = [
-            "value" => $element->params->text->{$language->code},
+            "value" => $step->survey_element->params->text->{$language->code},
             "span"  => $numberOfOptions,
         ];
 

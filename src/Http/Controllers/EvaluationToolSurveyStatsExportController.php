@@ -53,10 +53,12 @@ class EvaluationToolSurveyStatsExportController extends Controller
 
         if ($request->has("demo") && $request->demo == true) {
             $results->where("demo", true);
-            $filename .= '_demo_true';
+            $filename .= '_demo';
         } else {
             $results->where("demo", false);
         }
+
+        $results->orderBy("answered_at", "DESC");
 
 //        echo $results->toSql();
 
@@ -79,7 +81,7 @@ class EvaluationToolSurveyStatsExportController extends Controller
 //                echo response()->json($preparedResults)->getContent();
 
                 $r = 1;
-                foreach ($preparedResults as $resultRow) {
+                foreach ($preparedResults["headers"] as $resultRow) {
                     $c = 1;
                     foreach ($resultRow as $cellItem) {
                         foreach ($cellItem as $cellSubItem) {
@@ -192,7 +194,14 @@ class EvaluationToolSurveyStatsExportController extends Controller
 
         $language = EvaluationToolSurveyLanguage::all()->first();
 
-        $headers = [
+        $sessionIds = $results->map(function ($result) {
+            return $result->only("session_id");
+        })->groupBy("session_id")->keys();
+
+//        echo $sessionIds->count();
+//        echo response()->json($sessionIds)->getContent();
+
+        $data = [
             "title" => [
                 [
                     [
@@ -215,19 +224,48 @@ class EvaluationToolSurveyStatsExportController extends Controller
         $headers["question"] = [];
         $headers["options"]  = [];
 
+        $cellPosition  = 0;
+        $cellPositions = [];
+
         foreach ($survey->survey_steps as $step) {
             $elementType = ucfirst($step->survey_element_type->key);
             $className   = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . $elementType;
             if (class_exists($className)) {
-                if (method_exists($className, "getExportData")) {
-                    $exportData = $className::getExportData($step->survey_element, $language);
+                if (method_exists($className, "getExportDataHeaders")) {
+                    $exportData = $className::getExportDataHeaders($step, $language);
+                    $e          = 0;
                     foreach ($exportData as $key => $row) {
                         $headers[$key][] = $row;
+                        if ($e == 0) {
+                            // set cell position
+                            $cellPositions["step_" . $step->id] = $cellPosition + $row[0]["span"];
+                            $cellPosition                       += $row[0]["span"];
+                        }
+                        $e++;
                     }
                 }
             }
         }
 
-        return $headers;
+        foreach ($sessionIds as $sessionId) {
+            $sessionResults = $results->where("session_id", $sessionId);
+            foreach ($sessionResults as $result) {
+                $elementType = ucfirst($result->survey_step->survey_element_type->key);
+                $className   = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . $elementType;
+                if (class_exists($className)) {
+                    if (method_exists($className, "getExportDataResult")) {
+//                        echo $className . PHP_EOL;
+                        $resultData = $className::getExportDataResult($step->survey_element, $language, $result, $cellPositions["step_" .
+                                                                                                                                $result->survey_step_id]);
+                    }
+                }
+            }
+        }
+
+
+        return [
+            "headers" => $headers,
+            "results" => $results
+        ];
     }
 }

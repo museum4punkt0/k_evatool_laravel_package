@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\SurveyElementTypes;
 use Illuminate\Http\Request;
 use StdClass;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Faker\Factory;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
@@ -117,20 +118,20 @@ class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyEleme
         return $surveyResult;
     }
 
-    public static function getExportData(EvaluationToolSurveyElement $element, EvaluationToolSurveyLanguage $language): array
+    public static function getExportDataHeaders(EvaluationToolSurveyStep $step, EvaluationToolSurveyLanguage $language): array
     {
         $numberOfOptions = 1;
         $exportData      = [];
 
         $exportData["elements"]   = [];
         $exportData["elements"][] = [
-            "value" => $element->survey_element_type->key,
+            "value" => $step->survey_element->survey_element_type->key,
             "span"  => $numberOfOptions,
         ];
 
         $exportData["question"]   = [];
         $exportData["question"][] = [
-            "value" => $element->params->question->{$language->code},
+            "value" => $step->survey_element->params->question->{$language->code},
             "span"  => $numberOfOptions,
         ];
 
