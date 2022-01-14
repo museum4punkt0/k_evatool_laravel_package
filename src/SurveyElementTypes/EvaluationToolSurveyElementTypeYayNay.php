@@ -223,6 +223,7 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
         ];
 
         $exportData["question"]   = [];
+
         $exportData["question"][] = [
             "value" => $step->survey_element->params->question->{$language->code},
             "span"  => $numberOfOptions,
@@ -231,7 +232,7 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
         $exportData["options"] = [];
         foreach ($step->survey_element->params->assetIds as $asset) {
             $exportData["options"][] = [
-                "value" => $asset,
+                "value" => "Bild ID: " . $asset,
                 "span"  => 1
             ];
         }

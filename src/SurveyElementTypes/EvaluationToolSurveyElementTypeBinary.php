@@ -172,7 +172,7 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
 
     public static function getExportDataHeaders(EvaluationToolSurveyStep $step, EvaluationToolSurveyLanguage $language): array
     {
-        $numberOfOptions = 2;
+        $numberOfOptions = 1;
         $exportData      = [];
 
         $exportData["elements"]   = [];
@@ -189,15 +189,22 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
 
         $exportData["options"]   = [];
         $exportData["options"][] = [
-            "value" => $step->survey_element->params->trueValue,
+            "value" => $step->survey_element->params->trueValue . "/" . $step->survey_element->params->falseValue,
             "span"  => 1
         ];
-        $exportData["options"][] = [
+        /*$exportData["options"][] = [
             "value" => $step->survey_element->params->falseValue,
             "span"  => 1
-        ];
+        ];*/
 
 
         return $exportData;
+    }
+
+    public static function getExportDataResult(EvaluationToolSurveyElement $element, EvaluationToolSurveyLanguage $language, $result, $position): array
+    {
+        return [
+            ["value" => $result->result_value["value"], "position" => $position]
+        ];
     }
 }

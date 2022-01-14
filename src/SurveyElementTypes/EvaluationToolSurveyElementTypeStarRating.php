@@ -247,7 +247,7 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
 
         $exportData["options"]   = [];
         $exportData["options"][] = [
-            "value" => $step->survey_element->params->numberOfStars,
+            "value" => "Maximalwert: " . $step->survey_element->params->numberOfStars,
             "span"  => $numberOfOptions,
         ];
 
@@ -256,6 +256,8 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
 
     public static function getExportDataResult(EvaluationToolSurveyElement $element, EvaluationToolSurveyLanguage $language, $result, $position): array
     {
-        return ["value" => $result->id, "position" => $position];
+        return [
+            ["value" => $result->result_value["rating"], "position" => $position]
+        ];
     }
 }
