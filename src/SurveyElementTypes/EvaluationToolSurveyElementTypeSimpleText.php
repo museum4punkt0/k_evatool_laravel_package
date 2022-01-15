@@ -172,4 +172,11 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
 
         return $exportData;
     }
+
+    public static function getExportDataResult(EvaluationToolSurveyElement $element, EvaluationToolSurveyLanguage $language, $result, $position): array
+    {
+        return [
+            ["value" => $result->result_value["read"] ? "x" : null, "position" => $position]
+        ];
+    }
 }

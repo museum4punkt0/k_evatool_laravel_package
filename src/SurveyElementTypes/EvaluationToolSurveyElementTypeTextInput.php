@@ -143,4 +143,11 @@ class EvaluationToolSurveyElementTypeTextInput extends EvaluationToolSurveyEleme
 
         return $exportData;
     }
+
+    public static function getExportDataResult(EvaluationToolSurveyElement $element, EvaluationToolSurveyLanguage $language, $result, $position): array
+    {
+        return [
+            ["value" => $result->result_value["text"] ?: null, "position" => $position]
+        ];
+    }
 }

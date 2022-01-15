@@ -193,4 +193,24 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
 
         return $exportData;
     }
+
+    public static function getExportDataResult(EvaluationToolSurveyElement $element, EvaluationToolSurveyLanguage $language, $result, $position): array
+    {
+
+        $element     = $result->survey_step->survey_element;
+        $emojis      = $element->params->emojis;
+        $emojiValues = array_column($emojis, "meaning");
+
+        $results = [];
+        $i       = 0;
+        foreach ($emojiValues as $emojiValue) {
+            $results[] = [
+                "value"    => $result->result_value["meaning"] == $emojiValue ? "x" : null,
+                "position" => $position + $i
+            ];
+            $i++;
+        }
+
+        return $results;
+    }
 }

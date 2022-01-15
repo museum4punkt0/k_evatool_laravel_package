@@ -262,4 +262,24 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
 
         return $exportData;
     }
+
+    public static function getExportDataResult(EvaluationToolSurveyElement $element, EvaluationToolSurveyLanguage $language, $result, $position): array
+    {
+        // get element and option values
+        $element      = $result->survey_step->survey_element;
+        $options      = $element->params->options;
+        $optionValues = array_column($options, "value");
+
+        $results = [];
+        $i       = 0;
+        foreach ($optionValues as $optionValue) {
+            $results[] = [
+                "value"    => in_array($optionValue, array_column($result->result_value["selected"], "value")) ? "x" : null,
+                "position" => $position + $i
+            ];
+            $i++;
+        }
+
+        return $results;
+    }
 }

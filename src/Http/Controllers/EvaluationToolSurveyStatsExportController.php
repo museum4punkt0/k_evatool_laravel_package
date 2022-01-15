@@ -195,6 +195,12 @@ class EvaluationToolSurveyStatsExportController extends Controller
 
     }
 
+    /**
+     * Prepares the headers rows for the export to Excel
+     * @param $results
+     * @param EvaluationToolSurvey $survey
+     * @return array
+     */
     public function prepareResultsForExcel($results, EvaluationToolSurvey $survey): array
     {
 
@@ -203,9 +209,6 @@ class EvaluationToolSurveyStatsExportController extends Controller
         $sessionIds = $results->map(function ($result) {
             return $result->only("session_id");
         })->groupBy("session_id")->keys();
-
-//        echo $sessionIds->count();
-//        echo response()->json($sessionIds)->getContent();
 
         $headers = [
             "title" => [
@@ -253,6 +256,19 @@ class EvaluationToolSurveyStatsExportController extends Controller
             }
         }
 
+        // shift all position to left
+        $cellPositionsPrepared = [];
+        $keys                  = array_keys($cellPositions);
+        $c                     = 0;
+        foreach ($cellPositions as $key => $cellPosition) {
+            if ($c == 0) {
+                $cellPositionsPrepared[$key] = 1;
+            } else {
+                $cellPositionsPrepared[$key] = 1 + $cellPositions[$keys[$c - 1]];
+            }
+            $c++;
+        }
+
         $resultData = [];
         foreach ($sessionIds as $sessionId) {
             $sessionResults = $results->where("session_id", $sessionId);
@@ -261,18 +277,15 @@ class EvaluationToolSurveyStatsExportController extends Controller
                 $className   = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . $elementType;
                 if (class_exists($className)) {
                     if (method_exists($className, "getExportDataResult")) {
-//                        echo $className . PHP_EOL;
                         if (!isset($resultData[$sessionId])) {
                             $resultData[$sessionId] = [];
                         }
                         $resultData[$sessionId] = array_merge($resultData[$sessionId],
-                            $className::getExportDataResult($step->survey_element, $language, $result, $cellPositions["step_" . $result->survey_step_id]));
+                            $className::getExportDataResult($step->survey_element, $language, $result, $cellPositionsPrepared["step_" . $result->survey_step_id]));
                     }
                 }
             }
         }
-
-//        echo response()->json($resultData)->getContent();
 
         return [
             "headers" => $headers,
