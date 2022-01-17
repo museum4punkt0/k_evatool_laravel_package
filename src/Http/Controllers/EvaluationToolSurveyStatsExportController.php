@@ -5,11 +5,13 @@ namespace Twoavy\EvaluationTool\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use StdClass;
+use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStatsDownloadRequest;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStatsExportRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
@@ -31,11 +33,12 @@ class EvaluationToolSurveyStatsExportController extends Controller
     {
         $filename = "eva_tool_export_survey_" . $survey->id;
 
+        $ordering = EvaluationToolHelper::sortSurveySteps($survey);
+
         $results = EvaluationToolSurveyStepResult::whereIn("survey_step_id",
             $survey->survey_steps
                 ->pluck("id"))
-//                ->orderBy('session_id', 'ASC');
-            ->orderBy('answered_at', 'DESC');
+            ->orderByRaw(DB::raw("FIELD(survey_step_id, " . implode(",", $ordering->toArray()) . ") ASC"));
 
         // check for start date
         if ($request->has("start")) {
@@ -57,10 +60,6 @@ class EvaluationToolSurveyStatsExportController extends Controller
         } else {
             $results->where("demo", false);
         }
-
-        $results->orderBy("answered_at", "DESC");
-
-//        echo $results->toSql();
 
         $results = $results->get();
 
@@ -215,7 +214,7 @@ class EvaluationToolSurveyStatsExportController extends Controller
                 [
                     [
                         "value" => $survey->name,
-                        "span"  => 1
+                        "span"  => $survey->survey_steps->count()
                     ]
                 ],
             ],
@@ -223,7 +222,7 @@ class EvaluationToolSurveyStatsExportController extends Controller
                 [
                     [
                         "value" => $survey->slug,
-                        "span"  => 1
+                        "span"  => $survey->survey_steps->count()
                     ]
                 ]
             ]

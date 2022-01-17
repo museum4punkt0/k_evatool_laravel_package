@@ -3,6 +3,7 @@
 namespace Twoavy\EvaluationTool\Helpers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
@@ -217,5 +218,75 @@ class EvaluationToolHelper
         if ($maxCount < $fullCount) {
             abort(422, "at least one language must be provided with all keys");
         }
+    }
+
+    /**
+     * Sorts the survey's step by a potential ordering
+     *
+     * @param EvaluationToolSurvey $survey
+     * @return Collection
+     */
+    public static function sortSurveySteps(EvaluationToolSurvey $survey): Collection
+    {
+        $steps = $survey->survey_steps;
+
+        $firstStep = $steps->where("is_first_step", true)->first();
+
+        $orderedStepIds   = [$firstStep->id];
+        $orderedStepIds[] = self::getNextSteps($firstStep);
+
+        return collect($orderedStepIds)->flatten()->unique();
+    }
+
+    public static function getNextSteps(EvaluationToolSurveyStep $surveyStep): array
+    {
+        $nextSteps = [];
+
+        if ($surveyStep->next_step_id) {
+            $nextSteps[] = $surveyStep->next_step_id;
+            $nextSteps[] = self::getNextSteps(EvaluationToolSurveyStep::find($surveyStep->next_step_id));
+        }
+
+        if ($surveyStep->result_based_next_steps) {
+            // star rating & multiple choice
+            if (is_array($surveyStep->result_based_next_steps)) {
+                $resultBasedNextStepIds = array_column($surveyStep->result_based_next_steps, "stepId");
+                $nextSteps[]            = $resultBasedNextStepIds;
+                if (!empty($resultBasedNextStepIds)) {
+                    foreach ($resultBasedNextStepIds as $basedNextStepId) {
+                        $nextSteps[] = self::getNextSteps(EvaluationToolSurveyStep::find($basedNextStepId));
+                    }
+                }
+            }
+
+            // binary
+            if (isset($surveyStep->result_based_next_steps->trueNextStep->stepId)) {
+                $nextSteps[] = $surveyStep->result_based_next_steps->trueNextStep->stepId;
+            }
+            if (isset($surveyStep->result_based_next_steps->falseNextStep->stepId)) {
+                $nextSteps[] = $surveyStep->result_based_next_steps->falseNextStep->stepId;
+            }
+            if (isset($surveyStep->result_based_next_steps->trueNextStep->stepId)) {
+                $nextSteps[] = self::getNextSteps(EvaluationToolSurveyStep::find($surveyStep->result_based_next_steps->trueNextStep->stepId));
+            }
+            if (isset($surveyStep->result_based_next_steps->falseNextStep->stepId)) {
+                $nextSteps[] = self::getNextSteps(EvaluationToolSurveyStep::find($surveyStep->result_based_next_steps->trueNextStep->stepId));
+            }
+        }
+
+        // time based steps
+        if ($surveyStep->time_based_steps) {
+            if (is_array($surveyStep->time_based_steps)) {
+                $timeBasedNextStepIds = array_column($surveyStep->time_based_steps, "stepId");
+                $nextSteps[]          = $timeBasedNextStepIds;
+                if (!empty($timeBasedNextStepIds)) {
+                    foreach ($timeBasedNextStepIds as $basedNextStepId) {
+                        $nextSteps[] = self::getNextSteps(EvaluationToolSurveyStep::find($basedNextStepId));
+                    }
+                }
+            }
+        }
+
+        return $nextSteps;
     }
 }

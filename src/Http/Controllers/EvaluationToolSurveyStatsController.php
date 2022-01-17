@@ -8,8 +8,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use stdClass;
+use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStatsIndexRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
@@ -449,13 +451,13 @@ class EvaluationToolSurveyStatsController extends Controller
         $requestValues = $request->all();
         ksort($requestValues);
         $cacheKey = md5($survey->id . json_encode($requestValues));
-        $resultsByUuid = Cache::remember("stats-list-" . $cacheKey, Carbon::now()->addSeconds(15), function () use ($survey, $request) {
+        $resultsByUuid = Cache::remember("stats-list-" . $cacheKey, Carbon::now()->addSeconds(30), function () use ($survey, $request) {
 
+            $ordering = EvaluationToolHelper::sortSurveySteps($survey);
             $results = EvaluationToolSurveyStepResult::whereIn("survey_step_id",
                 $survey->survey_steps
                     ->pluck("id"))
-//                ->orderBy('session_id', 'ASC');
-                ->orderBy('answered_at', 'DESC');
+                ->orderByRaw(DB::raw("FIELD(survey_step_id, " . implode(",", $ordering->toArray()) . ") ASC"));
 
             // check for start date
             if ($request->has("start")) {

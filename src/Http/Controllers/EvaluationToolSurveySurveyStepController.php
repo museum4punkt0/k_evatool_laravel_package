@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStepStoreRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
@@ -26,7 +27,10 @@ class EvaluationToolSurveySurveyStepController extends Controller
      */
     public function index(EvaluationToolSurvey $survey): JsonResponse
     {
-        $surveySteps = $survey->survey_steps;
+        $ordering    = EvaluationToolHelper::sortSurveySteps($survey);
+        $surveySteps = $survey->survey_steps->sortBy(function ($model) use ($ordering) {
+            return array_search($model->getKey(), $ordering->toArray());
+        });
         return $this->showAll($surveySteps);
     }
 

@@ -247,7 +247,7 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
 
         $exportData["options"]   = [];
         $exportData["options"][] = [
-            "value" => "Maximalwert: " . $step->survey_element->params->numberOfStars,
+            "value" => "1-" . $step->survey_element->params->numberOfStars,
             "span"  => $numberOfOptions,
         ];
 
