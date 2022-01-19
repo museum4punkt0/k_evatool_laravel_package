@@ -21,6 +21,7 @@ use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStatsDownloadRequest
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStatsExportRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 
@@ -43,12 +44,10 @@ class EvaluationToolSurveyStatsExportController extends Controller
     {
         $filename = "eva_tool_export_survey_" . $survey->id;
 
-        $ordering = EvaluationToolHelper::sortSurveySteps($survey);
-
         $results = EvaluationToolSurveyStepResult::whereIn("survey_step_id",
             $survey->survey_steps
                 ->pluck("id"))
-            ->orderByRaw(DB::raw("FIELD(survey_step_id, " . implode(",", $ordering->toArray()) . ") ASC"))
+//            ->orderByRaw(DB::raw("FIELD(survey_step_id, " . implode(",", $ordering->toArray()) . ") ASC"))
             ->orderBy("answered_at", "DESC");
 
         // check for start date
@@ -340,7 +339,13 @@ class EvaluationToolSurveyStatsExportController extends Controller
         $cellPosition  = 0;
         $cellPositions = [];
 
-        foreach ($survey->survey_steps as $step) {
+        // order steps
+        $ordering = EvaluationToolHelper::sortSurveySteps($survey);
+        $surveySteps = EvaluationToolSurveyStep::whereIn("id", $ordering->toArray())
+            ->orderByRaw(DB::raw("FIELD(id, " . implode(",", $ordering->toArray()) . ") ASC"))
+            ->get();
+
+        foreach ($surveySteps as $step) {
             $elementType = ucfirst($step->survey_element_type->key);
             $className   = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . $elementType;
             if (class_exists($className)) {
