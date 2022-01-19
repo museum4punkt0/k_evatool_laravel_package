@@ -3,11 +3,15 @@
 namespace Twoavy\EvaluationTool\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Carbon\CarbonInterval;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use StdClass;
@@ -29,6 +33,11 @@ class EvaluationToolSurveyStatsExportController extends Controller
         $this->disk = Storage::disk("evaluation_tool_exports");
     }
 
+    /**
+     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     */
     public function getStatsExport(EvaluationToolSurvey $survey, EvaluationToolSurveyStatsExportRequest $request): JsonResponse
     {
         $filename = "eva_tool_export_survey_" . $survey->id;
@@ -38,7 +47,8 @@ class EvaluationToolSurveyStatsExportController extends Controller
         $results = EvaluationToolSurveyStepResult::whereIn("survey_step_id",
             $survey->survey_steps
                 ->pluck("id"))
-            ->orderByRaw(DB::raw("FIELD(survey_step_id, " . implode(",", $ordering->toArray()) . ") ASC"));
+            ->orderByRaw(DB::raw("FIELD(survey_step_id, " . implode(",", $ordering->toArray()) . ") ASC"))
+            ->orderBy("answered_at", "DESC");
 
         // check for start date
         if ($request->has("start")) {
@@ -77,17 +87,14 @@ class EvaluationToolSurveyStatsExportController extends Controller
 
                 $preparedResults = $this->prepareResultsForExcel($results, $survey);
 
-//                echo response()->json($preparedResults)->getContent();
-
                 $r = 1;
                 foreach ($preparedResults["headers"] as $resultRow) {
                     $c = 1;
                     foreach ($resultRow as $cellItem) {
                         foreach ($cellItem as $cellSubItem) {
-//                            print_r($cellSubItem);
-                            $sheet->setCellValueByColumnAndRow($c, $r, $cellSubItem["value"]);
+                            $valueToWrite = html_entity_decode(strip_tags($cellSubItem["value"]));
+                            $sheet->setCellValueByColumnAndRow($c, $r, $valueToWrite);
                             if (isset($cellSubItem["span"]) && $cellSubItem["span"] > 1) {
-//                                echo "merge " . $cellSubItem["span"] . " " . $r . ":" . $c . ":" . ($c + $cellSubItem["span"] - 1) . PHP_EOL;
                                 $sheet->mergeCellsByColumnAndRow($c, $r, ($c + $cellSubItem["span"] - 1), $r);
                                 $c = $c + $cellSubItem["span"];
                             } else {
@@ -96,14 +103,47 @@ class EvaluationToolSurveyStatsExportController extends Controller
                         }
                     }
                     $r++;
-//                    $sheet->setCellValue('A' . $i, $result->session_id);
-//                    $sheet->setCellValue('B' . $i, $result->survey_step->survey_element_type->key);
-//                    $sheet->setCellValue('C' . $i, json_encode($result->result_value));
                 }
+
+                // set properties
+                $spreadsheet->getProperties()
+                    ->setCreator("EVA-Tool")
+                    ->setLastModifiedBy("EVA-Tool")
+                    ->setTitle("EVA-Tool")
+                    ->setSubject("Auswertungsansicht")
+//                    ->setDescription("")
+                    ->setKeywords("evaluation tool online")
+                    ->setCategory("EVA-Tool Result Excel File");
+
+                // set colors
+                $spreadsheet
+                    ->getActiveSheet()
+                    ->getStyle('A1:' . $sheet->getHighestDataColumn() . "4")
+                    ->getFill()
+                    ->setFillType(Fill::FILL_SOLID)
+                    ->getStartColor()
+                    ->setRGB('333333');
+
+                $spreadsheet
+                    ->getActiveSheet()
+                    ->getStyle('A1:' . $sheet->getHighestDataColumn() . "4")
+                    ->getFont()
+                    ->getColor()
+                    ->setRGB('FFFFFF');
 
                 foreach ($preparedResults["results"] as $resultRow) {
                     foreach ($resultRow as $resultCell) {
-                        $sheet->setCellValueByColumnAndRow($resultCell["position"], $r, $resultCell["value"]);
+                        $valueToWrite = html_entity_decode(strip_tags($resultCell["value"]));
+                        if (isset($resultCell["format"])) {
+                            $spreadsheet->getActiveSheet()
+                                ->getCellByColumnAndRow($resultCell["position"], $r)
+                                ->setValueExplicit(
+                                    $valueToWrite,
+                                    $resultCell["format"]
+                                );
+                        } else {
+                            $sheet->setCellValueByColumnAndRow($resultCell["position"], $r, $valueToWrite);
+                        }
                     }
                     $r++;
                 }
@@ -112,6 +152,8 @@ class EvaluationToolSurveyStatsExportController extends Controller
                     $sheet->getColumnDimension($col)
                         ->setAutoSize(true);
                 }
+
+                $sheet->freezePane("E5");
 
                 $writer = new Xlsx($spreadsheet);
                 $writer->save($this->disk->path($filename));
@@ -199,6 +241,7 @@ class EvaluationToolSurveyStatsExportController extends Controller
      * @param $results
      * @param EvaluationToolSurvey $survey
      * @return array
+     * @throws Exception
      */
     public function prepareResultsForExcel($results, EvaluationToolSurvey $survey): array
     {
@@ -218,19 +261,52 @@ class EvaluationToolSurveyStatsExportController extends Controller
                     ]
                 ],
             ],
-            "slug"  => [
+            /*"slug"  => [
                 [
                     [
                         "value" => $survey->slug,
                         "span"  => $survey->survey_steps->count()
                     ]
                 ]
+            ]*/
+        ];
+
+        $headers["elements"]   = [];
+        $headers["elements"][] = [
+            [
+                "value" => "",
+                "span"  => 4
             ]
         ];
 
-        $headers["elements"] = [];
-        $headers["question"] = [];
-        $headers["options"]  = [];
+        $headers["question"]   = [];
+        $headers["question"][] = [
+            [
+                "value" => "",
+                "span"  => 4
+            ]
+        ];
+
+        $headers["options"]   = [];
+        $headers["options"][] = [
+            [
+                "value" => "Session",
+                "span"  => 1
+            ],
+            [
+                "value" => "Start",
+                "span"  => 1
+            ],
+            [
+                "value" => "Ende",
+                "span"  => 1
+            ],
+            [
+                "value" => "Dauer",
+                "span"  => 1
+            ]
+        ];
+
 
         $cellPosition  = 0;
         $cellPositions = [];
@@ -259,25 +335,42 @@ class EvaluationToolSurveyStatsExportController extends Controller
         $cellPositionsPrepared = [];
         $keys                  = array_keys($cellPositions);
         $c                     = 0;
+        $cellOffset            = 4;
         foreach ($cellPositions as $key => $cellPosition) {
             if ($c == 0) {
-                $cellPositionsPrepared[$key] = 1;
+                $cellPositionsPrepared[$key] = 1 + $cellOffset;
             } else {
-                $cellPositionsPrepared[$key] = 1 + $cellPositions[$keys[$c - 1]];
+                $cellPositionsPrepared[$key] = 1 + $cellPositions[$keys[$c - 1]] + $cellOffset;
             }
             $c++;
         }
 
         $resultData = [];
         foreach ($sessionIds as $sessionId) {
-            $sessionResults = $results->where("session_id", $sessionId);
+            $sessionResults        = $results->where("session_id", $sessionId);
+            $orderedSessionResults = $sessionResults->sortBy(function ($result) {
+                return $result->answered_at;
+            })->values();
+
+            // set german date format
+            Carbon::setLocale('de');
+
+            $firstResult = $orderedSessionResults->first()->answered_at;
+            $lastResult  = $orderedSessionResults->last()->answered_at;
+            $duration    = $firstResult->diffInSeconds($lastResult);
+
+
             foreach ($sessionResults as $result) {
                 $elementType = ucfirst($result->survey_step->survey_element_type->key);
                 $className   = 'Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementType' . $elementType;
                 if (class_exists($className)) {
                     if (method_exists($className, "getExportDataResult")) {
                         if (!isset($resultData[$sessionId])) {
-                            $resultData[$sessionId] = [];
+                            $resultData[$sessionId]   = [];
+                            $resultData[$sessionId][] = ["value" => substr($sessionId, 0, 8), "position" => 1, "format" => DataType::TYPE_STRING2];
+                            $resultData[$sessionId][] = ["value" => $firstResult->format("d.m.Y H:i:s"), "position" => 2];
+                            $resultData[$sessionId][] = ["value" => $lastResult->format("d.m.Y H:i:s"), "position" => 3];
+                            $resultData[$sessionId][] = ["value" => CarbonInterval::seconds($duration)->cascade()->forHumans(), "position" => 4];
                         }
                         $resultData[$sessionId] = array_merge($resultData[$sessionId],
                             $className::getExportDataResult($step->survey_element, $language, $result, $cellPositionsPrepared["step_" . $result->survey_step_id]));
