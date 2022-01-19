@@ -222,7 +222,7 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
             "span"  => $numberOfOptions,
         ];
 
-        $exportData["question"]   = [];
+        $exportData["question"] = [];
 
         $exportData["question"][] = [
             "value" => $step->survey_element->params->question->{$language->code},
@@ -238,5 +238,44 @@ class EvaluationToolSurveyElementTypeYayNay extends EvaluationToolSurveyElementT
         }
 
         return $exportData;
+    }
+
+    public static function getExportDataResult(EvaluationToolSurveyElement $element, EvaluationToolSurveyLanguage $language, $result, $position): array
+    {
+        // get element and asset ids
+        $element    = $result->survey_step->survey_element;
+        $assetIds   = $element->params->assetIds;
+        $trueValue  = $element->params->trueValue;
+        $falseValue = $element->params->falseValue;
+
+        $results = [];
+        $i       = 0;
+
+        // go through all assets
+        foreach ($assetIds as $assetId) {
+            if (in_array($assetId, array_column($result->result_value["images"], "asset"))) {
+                $index = array_search($assetId, array_column($result->result_value["images"], "asset"));
+
+                // true value
+                if ($result->result_value["images"][$index]["value"] == $trueValue) {
+                    $results[] = [
+                        "value"    => $trueValue,
+                        "position" => $position + $i
+                    ];
+                }
+
+                // false value
+                if ($result->result_value["images"][$index]["value"] == $falseValue) {
+                    $results[] = [
+                        "value"    => $falseValue,
+                        "position" => $position + $i
+                    ];
+                }
+            }
+
+            $i++;
+        }
+
+        return $results;
     }
 }
