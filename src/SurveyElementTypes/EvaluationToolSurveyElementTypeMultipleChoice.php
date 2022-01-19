@@ -273,10 +273,27 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
         $results = [];
         $i       = 0;
         foreach ($optionValues as $optionValue) {
-            $results[] = [
-                "value"    => in_array($optionValue, array_column($result->result_value["selected"], "value")) ? "x" : null,
-                "position" => $position + $i
-            ];
+            if (in_array($optionValue, array_column($result->result_value["selected"], "value"))) {
+
+                $index = array_search($optionValue, array_column($result->result_value["selected"], "value"));
+
+                $hasComment = false;
+                if (isset($result->result_value["selected"][$index]["comment"])) {
+                    $hasComment = $result->result_value["selected"][$index]["comment"];
+                }
+
+                $results[] = [
+                    "value"    => $hasComment ?: "x",
+                    "position" => $position + $i
+                ];
+            } else {
+                $results[] = [
+                    "value"    => null,
+                    "position" => $position + $i
+                ];
+            }
+
+
             $i++;
         }
 

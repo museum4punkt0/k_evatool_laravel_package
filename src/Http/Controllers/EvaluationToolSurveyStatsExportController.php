@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -79,11 +80,17 @@ class EvaluationToolSurveyStatsExportController extends Controller
 
             $i = 1;
 
+            // excel export
             if ($request->exportType == "xlsx") {
                 $filename .= ".xlsx";
 
                 $spreadsheet = new Spreadsheet();
-                $sheet       = $spreadsheet->getActiveSheet();
+
+                // global style
+                $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+                $spreadsheet->getDefaultStyle()->getFont()->setSize(10);
+
+                $sheet = $spreadsheet->getActiveSheet();
 
                 $preparedResults = $this->prepareResultsForExcel($results, $survey);
 
@@ -148,17 +155,38 @@ class EvaluationToolSurveyStatsExportController extends Controller
                     $r++;
                 }
 
+                // header style
+                $styleArray = [
+                    'font' => [
+                        'bold' => true,
+                        'size' => 16
+                    ],
+                ];
+                $spreadsheet->getActiveSheet()->getStyle('A1')->applyFromArray($styleArray);
+
+
+                // set widths
                 foreach (range('A', $sheet->getHighestDataColumn()) as $col) {
                     $sheet->getColumnDimension($col)
                         ->setAutoSize(true);
+//                        ->setWidth(100, 'pt');
                 }
 
                 $sheet->freezePane("E5");
+
+                // set alignment
+                $spreadsheet->getActiveSheet()->getStyle('A5:' . $sheet->getHighestDataColumn() . $sheet->getHighestDataRow())
+                    ->getAlignment()->setVertical(Alignment::VERTICAL_TOP);
+
+                // set text wrap
+                $spreadsheet->getActiveSheet()->getStyle('A5:' . $sheet->getHighestDataColumn() . $sheet->getHighestDataRow())
+                    ->getAlignment()->setWrapText(true);
 
                 $writer = new Xlsx($spreadsheet);
                 $writer->save($this->disk->path($filename));
             }
 
+            // csv export
             if ($request->exportType == "csv") {
                 $filename .= " . csv";
 
@@ -181,6 +209,7 @@ class EvaluationToolSurveyStatsExportController extends Controller
                 $writer->save($this->disk->path($filename));
             }
 
+            // json export
             if ($request->exportType == "json") {
                 $filename .= ".json";
 
