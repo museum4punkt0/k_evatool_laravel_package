@@ -62,6 +62,8 @@ class EvaluationToolSurveyStep extends Model
         "survey_step_demo_results",
     ];
 
+    protected $attributes = ["has_results"];
+
     public function survey(): HasOne
     {
         return $this->hasOne("Twoavy\EvaluationTool\Models\EvaluationToolSurvey", "id", "survey_id");
@@ -137,5 +139,10 @@ class EvaluationToolSurveyStep extends Model
         }
 
         return $this->time_based_steps;
+    }
+
+    public function getHasResultsAttribute(): bool
+    {
+        return $this->survey_step_results()->count() > 0;
     }
 }

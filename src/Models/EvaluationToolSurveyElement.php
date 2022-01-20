@@ -46,7 +46,13 @@ class EvaluationToolSurveyElement extends Model
     ];
 
     protected $with = ["survey_element_type"];
-    protected $withCount = ["survey_steps"];
+    protected $withCount = [
+        "survey_steps",
+        "survey_results",
+        "survey_demo_results"
+    ];
+
+    protected $attributes = ["has_results"];
 
     public function survey_element_type(): HasOne
     {
@@ -79,6 +85,32 @@ class EvaluationToolSurveyElement extends Model
         );
     }
 
+    /**
+     * @return HasManyThrough
+     */
+    public function survey_results(): HasManyThrough
+    {
+        return $this->hasManyThrough(EvaluationToolSurveyStepResult::class,
+            EvaluationToolSurveyStep::class,
+            "survey_element_id",
+            "survey_step_id",
+            "id",
+            "id")->where("demo", false);
+    }
+
+    /**
+     * @return HasManyThrough
+     */
+    public function survey_demo_results(): HasManyThrough
+    {
+        return $this->hasManyThrough(EvaluationToolSurveyStepResult::class,
+            EvaluationToolSurveyStep::class,
+            "survey_element_id",
+            "survey_step_id",
+            "id",
+            "id")->where("demo", true);
+    }
+
     public function created_by_user(): HasOne
     {
         return $this->hasOne(User::class, "id", "created_by");
@@ -87,5 +119,10 @@ class EvaluationToolSurveyElement extends Model
     public function updated_by_user(): HasOne
     {
         return $this->hasOne(User::class, "id", "updated_by");
+    }
+
+    public function getHasResultsAttribute(): bool
+    {
+        return $this->survey_results()->count() > 0;
     }
 }

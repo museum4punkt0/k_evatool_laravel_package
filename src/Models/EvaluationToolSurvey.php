@@ -51,6 +51,8 @@ class EvaluationToolSurvey extends Model
         "survey_demo_results"
     ];
 
+    protected $attributes = ["has_results"];
+
     /**
      * @return HasMany
      */
@@ -98,5 +100,10 @@ class EvaluationToolSurvey extends Model
     public function languages(): BelongsToMany
     {
         return $this->belongsToMany(EvaluationToolSurveyLanguage::class, "evaluation_tool_surveys_survey_languages", "survey_id", "survey_language_id");
+    }
+
+    public function getHasResultsAttribute(): bool
+    {
+        return $this->survey_results()->count() > 0;
     }
 }
