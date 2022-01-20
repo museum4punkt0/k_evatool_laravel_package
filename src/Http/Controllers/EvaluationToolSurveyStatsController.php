@@ -457,7 +457,8 @@ class EvaluationToolSurveyStatsController extends Controller
             $results = EvaluationToolSurveyStepResult::whereIn("survey_step_id",
                 $survey->survey_steps
                     ->pluck("id"))
-                ->orderByRaw(DB::raw("FIELD(survey_step_id, " . implode(",", $ordering->toArray()) . ") ASC"));
+                ->orderByRaw(DB::raw("FIELD(survey_step_id, " . implode(",", $ordering->toArray()) . ") ASC"))
+                ->orderBy("answered_at", "DESC");
 
             // check for start date
             if ($request->has("start")) {
