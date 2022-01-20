@@ -171,7 +171,7 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
             ],
             "options"       => [
                 [
-                    'value'  => 'simpleText',
+                    'value'  => 'simple_text',
                     'labels' => [
                         "de" => "SimpleText",
                         "en" => "SimpleText",
@@ -185,14 +185,14 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
                     ],
                 ],
                 [
-                    'value'  => 'multipleChoice',
+                    'value'  => 'multiple_choice',
                     'labels' => [
                         "de" => "MultipleChoice",
                         "en" => "MultipleChoice",
                     ],
                 ],
                 [
-                    'value'  => 'yayNay',
+                    'value'  => 'yay_nay',
                     'labels' => [
                         "de" => "YayNay",
                         "en" => "YayNay",
@@ -206,7 +206,7 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
                     ],
                 ],
                 [
-                    'value'  => 'starRating',
+                    'value'  => 'star_rating',
                     'labels' => [
                         "de" => "StarRating",
                         "en" => "StarRating",
@@ -220,18 +220,26 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
                     ],
                 ],
                 [
-                    'value'  => 'textInput',
+                    'value'  => 'text_input',
                     'labels' => [
                         "de" => "TextInput",
                         "en" => "TextInput",
                     ],
                 ],
                 [
-                    'value'  => 'voiceInput',
+                    'value'  => 'voice_input',
                     'labels' => [
                         "de" => "VoiceInput",
                         "en" => "VoiceInput",
                     ],
+                ],
+                [
+                    'value'  => 'with_comment',
+                    'labels' => [
+                        "de" => "Kommentierbar",
+                        "en" => "commentable",
+                    ],
+                    'commentable' => true
                 ],
 
             ],
