@@ -51,7 +51,7 @@ class EvaluationToolSurvey extends Model
         "survey_demo_results"
     ];
 
-    protected $attributes = ["has_results"];
+    protected $appends = ["has_results"];
 
     /**
      * @return HasMany

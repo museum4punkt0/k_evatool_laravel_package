@@ -62,7 +62,7 @@ class EvaluationToolSurveyStep extends Model
         "survey_step_demo_results",
     ];
 
-    protected $attributes = ["has_results"];
+    protected $appends = ["has_results"];
 
     public function survey(): HasOne
     {
