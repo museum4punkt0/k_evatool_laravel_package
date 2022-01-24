@@ -60,7 +60,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
         });;
 
         if (!$survey->published) {
-            return $this->errorResponse("survey not avaiable", 409);
+            return $this->errorResponse("survey not available", 410);
         }
 
         // set new uuid and apply to request if not supplied
