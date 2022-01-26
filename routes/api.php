@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolAssetController;
+use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolAudioTranscriptionController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyElementSurveyController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyLanguageController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyController;
@@ -15,6 +16,7 @@ use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyStepSurveyS
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyRunController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyStepController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySeedController;
+use Twoavy\EvaluationTool\Http\Controllers\SpeechMaticsController;
 
 Route::prefix('api/evaluation-tool')
     ->middleware(['api'])
@@ -37,6 +39,8 @@ Route::prefix('api/evaluation-tool')
         Route::apiResource('surveys.steps', EvaluationToolSurveySurveyStepController::class);
         Route::apiResource('surveys.results', EvaluationToolSurveySurveyResultController::class);
         Route::apiResource('surveys.steps.results', EvaluationToolSurveySurveyStepSurveyStepResultController::class);
+        Route::get('transcriptions/{resultAsset}', [SpeechmaticsController::class, "getTranscription"]);
+        Route::post('transcriptions/{resultAsset}', [EvaluationToolAudioTranscriptionController::class, "setManualTranscription"]);
         Route::apiResource('survey-step-result-assets.transcriptions', EvaluationToolSurveyStepResultAssetTranscriptionController::class)->only("store");
         Route::post('surveys/{survey}/stats-export', [EvaluationToolSurveyStatsExportController::class, "getStatsExport"]);
         Route::post('surveys/{survey}/stats-download', [EvaluationToolSurveyStatsExportController::class, "downloadStatsExport"]);

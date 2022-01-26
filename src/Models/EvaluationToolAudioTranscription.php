@@ -7,15 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Storage;
-use Twoavy\EvaluationTool\Transformers\EvaluationToolAssetTransformer;
+use Twoavy\EvaluationTool\Transformers\EvaluationToolAudioTranscriptionTransformer;
 
 class EvaluationToolAudioTranscription extends Model
 {
     use HasFactory, SoftDeletes;
 
     // transforms data on api responses
-    public $transformer = EvaluationToolTranscriptionTransformer::class;
+    public $transformer = EvaluationToolAudioTranscriptionTransformer::class;
 
     // number of items on paginated responses
     protected $perPage = 25;
@@ -23,6 +22,10 @@ class EvaluationToolAudioTranscription extends Model
     // fields that can be mass-assigned via create or fill methods
     protected $fillable = [
         "manual_transcription",
+    ];
+
+    protected $casts = [
+        "result_payload" => "json"
     ];
 
     public function created_by_user(): HasOne

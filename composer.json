@@ -1,15 +1,17 @@
 {
     "name": "twoavy/evaluation-tool",
-    "version": "1.0.363",
+    "version": "1.0.364",
     "description": "A laravel package for creating evaluations and surveys",
     "require": {
         "php": "^7.3|^8.0",
         "ankitpokhrel/tus-php": "^2.1",
         "cocur/slugify": "^4.0",
         "codeinc/human-readable-file-size": "^1.0",
+        "curl/curl": "^2.3",
         "donatello-za/rake-php-plus": "^1.0",
         "fakerphp/faker": "^1.15",
         "google/cloud-speech": "^1.4",
+        "guzzlehttp/guzzle": "^7.4",
         "illuminate/bus": "^8.0",
         "illuminate/console": "^8.0",
         "illuminate/contracts": "^8.0",
