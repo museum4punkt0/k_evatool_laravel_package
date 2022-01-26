@@ -16,7 +16,7 @@ use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyStepSurveyS
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyRunController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyStepController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySeedController;
-use Twoavy\EvaluationTool\Http\Controllers\SpeechMaticsController;
+use Twoavy\EvaluationTool\Http\Controllers\SpeechmaticsController;
 
 Route::prefix('api/evaluation-tool')
     ->middleware(['api'])
