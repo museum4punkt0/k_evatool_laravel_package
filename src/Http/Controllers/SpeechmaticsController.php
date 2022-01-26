@@ -27,9 +27,9 @@ class SpeechmaticsController extends Controller
         }
 
         // Speechmatics Config
-        $this->speechMaticsEndpoint = env('SPEECHMATICS_API_URL', "https://trial.asr.api.speechmatics.com/v2/jobs/");
-        $this->speechMaticsApiKey   = env('SPEECHMATICS_API_KEY');
-        $this->speechMaticsConfig   = [
+        $this->speechmaticsEndpoint = env('SPEECHMATICS_API_URL', "https://trial.asr.api.speechmatics.com/v2/jobs/");
+        $this->speechmaticsApiKey   = env('SPEECHMATICS_API_KEY');
+        $this->speechmaticsConfig   = [
             "type"                 => "transcription",
             "transcription_config" => [
                 "language" => "de"
@@ -38,7 +38,7 @@ class SpeechmaticsController extends Controller
 
         $this->curl = new Curl();
         $this->curl->setHeader('Content-Type', 'multipart/form-data');
-        $this->curl->setHeader('Authorization', 'Bearer ' . $this->speechMaticsApiKey);
+        $this->curl->setHeader('Authorization', 'Bearer ' . $this->speechmaticsApiKey);
     }
 
     public function getTranscription(EvaluationToolSurveyStepResultAsset $resultAsset): JsonResponse
@@ -68,10 +68,10 @@ class SpeechmaticsController extends Controller
 
         $post_data = [
             'data_file' => new \CurlFile($filePath),
-            'config'    => json_encode($this->speechMaticsConfig)
+            'config'    => json_encode($this->speechmaticsConfig)
         ];
 
-        $this->curl->post($this->speechMaticsEndpoint, $post_data);
+        $this->curl->post($this->speechmaticsEndpoint, $post_data);
 
         if ($this->curl->error) {
             return json_encode(['error' => 'Error: ' . $this->curl->error_code . ': ' . $this->curl->error_message]);
@@ -99,7 +99,7 @@ class SpeechmaticsController extends Controller
 
     public function getStatus(EvaluationToolSurveyStepResultAsset $resultAsset)
     {
-        $url = $this->speechMaticsEndpoint . $resultAsset->audio_transcription->transaction_id;
+        $url = $this->speechmaticsEndpoint . $resultAsset->audio_transcription->transaction_id;
         $this->curl->get($url);
 
         if ($this->curl->error) {
@@ -119,7 +119,7 @@ class SpeechmaticsController extends Controller
 
     public function retrieveTranscription(EvaluationToolSurveyStepResultAsset $resultAsset)
     {
-        $url = $this->speechMaticsEndpoint . $resultAsset->audio_transcription->transaction_id . "/transcript";
+        $url = $this->speechmaticsEndpoint . $resultAsset->audio_transcription->transaction_id . "/transcript";
         $this->curl->get($url);
 
         if ($this->curl->error) {
