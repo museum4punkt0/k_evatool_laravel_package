@@ -17,6 +17,7 @@ use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyRunControll
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyStepController;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySeedController;
 use Twoavy\EvaluationTool\Http\Controllers\SpeechmaticsController;
+use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSettingController;
 
 Route::prefix('api/evaluation-tool')
     ->middleware(['api'])
@@ -51,6 +52,7 @@ Route::prefix('api/evaluation-tool')
         Route::get('surveys/{survey}/stats-list', [EvaluationToolSurveyStatsController::class, "getStatsList"]);
         Route::get('surveys/{survey}/stats-trend', [EvaluationToolSurveyStatsController::class, "getStatsTrend"]);
         Route::get('surveys/{survey}/stats-list-scheme', [EvaluationToolSurveyStatsController::class, "getStatsListScheme"]);
+        Route::apiResource('settings', EvaluationToolSettingController::class);
     });
 
 Route::any('/tus/{any?}', function () {
