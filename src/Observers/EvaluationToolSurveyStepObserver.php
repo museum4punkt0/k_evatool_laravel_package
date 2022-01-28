@@ -39,14 +39,15 @@ class EvaluationToolSurveyStepObserver
     {
         if ($surveyStep->survey_element->survey_element_type->key === "video") {
             $timeBasedSteps = $surveyStep->time_based_steps;
-            usort( $timeBasedSteps, function ($a, $b)
-            {
-                if ($a->timecode == $b->timecode) {
-                    return 0;
-                }
-                return ($a->timecode < $b->timecode) ? -1 : 1;
-            });
-            $surveyStep->time_based_steps = $timeBasedSteps;
+            if (is_array($timeBasedSteps)) {
+                usort($timeBasedSteps, function ($a, $b) {
+                    if ($a->timecode == $b->timecode) {
+                        return 0;
+                    }
+                    return ($a->timecode < $b->timecode) ? -1 : 1;
+                });
+                $surveyStep->time_based_steps = $timeBasedSteps;
+            }
         }
 
         if (isset(request()->user()->id)) {
