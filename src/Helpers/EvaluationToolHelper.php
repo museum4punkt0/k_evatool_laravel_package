@@ -230,10 +230,11 @@ class EvaluationToolHelper
     {
         $steps = $survey->survey_steps;
 
-        $firstStep = $steps->where("is_first_step", true)->first();
-
-        $orderedStepIds   = [$firstStep->id];
-        $orderedStepIds[] = self::getNextSteps($firstStep);
+        $orderedStepIds = [];
+        if ($firstStep = $steps->where("is_first_step", true)->first()) {
+            $orderedStepIds   = [$firstStep->id];
+            $orderedStepIds[] = self::getNextSteps($firstStep);
+        }
 
         return collect($orderedStepIds)->flatten()->unique();
     }
