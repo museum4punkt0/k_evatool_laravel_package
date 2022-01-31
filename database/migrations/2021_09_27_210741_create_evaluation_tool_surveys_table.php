@@ -21,6 +21,7 @@ class CreateEvaluationToolSurveysTable extends Migration
             $table->timestamp('publish_up')->nullable();
             $table->timestamp('publish_down')->nullable();
             $table->json('admin_layout')->nullable();
+            $table->unsignedBigInteger('settings_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
