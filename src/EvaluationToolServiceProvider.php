@@ -11,12 +11,14 @@ use Twoavy\EvaluationTool\Console\Commands\TestCommand;
 use Twoavy\EvaluationTool\Console\Commands\TypesCommand;
 use Twoavy\EvaluationTool\Console\Commands\SeedSurveyResultsCommand;
 use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
+use Twoavy\EvaluationTool\Models\EvaluationToolSetting;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Observers\EvaluationToolAssetObserver;
+use Twoavy\EvaluationTool\Observers\EvaluationToolSettingObserver;
 use Twoavy\EvaluationTool\Observers\EvaluationToolSurveyLanguageObserver;
 use Twoavy\EvaluationTool\Observers\EvaluationToolSurveyObserver;
 use Twoavy\EvaluationTool\Observers\EvaluationToolSurveyElementObserver;
@@ -107,6 +109,7 @@ class EvaluationToolServiceProvider extends ServiceProvider
         EvaluationToolSurveyElement::observe(EvaluationToolSurveyElementObserver::class);
         EvaluationToolSurveyLanguage::observe(EvaluationToolSurveyLanguageObserver::class);
         EvaluationToolSurveyStepResult::observe(EvaluationToolSurveyStepResultObserver::class);
+        EvaluationToolSetting::observe(EvaluationToolSettingObserver::class);
 
         if ($this->app->runningInConsole()) {
             $this->commands([
