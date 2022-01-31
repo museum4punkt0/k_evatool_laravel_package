@@ -27,7 +27,15 @@ class EvaluationToolSettingStoreRequest extends FormRequest
             "name" => 'required|min:3|max:50',
             "settings" => 'required|array',
             "settings.pageTitle" => 'required|array',
-            "settings.pageTitle.*" => 'min:3|max:50'
+            "settings.pageTitle.*" => 'min:3|max:50',
+            "settings.privacy" => 'array',
+            "settings.privacy.*" => 'min:3',
+            "settings.privacyLink" => 'min:3|url',
+            "settings.imprint" => 'array',
+            "settings.imprint.*" => 'min:3',
+            "settings.imprintLink" => 'min:3|url',
+            "settings.socialDescription" => 'array',
+            "settings.socialDescription.*" => 'min:3|max:1000',
             //
         ];
     }
