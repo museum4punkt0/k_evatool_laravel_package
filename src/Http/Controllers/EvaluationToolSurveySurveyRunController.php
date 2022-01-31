@@ -120,6 +120,8 @@ class EvaluationToolSurveySurveyRunController extends Controller
 
         $language = EvaluationToolSurveyLanguage::where("code", $request->result_language)->first();
 
+        $deleteResult = false;
+
         if (!$surveyStepResult = EvaluationToolSurveyStepResult::where("session_id", $request->session_id)
             ->where("survey_step_id", $request->survey_step_id)
             ->first()) {
@@ -131,6 +133,12 @@ class EvaluationToolSurveySurveyRunController extends Controller
                 if (!$request->has("time")) {
                     return $this->errorResponse("video results must send a timecode (i.e. 00:00:02:25)", 409);
                 }
+
+                // check if result shall be deleted
+                if (!$request->has("delete_result") && $request->delete_result == true) {
+                    $deleteResult = true;
+                }
+
                 if (!$surveyStepResult = EvaluationToolSurveyStepResult::where("session_id", $request->session_id)
                     ->where("survey_step_id", $request->survey_step_id)
                     ->where("time", $request->time)
@@ -153,6 +161,10 @@ class EvaluationToolSurveySurveyRunController extends Controller
         $surveyStepResult->answered_at        = Carbon::now();
 
         $surveyStepResult->save();
+
+        if ($deleteResult) {
+            $surveyStepResult->delete();
+        }
 
         // store audio asset
         if ($surveyStep->survey_element_type->key == "voiceInput") {
@@ -202,8 +214,8 @@ class EvaluationToolSurveySurveyRunController extends Controller
         $this->audioDisk->put($filenameInterim, base64_decode($audioData));
 
         // get paths
-        $sourcePath    = $this->audioDisk->path($filenameInterim);
-        $targetPath    = $this->audioDisk->path($filename);
+        $sourcePath = $this->audioDisk->path($filenameInterim);
+        $targetPath = $this->audioDisk->path($filename);
 
         // convert file to mp3
         $command = "ffmpeg -i " . $sourcePath . " -vn -b:a 128k " . $targetPath;

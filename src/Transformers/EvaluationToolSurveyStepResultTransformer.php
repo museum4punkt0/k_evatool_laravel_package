@@ -59,8 +59,8 @@ class EvaluationToolSurveyStepResultTransformer extends TransformerAbstract
             "resultLanguage" => "result_language",
             "resultValue"    => "result_value",
             "timecode"       => "time",
+            "deleted"        => "delete_result",
             "isSkipped"      => "is_skipped",
-            "time"           => "time",
             "params"         => "params",
         ];
     }
