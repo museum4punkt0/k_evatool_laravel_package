@@ -3,10 +3,19 @@
 namespace Twoavy\EvaluationTool\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
+use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Rules\SnakeCase;
+use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyTransformer;
 
 class EvaluationToolSurveyStoreRequest extends FormRequest
 {
+    public function __construct(Request $request)
+    {
+        parent::__construct();
+        EvaluationToolHelper::reverseTransform($request, EvaluationToolSurveyTransformer::class);
+
+    }
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -30,7 +39,8 @@ class EvaluationToolSurveyStoreRequest extends FormRequest
             "description" => "max:500",
             "published"   => "boolean",
             "languages"   => "array",
-            "languages.*" => ['required', 'min:2', 'max:2', 'exists:evaluation_tool_survey_languages,code']
+            "languages.*" => ['required', 'min:2', 'max:2', 'exists:evaluation_tool_survey_languages,code'],
+            "settings_id" => ['exists:evaluation_tool_settings,id']
         ];
     }
 }

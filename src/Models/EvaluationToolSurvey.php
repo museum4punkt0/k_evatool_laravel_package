@@ -10,11 +10,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyTransformer;
 
 class EvaluationToolSurvey extends Model
 {
     use HasFactory, SoftDeletes;
+
 
     // transforms data on api responses
     public $transformer = EvaluationToolSurveyTransformer::class;
@@ -30,7 +32,8 @@ class EvaluationToolSurvey extends Model
         "published",
         "publish_up",
         "publish_down",
-        "admin_layout"
+        "admin_layout",
+        "settings_id"
     ];
 
     // date fields
@@ -105,5 +108,10 @@ class EvaluationToolSurvey extends Model
     public function getHasResultsAttribute(): bool
     {
         return $this->survey_results()->count() > 0;
+    }
+
+    public function settings(): HasOne
+    {
+        return $this->hasOne(EvaluationToolSetting::class, "id", "settings_id");
     }
 }

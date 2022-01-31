@@ -77,7 +77,7 @@ class EvaluationToolSettingController extends Controller
     public function destroy(EvaluationToolSetting $setting)
     {
         // TODO: check if a survey uses settings
-        return $this->errorResponse("settings cannot be deleted, because i still have not yet checked if they are in use or not", 409);
+        return $this->errorResponse("settings cannot be deleted, because i still have not yet checked if they are in use or not ".$setting->id, 409);
 
         $setting->delete();
         return $this->showOne($setting->refresh());
