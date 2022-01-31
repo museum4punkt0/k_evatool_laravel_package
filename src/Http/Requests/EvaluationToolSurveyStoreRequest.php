@@ -40,7 +40,7 @@ class EvaluationToolSurveyStoreRequest extends FormRequest
             "published"   => "boolean",
             "languages"   => "array",
             "languages.*" => ['required', 'min:2', 'max:2', 'exists:evaluation_tool_survey_languages,code'],
-            "settings_id" => ['exists:evaluation_tool_settings,id']
+            "setting_id" => ['exists:evaluation_tool_settings,id']
         ];
     }
 }

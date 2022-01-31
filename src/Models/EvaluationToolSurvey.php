@@ -33,7 +33,7 @@ class EvaluationToolSurvey extends Model
         "publish_up",
         "publish_down",
         "admin_layout",
-        "settings_id"
+        "setting_id"
     ];
 
     // date fields
@@ -110,8 +110,8 @@ class EvaluationToolSurvey extends Model
         return $this->survey_results()->count() > 0;
     }
 
-    public function settings(): HasOne
+    public function setting(): HasOne
     {
-        return $this->hasOne(EvaluationToolSetting::class, "id", "settings_id");
+        return $this->hasOne(EvaluationToolSetting::class, "id", "setting_id");
     }
 }

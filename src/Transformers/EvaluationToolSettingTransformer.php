@@ -19,7 +19,7 @@ class EvaluationToolSettingTransformer extends TransformerAbstract
             "id"                     => (int)$setting->id,
             "default"                     => (boolean)$setting->default,
             "name"                   => (string)$setting->name,
-            "settings"                   => (object)$setting->settings,
+            "setting"                   => (object)$setting->settings,
             "createdAt"              => $setting->created_at,
             "createdBy"              => $setting->created_by_user ? $setting->created_by_user->name : null,
             "updatedAt"              => $setting->updated_at,
@@ -54,7 +54,7 @@ class EvaluationToolSettingTransformer extends TransformerAbstract
         return [
             "id"          => "id",
             "name"        => "name",
-            "settings"        => "settings",
+            "setting"        => "setting",
             "default"        => "default",
         ];
     }

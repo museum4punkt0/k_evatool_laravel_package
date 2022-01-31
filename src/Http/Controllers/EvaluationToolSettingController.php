@@ -3,6 +3,7 @@
 namespace Twoavy\EvaluationTool\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSettingStoreRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSetting;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
@@ -14,6 +15,8 @@ class EvaluationToolSettingController extends Controller
     public function __construct()
     {
         $this->middleware("auth:api");
+        $this->disk = Storage::disk("evaluation_tool_settings_assets");
+        $this->uploadDisk = Storage::disk("evaluation_tool_uploads");
     }
     /**
      * Display a listing of the resource.

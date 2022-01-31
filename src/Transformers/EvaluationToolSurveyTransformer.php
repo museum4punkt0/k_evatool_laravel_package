@@ -30,7 +30,7 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
             "hasResults"             => (boolean)$survey->has_results,
             "statusByUuid"           => $survey->status ?: null,
             "adminLayout"            => $survey->admin_layout ?: [],
-            "settingsId"            => $survey->settings_id ?: null,
+            "settingId"            => $survey->setting_id ?: null,
             "createdAt"              => $survey->created_at,
             "createdBy"              => $survey->created_by_user ? $survey->created_by_user->name : null,
             "updatedAt"              => $survey->updated_at,
@@ -80,7 +80,7 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
             "publishDown" => "publish_down",
             "adminLayout" => "admin_layout",
             "languages"   => "languages",
-            "settingsId"  => "settings_id"
+            "settingId"  => "setting_id"
         ];
     }
 }
