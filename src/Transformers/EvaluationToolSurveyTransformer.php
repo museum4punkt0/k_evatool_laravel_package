@@ -48,7 +48,7 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
                 ],
                 [
                     "rel"  => "setting",
-                    "href" => route("settings.show", $survey->setting_id)
+                    "href" => isset($survey->setting_id) ? route("settings.show", $survey->setting_id) : null
                 ],
             ]
         ];
