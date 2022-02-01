@@ -39,6 +39,11 @@ class EvaluationToolSurveySurveyRunController extends Controller
     {
         $this->defaultLanguage = EvaluationToolSurveyLanguage::where("default", true)->first();
         $this->audioDisk       = Storage::disk("evaluation_tool_audio");
+
+        $this->isDemo = false;
+        if (request()->hasHeader('X-Demo')) {
+            $this->isDemo = true;
+        }
     }
 
     /**
@@ -59,7 +64,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
             return is_null($value->parent_step_id);
         });;
 
-        if (!$survey->published) {
+        if (!$survey->published && !$this->isDemo) {
             return $this->errorResponse("survey not available", 410);
         }
 
@@ -99,6 +104,10 @@ class EvaluationToolSurveySurveyRunController extends Controller
     {
         if (!$survey = EvaluationToolSurvey::where("slug", $surveySlug)->first()) {
             return $this->errorResponse("survey not found", 409);
+        }
+
+        if (!$survey->published && !$this->isDemo) {
+            return $this->errorResponse("survey not available", 410);
         }
 
         // Todo: Add resubmit counter (observer)
