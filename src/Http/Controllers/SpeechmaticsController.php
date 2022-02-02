@@ -43,7 +43,7 @@ class SpeechmaticsController extends Controller
 
     public function getTranscription(EvaluationToolSurveyStepResultAsset $resultAsset): JsonResponse
     {
-        if (!$resultAsset->audio_transcription) {
+        if (!$resultAsset->audio_transcription || !$resultAsset->audio_transcription->transaction_id) {
             $this->sendJob($resultAsset);
         } else {
             if ($resultAsset->audio_transcription->transaction_id) {
@@ -80,17 +80,19 @@ class SpeechmaticsController extends Controller
         $response = json_decode($this->curl->response);
 
         if (isset($response->id)) {
-            if (!$resultAsset->audio_transcription) {
-                $audioTranscription                 = new EvaluationToolAudioTranscription();
-                $audioTranscription->service        = self::SPEECHMATICS_SERVICE_NAME;
-                $audioTranscription->transaction_id = $response->id;
-                $audioTranscription->result_payload = $response;
-                $audioTranscription->status         = "sent";
-                $audioTranscription->save();
-
-                $resultAsset->transcription_id = $audioTranscription->id;
-                $resultAsset->save();
+            if (!$audioTranscription = $resultAsset->audio_transcription) {
+                $audioTranscription = new EvaluationToolAudioTranscription();
             }
+
+            $audioTranscription->service        = self::SPEECHMATICS_SERVICE_NAME;
+            $audioTranscription->transaction_id = $response->id;
+            $audioTranscription->result_payload = $response;
+            $audioTranscription->status         = "sent";
+            $audioTranscription->save();
+
+            $resultAsset->transcription_id = $audioTranscription->id;
+            $resultAsset->save();
+
             return $audioTranscription;
         }
 
