@@ -24,6 +24,7 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
             "publishUp"              => $survey->publish_up,
             "publishDown"            => $survey->publish_down,
             "languages"              => $survey->languages->pluck("code"),
+            "languageNames"          => $survey->languages->pluck("title"),
             "surveyStepsCount"       => $survey->survey_steps_count,
             "surveyResultsCount"     => $survey->survey_results_count,
             "surveyDemoResultsCount" => $survey->survey_demo_results_count,
