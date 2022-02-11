@@ -151,8 +151,21 @@ class EvaluationToolHelper
 
             foreach ($lookIn as $key => $text) {
                 // check if code exists in collection and only return when no match
-                $languageCodes = $languageCodes->filter(function ($value) use ($key) {
-                    return $value->code !== $key;
+                $languageCodes = $languageCodes->filter(function ($value) use ($key, $text) {
+                    if ($value->code !== $key) {
+                        return true;
+                    } else {
+                        // check if text is null
+                        if (is_null($text)) {
+                            return true;
+                        }
+
+                        // check if text is empty string
+                        if ($text == "") {
+                            return true;
+                        }
+                    }
+                    return false;
                 });
                 $index++;
             }
