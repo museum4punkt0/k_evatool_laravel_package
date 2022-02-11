@@ -74,6 +74,12 @@ class EvaluationToolSurveySurveyStepController extends Controller
         if ($step->survey_id !== $survey->id) {
             return $this->errorResponse("survey id does not match step id", 409);
         }
+
+        // disallow change if results for step exist (including demo results)
+        if ($step->survey_element_id !== $request->survey_element_id && ($step->survey_step_results_count > 0 || $step->survey_step_demo_results_count > 0)) {
+            return $this->errorResponse("element cannot be changed because step has valid results", 409);
+        }
+
         $step->fill($request->all());
         $step->save();
 
