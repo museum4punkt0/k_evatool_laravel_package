@@ -63,7 +63,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
 
         $surveySteps = $survey->survey_steps->filter(function ($value) {
             return is_null($value->parent_step_id);
-        });;
+        });
 
         if (!$survey->published && !$this->isDemo) {
             return $this->errorResponse("survey not available", 410);
@@ -210,6 +210,75 @@ class EvaluationToolSurveySurveyRunController extends Controller
         }*/
 
         return true;
+    }
+
+    /**
+     * Retrieve the survey paths possible
+     *
+     * @param $surveySlug
+     * @return JsonResponse
+     */
+    public function getSurveyPath($surveySlug): JsonResponse
+    {
+        if (!$survey = EvaluationToolSurvey::where("slug", $surveySlug)->first()) {
+            return $this->errorResponse("survey not found", 409);
+        }
+
+        $path         = new StdClass;
+        $firstStep    = $survey->survey_steps->where("is_first_step")->first();
+        $path->stepId = $firstStep->id;
+
+        $path->children = $this->followPath($firstStep->id, $survey);
+
+        return $this->successResponse($path);
+    }
+
+    public function followPath($stepId, $survey): array
+    {
+        $step        = $survey->survey_steps->find($stepId);
+        $element     = $step->survey_element;
+        $elementType = $element->survey_element_type->key;
+
+        $pathParts = [];
+
+        if ($step->next_step_id) {
+            $pathParts[] = $survey->survey_steps->find($step->next_step_id)->id;
+        }
+
+        if ($step->result_based_next_steps) {
+
+            // the same array merge works on all element types. yet they are split here in case they need to be handled individually
+            if ($elementType == "emoji") {
+                $pathParts = array_merge($pathParts, collect($step->result_based_next_steps)->pluck("stepId")->toArray());
+            }
+            if ($elementType == "multipleChoice") {
+                $pathParts = array_merge($pathParts, collect($step->result_based_next_steps)->pluck("stepId")->toArray());
+            }
+            if ($elementType == "binary") {
+                $pathParts = array_merge($pathParts, collect($step->result_based_next_steps)->pluck("stepId")->toArray());
+            }
+            if ($elementType == "starRating") {
+                $pathParts = array_merge($pathParts, collect($step->result_based_next_steps)->pluck("stepId")->toArray());
+            }
+        }
+
+        // array of elements that shall be amended to the path
+        $pathAmend = [];
+
+        if (!empty($pathParts)) {
+            foreach ($pathParts as $pathPart) {
+                $subPath         = new StdClass;
+                $subPath->stepId = $pathPart;
+
+                // keep following the path recursively
+                if ($this->followPath($pathPart, $survey)) {
+                    $subPath->children = $this->followPath($pathPart, $survey);
+                }
+                $pathAmend[] = $subPath;
+            }
+        }
+
+        return $pathAmend;
     }
 
     public function createAudioAsset($audioData, EvaluationToolSurveyStepResult $result)

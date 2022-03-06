@@ -37,6 +37,7 @@ Route::prefix('api/evaluation-tool')
         Route::get('surveys/{surveySlug}/run', [EvaluationToolSurveySurveyRunController::class, "index"]);
         Route::post('surveys/{surveySlug}/run/asset', [EvaluationToolSurveySurveyRunController::class, "storeAsset"]);
         Route::post('surveys/{surveySlug}/run', [EvaluationToolSurveySurveyRunController::class, "store"]);
+        Route::get('surveys/{surveySlug}/path', [EvaluationToolSurveySurveyRunController::class, "getSurveyPath"]);
         Route::apiResource('surveys.steps', EvaluationToolSurveySurveyStepController::class);
         Route::apiResource('surveys.results', EvaluationToolSurveySurveyResultController::class);
         Route::apiResource('surveys.steps.results', EvaluationToolSurveySurveyStepSurveyStepResultController::class);
