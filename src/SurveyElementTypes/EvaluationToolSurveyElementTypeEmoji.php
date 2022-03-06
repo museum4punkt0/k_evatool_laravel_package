@@ -166,6 +166,35 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
         EvaluationToolHelper::checkCompleteLanguages($request, self::PARAMS_KEYS);
     }
 
+    /**
+     * Get the next step based on the result of a survey step
+     *
+     * @param EvaluationToolSurveyStep $surveyStep
+     * @return mixed
+     */
+    public static function getResultBasedNextStep(EvaluationToolSurveyStep $surveyStep)
+    {
+        if (isset($surveyStep->resultByUuid["meaning"])) {
+            $meaning = $surveyStep->resultByUuid["meaning"];
+            if (!empty($surveyStep->result_based_next_steps)) {
+
+                // go through result based next steps
+                foreach ($surveyStep->result_based_next_steps as $nextStep) {
+
+                    // go through emojis
+                    foreach ($surveyStep->survey_element->params->emojis as $emoji) {
+
+                        // check if results in meaning
+                        if ($emoji->meaning == $meaning && $nextStep->type === $emoji->type) {
+                            return $nextStep->stepId;
+                        }
+                    }
+                }
+            }
+        }
+        return $surveyStep->next_step_id;
+    }
+
     public static function getExportDataHeaders(EvaluationToolSurveyStep $step, EvaluationToolSurveyLanguage $language): array
     {
         $numberOfOptions = count($step->survey_element->params->emojis);

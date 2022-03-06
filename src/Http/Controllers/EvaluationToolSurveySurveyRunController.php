@@ -17,6 +17,7 @@ use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResultAsset;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeBinary;
+use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeEmoji;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeMultipleChoice;
 use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeStarRating;
 use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
@@ -479,6 +480,9 @@ class EvaluationToolSurveySurveyRunController extends Controller
                 break;
             case "starRating":
                 $stepId = EvaluationToolSurveyElementTypeStarRating::getResultBasedNextStep($surveyStep);
+                break;
+            case "emoji":
+                $stepId = EvaluationToolSurveyElementTypeEmoji::getResultBasedNextStep($surveyStep);
                 break;
             case "multipleChoice":
                 $stepId = EvaluationToolSurveyElementTypeMultipleChoice::getResultBasedNextStep($surveyStep);
