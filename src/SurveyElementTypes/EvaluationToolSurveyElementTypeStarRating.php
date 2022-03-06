@@ -172,10 +172,15 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
         return $surveyStep->next_step_id;
     }
 
+    /**
+     * Calls checkMissingLanguages method to verify that all languages configured for a survey are present in the survey element
+     *
+     * @param EvaluationToolSurveyElement $element
+     * @return array
+     */
     public static function validateSurveyBasedLanguages(EvaluationToolSurveyElement $element): array
     {
         $keysToCheck = self::PARAMS_KEYS;
-
         return EvaluationToolHelper::checkMissingLanguages($element, $keysToCheck);
     }
 
