@@ -97,7 +97,9 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
                 'min:1',
                 'max:10',
             ],
-            "params.emojis.*.type"    => ["min:1", "max:20", new Emoji()],
+            "params.emojis.*.type"    => ["min:1", "max:20"],
+            // Todo: Improve emoji rule and add again
+//            "params.emojis.*.type"    => ["min:1", "max:20", new Emoji()],
             "params.emojis.*.meaning" => ["min:1", "max:20", new SnakeCase()],
             'languageKeys.*'          => ['required', 'exists:evaluation_tool_survey_languages,code'],
         ];
