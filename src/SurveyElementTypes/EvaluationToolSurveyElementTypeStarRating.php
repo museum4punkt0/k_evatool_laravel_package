@@ -161,7 +161,7 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
     {
         if (isset($surveyStep->resultByUuid["rating"])) {
             $rating = $surveyStep->resultByUuid["rating"];
-            if ($surveyStep->result_based_next_steps && !empty($surveyStep->result_based_next_steps)) {
+            if (!empty($surveyStep->result_based_next_steps)) {
                 foreach ($surveyStep->result_based_next_steps as $nextStep) {
                     if ($nextStep->start <= $rating && $nextStep->end >= $rating) {
                         return $nextStep->stepId;
@@ -264,5 +264,18 @@ class EvaluationToolSurveyElementTypeStarRating extends EvaluationToolSurveyElem
         return [
             ["value" => $result->result_value["rating"], "position" => $position]
         ];
+    }
+
+    public static function isResultBasedMatch($result, $step): bool
+    {
+        $rating = $result->result_value["rating"];
+        if (!empty($step->result_based_next_steps)) {
+            foreach ($step->result_based_next_steps as $nextStep) {
+                if ($nextStep->start <= $rating && $nextStep->end >= $rating) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

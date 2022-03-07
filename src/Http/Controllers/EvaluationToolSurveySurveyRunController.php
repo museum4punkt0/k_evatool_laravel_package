@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use StdClass;
+use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
+use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyRunIndexRequest;
+use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyRunSurveyPathRequest;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStepResultAssetStoreRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
@@ -45,14 +48,17 @@ class EvaluationToolSurveySurveyRunController extends Controller
         if (request()->hasHeader('X-Demo')) {
             $this->isDemo = true;
         }
+
+        $this->doneCount      = 0;
+        $this->remainingCount = 0;
     }
 
     /**
      * @param $surveySlug
-     * @param Request $request
+     * @param EvaluationToolSurveyRunIndexRequest $request
      * @return JsonResponse
      */
-    public function index($surveySlug, Request $request): JsonResponse
+    public function index($surveySlug, EvaluationToolSurveyRunIndexRequest $request): JsonResponse
     {
         // tell the request that it is in "run mode"
         $request->request->add(["is_run" => true]);
@@ -216,24 +222,60 @@ class EvaluationToolSurveySurveyRunController extends Controller
      * Retrieve the survey paths possible
      *
      * @param $surveySlug
+     * @param EvaluationToolSurveyRunSurveyPathRequest $request
      * @return JsonResponse
      */
-    public function getSurveyPath($surveySlug): JsonResponse
+    public function getSurveyPath($surveySlug, EvaluationToolSurveyRunSurveyPathRequest $request): JsonResponse
     {
         if (!$survey = EvaluationToolSurvey::where("slug", $surveySlug)->first()) {
             return $this->errorResponse("survey not found", 409);
+        }
+
+        $results = null;
+
+        if ($request->has("uuid")) {
+            $uuid    = $request->uuid;
+            $results = EvaluationToolSurveyStepResult::where("session_id", $uuid)->whereIn("survey_step_id", $survey->survey_steps->pluck("id"))->orderBy("answered_at", "ASC")->get();
         }
 
         $path         = new StdClass;
         $firstStep    = $survey->survey_steps->where("is_first_step")->first();
         $path->stepId = $firstStep->id;
 
-        $path->children = $this->followPath($firstStep->id, $survey);
+        // check of step has results and label as "done"
+        $done      = false;
+        $remaining = false;
 
-        return $this->successResponse($path);
+        if ($results->first() && $results->first()->survey_step_id == $firstStep->id) {
+            $path->done = true;
+            $done       = true;
+            $this->doneCount++;
+
+            if ($results->count() == 1) {
+                $lastResult = $results->first();
+            }
+
+            // remove the first result
+            $results->shift();
+            if ($results->count() === 0) {
+                $path->lastDone = true;
+                $remaining      = true;
+                $path->ended    = $this->checkLastResultForEnd($lastResult, $firstStep);
+            }
+        }
+
+        $path->children = $this->followPath($firstStep->id, $survey, $results, $done, $remaining);
+
+        $response                 = new StdClass;
+        $response->doneCount      = $this->doneCount;
+        $response->remainingCount = $this->remainingCount;
+//        $response->maxCount       = $this->getPathMaximumDepth($path);
+        $response->path           = $path;
+
+        return $this->successResponse($response);
     }
 
-    public function followPath($stepId, $survey): array
+    public function followPath($stepId, $survey, $results, $stepIsDone = false, $remaining = false): array
     {
         $step        = $survey->survey_steps->find($stepId);
         $element     = $step->survey_element;
@@ -270,15 +312,88 @@ class EvaluationToolSurveySurveyRunController extends Controller
                 $subPath         = new StdClass;
                 $subPath->stepId = $pathPart;
 
-                // keep following the path recursively
-                if ($this->followPath($pathPart, $survey)) {
-                    $subPath->children = $this->followPath($pathPart, $survey);
+                // check if there are (still) results and previous step is done
+                $done = $stepIsDone;
+                if ($results->count() > 0 && $stepIsDone) {
+
+                    // check of step has results and label as "done"
+                    if ($results->first()->survey_step_id == $pathPart) {
+                        $subPath->done = true;
+                        $done          = true;
+                        $this->doneCount++;
+
+                        if ($results->count() == 1) {
+                            $lastResult = $results->first();
+                        }
+
+                        // remove the first result
+                        $results->shift();
+                        if ($results->count() == 0) {
+                            $subPath->lastDone = true;
+                            $remaining         = true;
+                            $subPath->ended    = $this->checkLastResultForEnd($lastResult, $survey->survey_steps->find($pathPart));
+                        }
+                    }
                 }
+
+                // keep following the path recursively
+                if ($children = $this->followPath($pathPart, $survey, $results, $done, $remaining)) {
+                    $subPath->children = $children;
+                }
+
                 $pathAmend[] = $subPath;
             }
         }
 
         return $pathAmend;
+    }
+
+    public function checkLastResultForEnd($result, $step): bool
+    {
+        $elementType = $step->survey_element_type->key;
+
+        if (!$step->next_step_id) {
+            if (!$step->result_based_next_steps) {
+                return true;
+            } else {
+                if ($elementType == "emoji") {
+                    return EvaluationToolSurveyElementTypeEmoji::isResultBasedMatch($result, $step);
+                }
+
+                if ($elementType == "binary") {
+                    return EvaluationToolSurveyElementTypeBinary::isResultBasedMatch($result, $step);
+                }
+
+                if ($elementType == "starRating") {
+                    return EvaluationToolSurveyElementTypeStarRating::isResultBasedMatch($result, $step);
+                }
+
+                if ($elementType == "multipleChoice") {
+                    return EvaluationToolSurveyElementTypeMultipleChoice::isResultBasedMatch($result, $step);
+                }
+            }
+        }
+        return false;
+    }
+
+    public function getPathMaximumDepth($path)
+    {
+        return $this->walkPath($path->children);
+    }
+
+    public function walkPath($path, $depth = 1)
+    {
+        foreach ($path as $subPath) {
+            if (isset($subPath->children)) {
+                $depth++;
+                $newDepth = $this->walkPath($subPath->children, $depth);
+//                echo $newDepth . "-" . $depth . PHP_EOL;
+                if ($newDepth == $depth) {
+//                    $depth--;
+                }
+            }
+        }
+        return $depth;
     }
 
     public function createAudioAsset($audioData, EvaluationToolSurveyStepResult $result)
@@ -456,7 +571,6 @@ class EvaluationToolSurveySurveyRunController extends Controller
 
     public function samplePayloadVoiceInput($params): StdClass
     {
-        // TODO
         $voiceInputPayload                               = new StdClass();
         $voiceInputPayload->{self::VOICEINPUT_VALUE_KEY} = "";
         return $voiceInputPayload;
@@ -483,13 +597,13 @@ class EvaluationToolSurveySurveyRunController extends Controller
 
         foreach ($surveySteps as $surveyStepMain) {
             foreach ($surveySteps as $surveyStep) {
-                if ($upcomingStep->result_based_next_steps && !empty($upcomingStep->result_based_next_steps)) {
+                if (!empty($upcomingStep->result_based_next_steps)) {
                     if ($upcomingStep->isAnswered) {
                         $nextStep = $this->getResultBasedNextStep($upcomingStep);
-                        if (isset($nextStep->id) && $nextStep->id == $surveyStep->id) {
-                            $currentStep    = $surveyStep;
-                            $stepOrdering[] = $surveyStep->id;
-                            $upcomingStep   = $surveyStep;
+                        if ($nextStep && $nextSurveyStep = $surveySteps->find($nextStep->id)) {
+                            $currentStep    = $nextSurveyStep;
+                            $stepOrdering[] = $nextSurveyStep->id;
+                            $upcomingStep   = $nextSurveyStep;
                             break;
                         }
                     }

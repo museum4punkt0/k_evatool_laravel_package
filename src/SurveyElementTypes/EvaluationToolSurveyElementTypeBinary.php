@@ -207,4 +207,19 @@ class EvaluationToolSurveyElementTypeBinary extends EvaluationToolSurveyElementT
             ["value" => $result->result_value["value"], "position" => $position]
         ];
     }
+
+    public static function isResultBasedMatch($result, $step): bool
+    {
+        $value = $step->resultByUuid["value"];
+
+        if ($value == $step->survey_element->params->trueValue) {
+            return false;
+        }
+
+        if ($value == $step->survey_element->params->falseValue) {
+            return false;
+        }
+
+        return true;
+    }
 }

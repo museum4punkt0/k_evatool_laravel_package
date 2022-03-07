@@ -185,13 +185,14 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
                     foreach ($surveyStep->survey_element->params->emojis as $emoji) {
 
                         // check if results in meaning
-                        if ($emoji->meaning == $meaning && $nextStep->type === $emoji->type) {
+                        if ($emoji->meaning == $meaning && $nextStep->type == $emoji->type) {
                             return $nextStep->stepId;
                         }
                     }
                 }
             }
         }
+
         return $surveyStep->next_step_id;
     }
 
@@ -241,5 +242,18 @@ class EvaluationToolSurveyElementTypeEmoji extends EvaluationToolSurveyElementTy
         }
 
         return $results;
+    }
+
+    public static function isResultBasedMatch($result, $step): bool
+    {
+        $meaning = $result->result_value["meaning"];
+        foreach ($step->survey_element->params->emojis as $emoji) {
+            if (in_array($emoji->type, collect($step->result_based_next_steps)->pluck("type")->toArray())) {
+                if ($emoji->meaning == $meaning) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

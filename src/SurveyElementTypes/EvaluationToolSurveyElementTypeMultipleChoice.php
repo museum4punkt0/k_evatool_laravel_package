@@ -159,7 +159,7 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
             $minSelectable = $surveyStep->survey_element->params->minSelectable;
             $maxSelectable = $surveyStep->survey_element->params->maxSelectable;
             if ($minSelectable == 1 && $maxSelectable == 1) {
-                if ($surveyStep->result_based_next_steps && !empty($surveyStep->result_based_next_steps)) {
+                if (!empty($surveyStep->result_based_next_steps)) {
                     foreach ($surveyStep->result_based_next_steps as $nextStep) {
                         if ($nextStep->value == $value[0]["value"]) {
                             return $nextStep->stepId;
@@ -298,5 +298,22 @@ class EvaluationToolSurveyElementTypeMultipleChoice extends EvaluationToolSurvey
         }
 
         return $results;
+    }
+
+    public static function isResultBasedMatch($result, $step): bool
+    {
+        $value         = $result->result_value["selected"];
+        $minSelectable = $step->survey_element->params->minSelectable;
+        $maxSelectable = $step->survey_element->params->maxSelectable;
+        if ($minSelectable == 1 && $maxSelectable == 1) {
+            if (!empty($step->result_based_next_steps)) {
+                foreach ($step->result_based_next_steps as $nextStep) {
+                    if ($nextStep->value == $value[0]["value"]) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 }
