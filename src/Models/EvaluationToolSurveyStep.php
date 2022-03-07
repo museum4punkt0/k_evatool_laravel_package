@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Request;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveySurveyRunController;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepResultCombinedTransformer;
@@ -106,6 +105,24 @@ class EvaluationToolSurveyStep extends Model
     public function previous_steps(): HasMany
     {
         return $this->hasMany("Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep", "next_step_id", "id");
+    }
+
+    public function getPreviousResultBasedNextStepsAttribute()
+    {
+        $surveySteps = EvaluationToolSurveyStep::where("survey_id", $this->survey_id)
+            ->get()
+            ->map(function ($step) {
+                if ($step->result_based_next_steps) {
+                    foreach($step->result_based_next_steps AS $nextStep) {
+                        if($nextStep->stepId == $this->id) {
+                            return $step->id;
+                        }
+                    }
+                }
+                return null;
+            })->filter()->values()->flatten();
+
+        return $surveySteps;
     }
 
     public function created_by_user(): HasOne
