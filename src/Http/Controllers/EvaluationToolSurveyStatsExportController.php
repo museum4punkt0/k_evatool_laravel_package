@@ -243,7 +243,7 @@ class EvaluationToolSurveyStatsExportController extends Controller
             $responsePayload->mime = $this->disk->mimeType($filename);
             $responsePayload->hash = hash('sha1', $this->disk->get($filename));
         }
-        $responsePayload->totalResults = $results->count();
+        $responsePayload->totalResults = $results->groupBy("session_id")->count();
 
         return $this->successResponse($responsePayload);
     }
