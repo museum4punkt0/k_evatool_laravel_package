@@ -2,7 +2,6 @@
 
 namespace Twoavy\EvaluationTool;
 
-use Illuminate\Auth\Events\Authenticated;
 use TusPhp\Events\TusEvent;
 use TusPhp\Tus\Server as TusServer;
 use Illuminate\Support\ServiceProvider;

@@ -81,10 +81,19 @@ class EvaluationToolAssetController extends Controller
      */
     public function createTusAsset($tusData)
     {
-        $asset = new EvaluationToolAsset();
+        $filename = $tusData["name"];
 
-        $filename     = $tusData["name"];
-        $filenameSlug = Str::slug(pathinfo($filename, 8), "_") . "." . strtolower(pathinfo($filename, 4));
+        $hash         = hash_file('md5', $this->uploadDisk->path($filename));
+        $filenameSlug = Str::slug(pathinfo($filename, 8), "_") . "_" . substr($hash, 0, 6) . "." . strtolower(pathinfo($filename, 4));
+
+        if (!$asset = EvaluationToolAsset::withTrashed()->where("hash", $hash)->first()) {
+            $asset = new EvaluationToolAsset();
+        }
+
+        // restore if asset is trashed
+        if ($asset->trashed()) {
+            $asset->restore();
+        }
 
         $asset->filename = $filenameSlug;
         $asset->hash     = hash_file('md5', $this->uploadDisk->path($filename));
