@@ -37,6 +37,12 @@ class EvaluationToolSurveyStepObserver
 
     public function updating(EvaluationToolSurveyStep $surveyStep)
     {
+
+        // if survey is archived, prevent changes to elements which are directly used in archived survey
+        if ($surveyStep->survey->archived) {
+            abort(409, 'Survey step update forbidden as survey is archived');
+        }
+
         if ($surveyStep->survey_element->survey_element_type->key === "video") {
             $timeBasedSteps = $surveyStep->time_based_steps;
             if (is_array($timeBasedSteps)) {

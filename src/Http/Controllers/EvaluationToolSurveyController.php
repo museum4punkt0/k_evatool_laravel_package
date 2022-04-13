@@ -127,4 +127,23 @@ class EvaluationToolSurveyController extends Controller
 
         return $this->showOne($survey);
     }
+
+    public function archiveSurvey(EvaluationToolSurvey $survey): JsonResponse
+    {
+
+        // toggles archive state and sets published state to opposite
+
+        $survey->archived = !$survey->archived;
+        if ($survey->archived === true) {
+            $survey->archived_at = now();
+            $survey->published = !$survey->published;
+        } else {
+            $survey->archived_at = null;
+
+
+        }
+        $survey->save();
+
+        return $this->showOne($survey);
+    }
 }

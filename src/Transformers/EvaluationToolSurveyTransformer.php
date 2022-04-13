@@ -38,6 +38,8 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
             "updatedBy"              => $survey->updated_by_user ? $survey->updated_by_user->name : null,
             "deletedAt"              => (string)$survey->deleted_at,
             "deletedBy"              => $survey->deleted_by_user ? $survey->deleted_by_user->name : null,
+            "archived"               => $survey->archived,
+            "archivedAt"            => $survey->archived_at,
             "links"                  => [
                 [
                     "rel"  => "self",
@@ -73,6 +75,7 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
         return isset($attributes[$index]) ? $attributes[$index] : null;
     }
 
+    // added
     public static function attributes(): array
     {
         return [
@@ -85,7 +88,9 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
             "publishDown" => "publish_down",
             "adminLayout" => "admin_layout",
             "languages"   => "languages",
-            "settingId"   => "setting_id"
+            "settingId"   => "setting_id",
+            "archived"    => "archived",
+            "archivedAt"  => "archived_at"
         ];
     }
 }

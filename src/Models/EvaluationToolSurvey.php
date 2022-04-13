@@ -33,13 +33,15 @@ class EvaluationToolSurvey extends Model
         "publish_up",
         "publish_down",
         "admin_layout",
-        "setting_id"
+        "setting_id",
+        "archived"
     ];
 
     // date fields
     protected $dates = [
         "publish_up",
-        "publish_down"
+        "publish_down",
+        "archived_at",
     ];
 
     // specially cast fields
