@@ -26,6 +26,7 @@ Route::prefix('api/evaluation-tool')
         Route::apiResource('assets', EvaluationToolAssetController::class);
         Route::post('surveys/{survey}/duplicate', [EvaluationToolSurveyController::class, "duplicateSurvey"]);
         Route::post('surveys/{survey}/publish', [EvaluationToolSurveyController::class, "publishSurvey"]);
+        Route::post('surveys/{survey}/archive', [EvaluationToolSurveyController::class, "archiveSurvey"]);
         Route::put('surveys/{survey}/admin-layout', [EvaluationToolSurveyController::class, "updateAdminLayout"]);
         Route::apiResource('survey-elements', EvaluationToolSurveyElementController::class);
         Route::apiResource('survey-elements.surveys', EvaluationToolSurveyElementSurveyController::class)->only("index");

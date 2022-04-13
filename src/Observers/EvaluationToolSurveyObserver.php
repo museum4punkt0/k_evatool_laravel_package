@@ -40,6 +40,12 @@ class EvaluationToolSurveyObserver
      */
     public function updating(EvaluationToolSurvey $survey)
     {
+
+        // if survey is archived, prevent changes to db
+        if (EvaluationToolSurvey::find($survey->id)->archived && $survey->archived) {
+            abort(409, 'Survey update forbidden');
+        }
+        
         $survey->slug = $this->createUniqueSlug($survey);
         if (isset(request()->user()->id)) {
             $survey->updated_by = request()->user()->id;
