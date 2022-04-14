@@ -2,6 +2,7 @@
 
 namespace Twoavy\EvaluationTool\Observers;
 
+use Hashids\Hashids;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 
@@ -30,6 +31,10 @@ class EvaluationToolSurveyStepObserver
      */
     public function created(EvaluationToolSurveyStep $surveyStep)
     {
+        $hashids          = new Hashids('evatool' . env('APP_URL'), 6, 'abcdefghijklmnopqrstuvwxyz1234567890');
+        $surveyStep->slug = $hashids->encode($surveyStep->id);
+        $surveyStep->saveQuietly();
+
         if ($surveyStep->survey_element->survey_element_type->key === "video") {
             $this->setParentStepIds($surveyStep);
         }

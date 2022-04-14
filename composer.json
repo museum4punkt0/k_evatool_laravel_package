@@ -1,6 +1,6 @@
 {
     "name": "twoavy/evaluation-tool",
-    "version": "1.0.396",
+    "version": "1.0.397",
     "description": "A laravel package for creating evaluations and surveys",
     "require": {
         "php": "^7.3|^8.0",
@@ -12,6 +12,7 @@
         "fakerphp/faker": "^1.15",
         "google/cloud-speech": "^1.4",
         "guzzlehttp/guzzle": "^7.4",
+        "hashids/hashids": "^4.1",
         "illuminate/bus": "^8.0",
         "illuminate/console": "^8.0",
         "illuminate/contracts": "^8.0",
