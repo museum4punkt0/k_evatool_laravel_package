@@ -61,7 +61,7 @@ class EvaluationToolSurveyStep extends Model
         "survey_step_demo_results",
     ];
 
-    protected $appends = ["has_results"];
+    protected $appends = ["has_results", "single_access"];
 
     public function survey(): HasOne
     {
@@ -113,8 +113,8 @@ class EvaluationToolSurveyStep extends Model
             ->get()
             ->map(function ($step) {
                 if ($step->result_based_next_steps) {
-                    foreach($step->result_based_next_steps AS $nextStep) {
-                        if($nextStep->stepId == $this->id) {
+                    foreach ($step->result_based_next_steps as $nextStep) {
+                        if ($nextStep->stepId == $this->id) {
                             return $step->id;
                         }
                     }
@@ -161,5 +161,10 @@ class EvaluationToolSurveyStep extends Model
     public function getHasResultsAttribute(): bool
     {
         return $this->survey_step_results()->count() > 0;
+    }
+
+    public function getSingleAccessAttribute()
+    {
+        return $this->survey->single_step_access;
     }
 }
