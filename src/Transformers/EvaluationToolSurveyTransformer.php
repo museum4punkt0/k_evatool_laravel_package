@@ -19,6 +19,7 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
             "id"                     => (int)$survey->id,
             "name"                   => (string)$survey->name,
             "slug"                   => (string)$survey->slug,
+            "singleStepAccess"       => (boolean)$survey->single_step_access,
             "description"            => (string)$survey->description,
             "published"              => (bool)$survey->published,
             "publishUp"              => $survey->publish_up,
@@ -39,7 +40,7 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
             "deletedAt"              => (string)$survey->deleted_at,
             "deletedBy"              => $survey->deleted_by_user ? $survey->deleted_by_user->name : null,
             "archived"               => $survey->archived,
-            "archivedAt"            => $survey->archived_at,
+            "archivedAt"             => $survey->archived_at,
             "links"                  => [
                 [
                     "rel"  => "self",
