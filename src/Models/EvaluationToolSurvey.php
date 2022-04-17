@@ -28,6 +28,7 @@ class EvaluationToolSurvey extends Model
     protected $fillable = [
         "name",
         "slug",
+        "single_step_access",
         "description",
         "published",
         "publish_up",
@@ -46,7 +47,8 @@ class EvaluationToolSurvey extends Model
 
     // specially cast fields
     protected $casts = [
-        "admin_layout" => "object"
+        "admin_layout"       => "object",
+        "single_step_access" => "boolean"
     ];
 
     // relations that are included with their element count

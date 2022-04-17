@@ -16,17 +16,17 @@ class EvaluationToolSettingTransformer extends TransformerAbstract
     public function transform(EvaluationToolSetting $setting): array
     {
         $transformed = [
-            "id"                     => (int)$setting->id,
-            "default"                     => (boolean)$setting->default,
-            "name"                   => (string)$setting->name,
-            "setting"                   => (object)$setting->settings,
-            "createdAt"              => $setting->created_at,
-            "createdBy"              => $setting->created_by_user ? $setting->created_by_user->name : null,
-            "updatedAt"              => $setting->updated_at,
-            "updatedBy"              => $setting->updated_by_user ? $setting->updated_by_user->name : null,
-            "deletedAt"              => (string)$setting->deleted_at,
-            "deletedBy"              => $setting->deleted_by_user ? $setting->deleted_by_user->name : null,
-            "links"                  => [
+            "id"        => (int)$setting->id,
+            "default"   => (boolean)$setting->default,
+            "name"      => (string)$setting->name,
+            "setting"   => (object)$setting->settings,
+            "createdAt" => $setting->created_at,
+            "createdBy" => $setting->created_by_user ? $setting->created_by_user->name : null,
+            "updatedAt" => $setting->updated_at,
+            "updatedBy" => $setting->updated_by_user ? $setting->updated_by_user->name : null,
+            "deletedAt" => (string)$setting->deleted_at,
+            "deletedBy" => $setting->deleted_by_user ? $setting->deleted_by_user->name : null,
+            "links"     => [
                 [
                     "rel"  => "self",
                     "href" => route("settings.show", $setting->id)
@@ -52,10 +52,10 @@ class EvaluationToolSettingTransformer extends TransformerAbstract
     public static function attributes(): array
     {
         return [
-            "id"          => "id",
-            "name"        => "name",
-            "setting"        => "setting",
-            "default"        => "default",
+            "id"      => "id",
+            "name"    => "name",
+            "setting" => "setting",
+            "default" => "default",
         ];
     }
 }

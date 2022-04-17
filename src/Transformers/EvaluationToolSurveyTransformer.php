@@ -80,18 +80,19 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
     public static function attributes(): array
     {
         return [
-            "id"          => "id",
-            "name"        => "name",
-            "slug"        => "slug",
-            "description" => "description",
-            "published"   => "published",
-            "publishUp"   => "publish_up",
-            "publishDown" => "publish_down",
-            "adminLayout" => "admin_layout",
-            "languages"   => "languages",
-            "settingId"   => "setting_id",
-            "archived"    => "archived",
-            "archivedAt"  => "archived_at"
+            "id"               => "id",
+            "name"             => "name",
+            "slug"             => "slug",
+            "singleStepAccess" => "single_step_access",
+            "description"      => "description",
+            "published"        => "published",
+            "publishUp"        => "publish_up",
+            "publishDown"      => "publish_down",
+            "adminLayout"      => "admin_layout",
+            "languages"        => "languages",
+            "settingId"        => "setting_id",
+            "archived"         => "archived",
+            "archivedAt"       => "archived_at"
         ];
     }
 }

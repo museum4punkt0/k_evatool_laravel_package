@@ -34,12 +34,13 @@ class EvaluationToolSurveyStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name"        => "required|min:3|max:100",
-            "slug"        => ["min:3", "max:100", new SnakeCase()],
-            "description" => "max:500",
-            "published"   => "boolean",
-            "languages"   => "array",
-            "languages.*" => ['required', 'min:2', 'max:2', 'exists:evaluation_tool_survey_languages,code'],
+            "name"               => "required|min:3|max:100",
+            "slug"               => ["min:3", "max:100", new SnakeCase()],
+            "single_step_access" => "boolean",
+            "description"        => "max:500",
+            "published"          => "boolean",
+            "languages"          => "array",
+            "languages.*"        => ['required', 'min:2', 'max:2', 'exists:evaluation_tool_survey_languages,code'],
             // "setting_id" => ['exists:evaluation_tool_settings,id']
         ];
     }
