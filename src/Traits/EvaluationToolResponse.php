@@ -100,14 +100,14 @@ trait EvaluationToolResponse
             }
             $collection = $this->transformData($collection, $transformer);
 
-            if($emitResponse) {
+            if ($emitResponse) {
                 return $this->successResponse($collection, $code);
             }
 
             return $collection["data"];
         }
 
-        if($emitResponse) {
+        if ($emitResponse) {
             return $this->successResponse($this->paginate($collection), $code);
         }
 
@@ -187,7 +187,7 @@ trait EvaluationToolResponse
         return $paginated;
     }
 
-    protected function showOne(Model $instance, $code = 200, $transformerOverride = false): JsonResponse
+    protected function showOne(Model $instance, $code = 200, $transformerOverride = false, $emitResponse = true)
     {
         if (isset($instance->transformer)) {
             $transformer = $instance->transformer;
@@ -195,9 +195,19 @@ trait EvaluationToolResponse
                 $transformer = $transformerOverride;
             }
             $data = $this->transformData($instance, $transformer);
-            return $this->successResponse($data, $code);
+
+            if ($emitResponse) {
+                return $this->successResponse($data, $code);
+            }
+
+            return $data["data"];
         }
-        return $this->successResponse(["data" => $instance], $code);
+
+        if ($emitResponse) {
+            return $this->successResponse(["data" => $instance], $code);
+        }
+
+        return $instance;
     }
 
     protected function transformData($data, $transformer, $removeDataKey = false): array
