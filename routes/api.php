@@ -36,8 +36,10 @@ Route::prefix('api/evaluation-tool')
         Route::post('surveys/{survey}/steps/{step}/remove-next-step', [EvaluationToolSurveySurveyStepController::class, "removeNextStep"]);
         Route::apiResource('surveys', EvaluationToolSurveyController::class);
         Route::get('surveys/{surveySlug}/run', [EvaluationToolSurveySurveyRunController::class, "index"]);
+        Route::get('surveys/{stepSlug}/run-step', [EvaluationToolSurveySurveyRunController::class, "indexStep"]);
         Route::post('surveys/{surveySlug}/run/asset', [EvaluationToolSurveySurveyRunController::class, "storeAsset"]);
         Route::post('surveys/{surveySlug}/run', [EvaluationToolSurveySurveyRunController::class, "store"]);
+        Route::post('surveys/{stepSlug}/run-step', [EvaluationToolSurveySurveyRunController::class, "storeStep"]);
         Route::get('surveys/{surveySlug}/path', [EvaluationToolSurveySurveyRunController::class, "getSurveyPath"]);
         Route::apiResource('surveys.steps', EvaluationToolSurveySurveyStepController::class);
         Route::apiResource('surveys.results', EvaluationToolSurveySurveyResultController::class);

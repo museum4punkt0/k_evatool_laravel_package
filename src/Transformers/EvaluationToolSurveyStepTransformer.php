@@ -19,7 +19,8 @@ class EvaluationToolSurveyStepTransformer extends TransformerAbstract
             "id"                       => (int)$surveyStep->id,
             "name"                     => (string)$surveyStep->name,
             "slug"                     => (string)$surveyStep->slug,
-            "singleAccess"             => $surveyStep->single_access && $surveyStep->survey->published,
+            "singleAccess"             => $surveyStep->single_access && $surveyStep->survey->published && in_array
+                ($surveyStep->survey_element->survey_element_type->key,EvaluationToolSurveyStep::SINGLE_STEP_ELEMENT_TYPES),
             "surveyId"                 => (int)$surveyStep->survey_id,
             "surveyElementId"          => (int)$surveyStep->survey_element_id,
             "surveyElementType"        => (string)$surveyStep->survey_element->survey_element_type->key,

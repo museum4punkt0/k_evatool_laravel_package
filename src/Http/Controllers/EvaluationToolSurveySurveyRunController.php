@@ -4,13 +4,11 @@ namespace Twoavy\EvaluationTool\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 use StdClass;
-use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyRunIndexRequest;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyRunSurveyPathRequest;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveyStepResultAssetStoreRequest;
@@ -71,6 +69,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
             return is_null($value->parent_step_id);
         });
 
+        // only show if survey is published or in demo mode
         if (!$survey->published && !$this->isDemo) {
             return $this->errorResponse("survey not available", 410);
         }
@@ -99,6 +98,61 @@ class EvaluationToolSurveySurveyRunController extends Controller
             "uuid"   => $request->uuid,
             "survey" => $this->transformData($survey, EvaluationToolSurveyTransformer::class, true),
             "steps"  => $data,
+        ]);
+    }
+
+    public function indexStep($stepSlug, EvaluationToolSurveyRunIndexRequest $request): JsonResponse
+    {
+        $request->request->add(["is_run" => true]);
+
+        // load all steps with slug (is always just one)
+        if (!$step = EvaluationToolSurveyStep::where("slug", $stepSlug)->first()) {
+            return $this->errorResponse("step not found", 409);
+        }
+
+        if (!in_array($step->survey_element->survey_element_type->key, EvaluationToolSurveyStep::SINGLE_STEP_ELEMENT_TYPES)) {
+            return $this->errorResponse("step cannot be loaded with single access", 409);
+        }
+
+        // get survey from first step
+        $survey = $step->survey;
+
+        // prohibit direct access, when single step access is not set in survey
+        if (!$survey->single_step_access) {
+            return $this->errorResponse("step cannot be accessed directly", 409);
+        }
+
+        // only show if survey is published or in demo mode
+        if (!$survey->published && !$this->isDemo) {
+            return $this->errorResponse("survey not available", 410);
+        }
+
+        // set new uuid and apply to request if not supplied
+        if (!$request->has("uuid")) {
+            $uuid = $this->generateUuid();
+            $request->request->add(["uuid" => $uuid]);
+        } else {
+            $uuid = $request->uuid;
+        }
+
+
+        $step->sampleResultPayload = $this->getSampleResultPayload($step);
+
+        $resultsByUuid      = $this->getResultsByUuid($step, $uuid);
+        $step->resultByUuid = $resultsByUuid->result;
+        $step->isAnswered   = $resultsByUuid->isAnswered;
+
+        $survey->status = [
+            "currentStep"  => $step->isAnswered ? -1 : -2,
+            "stepOrdering" => []
+        ];
+
+        $data = $this->showOne($step, 200, EvaluationToolSurveyStepResultCombinedTransformer::class, false, false);
+
+        return response()->json([
+            "uuid"   => $request->uuid,
+            "survey" => $this->transformData($survey, EvaluationToolSurveyTransformer::class, true),
+            "step"   => $data,
         ]);
     }
 
@@ -196,6 +250,80 @@ class EvaluationToolSurveySurveyRunController extends Controller
     }
 
     /**
+     * @param $stepSlug
+     * @param EvaluationToolSurveySurveyStepResultStoreRequest $request
+     * @return JsonResponse
+     */
+    public function storeStep($stepSlug, EvaluationToolSurveySurveyStepResultStoreRequest $request): JsonResponse
+    {
+        // return error if no session id provided
+        if (!$request->has("session_id")) {
+            return $this->errorResponse("no session id (uuid) provided", 409);
+        }
+
+        // get step and return error if not found
+        if (!$step = EvaluationToolSurveyStep::where("slug", $stepSlug)->first()) {
+            return $this->errorResponse("step not found", 409);
+        }
+
+        if (!in_array($step->survey_element->survey_element_type->key, EvaluationToolSurveyStep::SINGLE_STEP_ELEMENT_TYPES)) {
+            return $this->errorResponse("step cannot be loaded with single access", 409);
+        }
+
+        // get survey from first step
+        $survey = $step->survey;
+
+        // prohibit direct access, when single step access is not set in survey
+        if (!$survey->single_step_access) {
+            return $this->errorResponse("step cannot be accessed directly", 409);
+        }
+
+        // only show if survey is published or in demo mode
+        if (!$survey->published && !$this->isDemo) {
+            return $this->errorResponse("survey not available", 410);
+        }
+
+        // check for existing answer
+        if (!$this->checkPreviousStepAnswer($step, $request->session_id)) {
+            return $this->errorResponse("survey result cannot be stored", 409);
+        }
+
+        // get language
+        $language = EvaluationToolSurveyLanguage::where("code", $request->result_language)->first();
+
+        // load existing result or create new one
+        if (!$surveyStepResult = EvaluationToolSurveyStepResult::where("session_id", $request->session_id)
+            ->where("survey_step_id", $request->survey_step_id)
+            ->first()) {
+            $surveyStepResult = new EvaluationToolSurveyStepResult();
+        }
+
+        // set all relevant keys
+        $surveyStepResult->survey_step_id     = $request->survey_step_id;
+        $surveyStepResult->session_id         = $request->session_id;
+        $surveyStepResult->result_value       = $request->result_value;
+        $surveyStepResult->time               = $request->time;
+        $surveyStepResult->result_language_id = $language->id;
+        $surveyStepResult->params             = $step->survey_element->params;
+        $surveyStepResult->answered_at        = Carbon::now();
+
+        // save result
+        $surveyStepResult->save();
+
+        // store audio asset
+        if ($step->survey_element_type->key == "voiceInput") {
+            if (isset($request->result_value)) {
+                if (!isset($request->result_value["audio"])) {
+                    abort(409, "no audio present");
+                }
+                $this->createAudioAsset($request->result_value["audio"], $surveyStepResult);
+            }
+        }
+
+        return $this->showOne($surveyStepResult->refresh());
+    }
+
+    /**
      * @param EvaluationToolSurveyStep $surveyStep
      * @param $sessionId
      * @return bool
@@ -270,7 +398,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
         $response->doneCount      = $this->doneCount;
         $response->remainingCount = $this->remainingCount;
 //        $response->maxCount       = $this->getPathMaximumDepth($path);
-        $response->path           = $path;
+        $response->path = $path;
 
         return $this->successResponse($response);
     }
@@ -619,19 +747,6 @@ class EvaluationToolSurveySurveyRunController extends Controller
                     $upcomingStep   = $surveyStep;
                     break;
                 }
-
-                /* else {
-                    if ($upcomingStep->next_step_id == $surveyStep->id) {
-                        if ($upcomingStep->isAnswered && !$hasUnansweredStep) {
-                            $currentStep = $surveyStep;
-                        } else {
-                            $hasUnansweredStep = true;
-                        }
-                        $stepOrdering[] = $surveyStep->id;
-                        $upcomingStep   = $surveyStep;
-                        break;
-                    }
-                }*/
             }
         }
 

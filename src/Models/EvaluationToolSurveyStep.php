@@ -18,6 +18,8 @@ class EvaluationToolSurveyStep extends Model
 {
     use HasFactory, SoftDeletes;
 
+    const SINGLE_STEP_ELEMENT_TYPES = ['binary', 'yayNay', 'multipleChoice', 'emoji', 'voiceInput', 'textInput', 'starRating'];
+
     // transforms data on api responses
     public $transformer = EvaluationToolSurveyStepTransformer::class;
 
