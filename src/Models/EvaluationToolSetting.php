@@ -12,19 +12,23 @@ class EvaluationToolSetting extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $casts = [
-        "default" => "boolean",
-        "settings" => "object"
-    ];
+    public $transformer = EvaluationToolSettingTransformer::class;
+
     protected $fillable = [
         "default",
         "name",
         "settings",
     ];
-    public $transformer = EvaluationToolSettingTransformer::class;
 
-    public function survey(): HasMany
+    protected $casts = [
+        "default"  => "boolean",
+        "settings" => "object"
+    ];
+
+    protected $withCount = ["surveys"];
+
+    public function surveys(): HasMany
     {
-        return $this->hasMany(EvaluationToolSurvey::class);
+        return $this->hasMany(EvaluationToolSurvey::class, "setting_id");
     }
 }

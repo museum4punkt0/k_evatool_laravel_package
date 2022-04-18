@@ -3,15 +3,17 @@
 namespace Twoavy\EvaluationTool\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Route;
 
 class EvaluationToolSettingStoreRequest extends FormRequest
 {
+
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -21,22 +23,10 @@ class EvaluationToolSettingStoreRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             "name" => 'required|min:3|max:50',
-            "settings" => 'required|array',
-            "settings.pageTitle" => 'required|array',
-            "settings.pageTitle.*" => 'min:3|max:50',
-            "settings.privacy" => 'array',
-            "settings.privacy.*" => 'min:3',
-            "settings.privacyLink" => 'min:3|url',
-            "settings.imprint" => 'array',
-            "settings.imprint.*" => 'min:3',
-            "settings.imprintLink" => 'min:3|url',
-            "settings.socialDescription" => 'array',
-            "settings.socialDescription.*" => 'min:3|max:1000',
-            //
         ];
     }
 }
