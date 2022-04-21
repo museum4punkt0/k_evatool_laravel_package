@@ -57,6 +57,7 @@ Route::prefix('api/evaluation-tool')
         Route::get('surveys/{survey}/stats-trend', [EvaluationToolSurveyStatsController::class, "getStatsTrend"]);
         Route::get('surveys/{survey}/stats-list-scheme', [EvaluationToolSurveyStatsController::class, "getStatsListScheme"]);
         Route::apiResource('settings', EvaluationToolSettingController::class);
+        Route::post('settings-asset', [EvaluationToolSettingController::class, "storeAsset"]);
     });
 
 Route::any('/tus/{any?}', function () {

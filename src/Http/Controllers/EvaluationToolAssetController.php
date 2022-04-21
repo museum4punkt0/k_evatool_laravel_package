@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use getID3;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Spatie\Image\Exceptions\InvalidManipulation;
@@ -160,12 +161,30 @@ class EvaluationToolAssetController extends Controller
         return $metaDataPrepared;
     }
 
-    public function destroy(EvaluationToolAsset $asset): JsonResponse
+    public function destroy(EvaluationToolAsset $asset, Request $request): JsonResponse
     {
         if ($asset->survey_elements()->count() > 0) {
             return $this->errorResponse("cannot be deleted, asset in use", 409);
         }
-        $asset->delete();
+
+        // delete files
+        if($request->has("force")) {
+            $paths = [
+                $asset->filename,
+                "preview/" . $asset->filename,
+                "thumbnail/" . $asset->filename
+            ];
+
+            foreach ($paths as $path) {
+                if ($this->disk->exists($path)) {
+                    $this->disk->delete($path);
+                }
+            }
+            $asset->forceDelete();
+        } else {
+            $asset->delete();
+        }
+
         return $this->showOne($asset);
     }
 }

@@ -4,6 +4,7 @@ namespace Twoavy\EvaluationTool\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use StdClass;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSettingStoreRequest;
@@ -88,5 +89,14 @@ class EvaluationToolSettingController extends Controller
         $setting->delete();
 
         return $this->showOne($setting->refresh());
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function storeAsset(Request $request): JsonResponse
+    {
+        return $this->successResponse($request->allFiles());
     }
 }
