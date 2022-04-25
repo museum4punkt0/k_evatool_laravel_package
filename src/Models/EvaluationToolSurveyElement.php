@@ -116,7 +116,7 @@ class EvaluationToolSurveyElement extends Model
         return $this->hasOne(User::class, "id", "created_by");
     }
 
-    public function updated_by_user(): HasOne
+        public function updated_by_user(): HasOne
     {
         return $this->hasOne(User::class, "id", "updated_by");
     }

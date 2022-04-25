@@ -3,6 +3,7 @@
 namespace Twoavy\EvaluationTool\Transformers;
 
 use League\Fractal\TransformerAbstract;
+use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 
 class EvaluationToolSurveyTransformer extends TransformerAbstract
@@ -32,7 +33,7 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
             "hasResults"             => (boolean)$survey->has_results,
             "statusByUuid"           => $survey->status ?: null,
             "adminLayout"            => $survey->admin_layout ?: [],
-            "settingId"              => $survey->setting_id ?: null,
+            "setting"                => $survey->setting_id ? EvaluationToolHelper::transformModel($survey->setting) : null,
             "createdAt"              => $survey->created_at,
             "createdBy"              => $survey->created_by_user ? $survey->created_by_user->name : null,
             "updatedAt"              => $survey->updated_at,

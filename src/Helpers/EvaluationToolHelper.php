@@ -13,17 +13,23 @@ class EvaluationToolHelper
 {
     public static function transformModel($model, $removeDataKey = true, $transformerOverride = false): ?array
     {
+        // check if model has transformer, otherwise just return model
         if (isset($model->transformer)) {
             $transformer = $model->transformer;
 
+            // override transformer
             if ($transformerOverride) {
                 $transformer = $transformerOverride;
             }
 
+            // load the transformer instance
             $transformation = fractal($model, new $transformer);
+
+            // remove data key
             if ($removeDataKey) {
                 return $transformation->toArray()["data"];
             }
+
             return $transformation->toArray();
         }
         return $model;
