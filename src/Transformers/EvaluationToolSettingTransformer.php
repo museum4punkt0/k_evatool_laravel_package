@@ -2,6 +2,7 @@
 
 namespace Twoavy\EvaluationTool\Transformers;
 
+use Illuminate\Support\Facades\Storage;
 use League\Fractal\TransformerAbstract;
 use Twoavy\EvaluationTool\Models\EvaluationToolSetting;
 
@@ -19,7 +20,7 @@ class EvaluationToolSettingTransformer extends TransformerAbstract
             "id"          => (int)$setting->id,
             "default"     => (boolean)$setting->default,
             "name"        => (string)$setting->name,
-            "setting"     => (object)$setting->settings,
+            "setting"     => $this->transformToUrl($setting->settings, ['logoImage', 'iconImage', 'backgroundImage']),
             "surveyCount" => (int)$setting->surveys_count,
             "createdAt"   => $setting->created_at,
             "createdBy"   => $setting->created_by_user ? $setting->created_by_user->name : null,
@@ -59,4 +60,23 @@ class EvaluationToolSettingTransformer extends TransformerAbstract
             "default" => "default",
         ];
     }
+
+    /**
+     *  transform object values of given keys to url
+     *
+     * @param object $field
+     * @param array $keys
+     * @return object
+     */
+    protected function transformToUrl(object $field,  array $keys): object
+    {
+        foreach ($field as $key => $setting) {
+            if (in_array($key, $keys)) {
+                $field->{$key} = Storage::disk("evaluation_tool_settings_assets")->url($setting);
+            }
+        }
+
+        return $field;
+    }
+
 }
