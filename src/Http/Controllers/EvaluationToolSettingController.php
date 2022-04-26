@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use PhpOffice\PhpSpreadsheet\Settings;
 use StdClass;
+use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSettingAssetStoreRequest;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSettingStoreRequest;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSettingUpdateRequest;
 use Twoavy\EvaluationTool\Models\EvaluationToolSetting;
@@ -101,21 +102,8 @@ class EvaluationToolSettingController extends Controller
      * @param EvaluationToolSetting $setting
      * @return JsonResponse
      */
-    public function storeAsset(Request $request, EvaluationToolSetting $setting): JsonResponse
+    public function storeAsset(EvaluationToolSettingAssetStoreRequest $request, EvaluationToolSetting $setting): JsonResponse
     {
-        $request->validate([
-            'file' => 'image',
-        ]);
-
-        $assetMeta = json_decode($request->assetMeta, true);
-        $settings = json_decode(json_encode($setting['settings']), true);
-
-        // asset subtype validation
-        $validSubTypes = ['logo', 'icon', 'background'];
-        if (!in_array($assetMeta['subType'], $validSubTypes)) {
-            return $this->errorResponse("the given asset subtype is invalid", 422);
-        }
-
         // generate asset file name and store file to the disk
         $pathInfo = pathinfo($request->name);
         $fileName = Str::slug($pathInfo['filename'], '_', 'de')
@@ -125,15 +113,18 @@ class EvaluationToolSettingController extends Controller
         $this->disk->put($fileName, $request->file->getContent());
 
         // remove existing asset file
-        $settingsAssetKey = $assetMeta['subType'] . 'Image';
-        if (isset($settings[$settingsAssetKey])) {
-            $this->disk->delete(basename($settings[$settingsAssetKey]));
+        $settingsAssetKey = $request->decodedAssetMeta['subType'] . 'Image';
+        if (isset($setting->settings->{$settingsAssetKey})) {
+            $this->disk->delete(basename($setting->settings->{$settingsAssetKey}));
         }
 
         // update setting
-        $setting->settings = array_merge($settings, [$settingsAssetKey => $this->disk->url($fileName)]);
+        $tempSettings = $setting->settings;
+        $tempSettings->{$settingsAssetKey} = $fileName;
+        $setting->settings = $tempSettings;
+
         $setting->save();
 
-        return $this->successResponse($request->allFiles());
+        return $this->showOne($setting->refresh());
     }
 }
