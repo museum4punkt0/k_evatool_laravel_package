@@ -9,6 +9,7 @@ use Twoavy\EvaluationTool\Console\Commands\SurveyElementAssets;
 use Twoavy\EvaluationTool\Console\Commands\TestCommand;
 use Twoavy\EvaluationTool\Console\Commands\TypesCommand;
 use Twoavy\EvaluationTool\Console\Commands\SeedSurveyResultsCommand;
+use Twoavy\EvaluationTool\Helpers\EvaluationToolInitialDataHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
 use Twoavy\EvaluationTool\Models\EvaluationToolSetting;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
@@ -106,6 +107,9 @@ class EvaluationToolServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
 
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        // ensures initial data presented in the db (languages, settings)
+        EvaluationToolInitialDataHelper::ensureInitialData();
 
         // observers
         EvaluationToolAsset::observe(EvaluationToolAssetObserver::class);
