@@ -65,14 +65,14 @@ class EvaluationToolSettingTransformer extends TransformerAbstract
      *  transform object values of given keys to url
      *
      * @param object $field
-     * @param array $keys
+     * @param array $transformableKeys
      * @return object
      */
-    protected function transformToUrl(object $field,  array $keys): object
+    protected function transformToUrl(object $field,  array $transformableKeys): object
     {
-        foreach ($field as $key => $setting) {
-            if (in_array($key, $keys)) {
-                $field->{$key} = Storage::disk("evaluation_tool_settings_assets")->url($setting);
+        foreach ($field as $key => $value) {
+            if (in_array($key, $transformableKeys) && $value) {
+                $field->{$key} = Storage::disk("evaluation_tool_settings_assets")->url($value);
             }
         }
 
