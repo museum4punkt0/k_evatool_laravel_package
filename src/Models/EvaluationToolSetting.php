@@ -61,12 +61,12 @@ class EvaluationToolSetting extends Model
      */
     public function setSettingsAttribute($settings)
     {
-        $settingsArray = (array)$settings;
-
         foreach ($this->settingsAssetUrlKeys as $url) {
-            $settingsArray[$url] = basename($settingsArray[$url]);
+            if (isset($settings[$url . "Url"])) {
+                unset($settings[$url . "Url"]);
+            }
         }
 
-        $this->attributes['settings'] = json_encode($settingsArray);
+        $this->attributes['settings'] = json_encode($settings);
     }
 }
