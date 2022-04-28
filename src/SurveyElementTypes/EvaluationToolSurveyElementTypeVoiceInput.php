@@ -48,7 +48,14 @@ class EvaluationToolSurveyElementTypeVoiceInput extends EvaluationToolSurveyElem
 
     public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement): array
     {
-        return [];
+        return [
+            "result_value.manual_text" => [
+                'required',
+                'string',
+                'min:1',
+                'max:1000',
+            ],
+        ];
     }
 
     /**
