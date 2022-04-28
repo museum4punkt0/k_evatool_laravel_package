@@ -808,8 +808,14 @@ class EvaluationToolSurveySurveyRunController extends Controller
         $statusByUuid->isAnswered = false;
         $statusByUuid->result     = null;
 
+
         if ($surveyStep->survey_element_type->key === "video") {
-            if ($surveyStep->survey_step_result_by_uuid($uuid)->get()->count() > 0) {
+
+            $timeBasedStepIds = collect($surveyStep->time_based_steps)->pluck('stepId');
+            $resultStepIds = EvaluationToolSurveyStepResult::where('session_id', $uuid)->get()->pluck('survey_step_id');
+            $allStepsAnswered =  $timeBasedStepIds->diff($resultStepIds)->isEmpty();
+
+            if ($allStepsAnswered) {
                 $statusByUuid->result     = $surveyStep->survey_step_result_by_uuid($uuid)->get()->map(function ($result) {
                     return [
                         "timecode"    => $result->time,
