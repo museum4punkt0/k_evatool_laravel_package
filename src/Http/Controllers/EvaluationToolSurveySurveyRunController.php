@@ -224,9 +224,28 @@ class EvaluationToolSurveySurveyRunController extends Controller
             }
         }
 
+        $resultValue = $request->result_value;
+        if ($surveyStep->survey_element_type->key == "voiceInput") {
+
+            // init result payload
+            $resultPayload = [];
+
+            // check if result value exists
+            if ($surveyStepResult->result_value) {
+                $resultPayload = $surveyStepResult->result_value;
+            }
+
+            // check if manual text exists
+            if ($request->has("result_value.manual_text")) {
+                $resultPayload["manual_text"] = $request->result_value["manual_text"];
+            }
+            $resultValue = $resultPayload;
+        }
+
+
         $surveyStepResult->survey_step_id     = $request->survey_step_id;
         $surveyStepResult->session_id         = $request->session_id;
-        $surveyStepResult->result_value       = $request->result_value;
+        $surveyStepResult->result_value       = $resultValue;
         $surveyStepResult->time               = $request->time;
         $surveyStepResult->result_language_id = $language->id;
         $surveyStepResult->params             = $surveyStep->survey_element->params;
@@ -241,10 +260,9 @@ class EvaluationToolSurveySurveyRunController extends Controller
         // store audio asset
         if ($surveyStep->survey_element_type->key == "voiceInput") {
             if (isset($request->result_value)) {
-                if (!isset($request->result_value["audio"])) {
-                    abort(409, "no audio present");
+                if (isset($request->result_value["audio"])) {
+                    $this->createAudioAsset($request->result_value["audio"], $surveyStepResult);
                 }
-                $this->createAudioAsset($request->result_value["audio"], $surveyStepResult);
             }
         }
 
@@ -315,10 +333,9 @@ class EvaluationToolSurveySurveyRunController extends Controller
         // store audio asset
         if ($step->survey_element_type->key == "voiceInput") {
             if (isset($request->result_value)) {
-                if (!isset($request->result_value["audio"])) {
-                    abort(409, "no audio present");
+                if (isset($request->result_value["audio"])) {
+                    $this->createAudioAsset($request->result_value["audio"], $surveyStepResult);
                 }
-                $this->createAudioAsset($request->result_value["audio"], $surveyStepResult);
             }
         }
 
@@ -563,7 +580,21 @@ class EvaluationToolSurveySurveyRunController extends Controller
             $resultAsset->save();
         }
 
-        $resultValue          = ["resultAssetId" => $resultAsset->id];
+        // init result payload
+        $resultPayload                = new StdClass();
+        $resultPayload->resultAssedId = $resultAsset->id;
+
+        // check if result value exists
+        if ($result->result_value) {
+            $resultPayload = $result->result_value;
+        }
+
+        // check if manual text exists
+        if (request()->has("manual_text")) {
+            $resultPayload->manual_text = request()->result_value["manual_text"];
+        }
+        $resultValue = $resultPayload;
+
         $result->result_value = $resultValue;
         $result->save();
     }

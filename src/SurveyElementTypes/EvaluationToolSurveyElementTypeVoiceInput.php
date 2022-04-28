@@ -6,6 +6,7 @@ use Faker\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use StdClass;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
 use Twoavy\EvaluationTool\Http\Controllers\EvaluationToolSurveyStepResultAssetController;
@@ -50,11 +51,16 @@ class EvaluationToolSurveyElementTypeVoiceInput extends EvaluationToolSurveyElem
     {
         return [
             "result_value.manual_text" => [
-                'required',
+                'sometimes',
                 'string',
                 'min:1',
                 'max:1000',
             ],
+            "result_value.audio"       => [
+                'sometimes',
+                'string',
+                'starts_with:data:audio'
+            ]
         ];
     }
 
