@@ -29,6 +29,9 @@ class EvaluationToolSetting extends Model
 
     protected $withCount = ["surveys"];
 
+    // setting asset keys providing urls
+    public $settingsAssetUrlKeys = ['logoImage', 'iconImage', 'backgroundImage'];
+
     public function surveys(): HasMany
     {
         return $this->hasMany(EvaluationToolSurvey::class, "setting_id");
@@ -47,5 +50,23 @@ class EvaluationToolSetting extends Model
     public function deleted_by_user(): HasOne
     {
         return $this->hasOne(User::class, "id", "deleted_by");
+    }
+
+
+    /**
+     *  save asset's paths always as file basename
+     *
+     * @param $settings
+     * @return void
+     */
+    public function setSettingsAttribute($settings)
+    {
+        $settingsArray = (array)$settings;
+
+        foreach ($this->settingsAssetUrlKeys as $url) {
+            $settingsArray[$url] = basename($url);
+        }
+
+        $this->attributes['settings'] = json_encode($settingsArray);
     }
 }

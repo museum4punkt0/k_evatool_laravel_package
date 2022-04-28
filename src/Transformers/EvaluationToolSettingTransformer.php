@@ -20,7 +20,7 @@ class EvaluationToolSettingTransformer extends TransformerAbstract
             "id"          => (int)$setting->id,
             "default"     => (boolean)$setting->default,
             "name"        => (string)$setting->name,
-            "setting"     => $this->transformToUrl($setting->settings, ['logoImage', 'iconImage', 'backgroundImage']),
+            "setting"     => $this->transformToUrl($setting->settings, $setting->settingsAssetUrlKeys),
             "surveyCount" => (int)$setting->surveys_count,
             "createdAt"   => $setting->created_at,
             "createdBy"   => $setting->created_by_user ? $setting->created_by_user->name : null,
