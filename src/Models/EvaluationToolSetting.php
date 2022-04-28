@@ -64,7 +64,7 @@ class EvaluationToolSetting extends Model
         $settingsArray = (array)$settings;
 
         foreach ($this->settingsAssetUrlKeys as $url) {
-            $settingsArray[$url] = basename($url);
+            $settingsArray[$url] = basename($settingsArray[$url]);
         }
 
         $this->attributes['settings'] = json_encode($settingsArray);
