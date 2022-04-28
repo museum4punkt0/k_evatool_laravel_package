@@ -42,7 +42,9 @@ class EvaluationToolSurveyElementTypeVideo extends EvaluationToolSurveyElementTy
 
     public static function prepareResultRules(EvaluationToolSurveyElement $surveyElement): array
     {
-        return [];
+        return [
+            "deleted" => "sometimes|boolean"
+        ];
     }
 
     /**
@@ -131,12 +133,12 @@ class EvaluationToolSurveyElementTypeVideo extends EvaluationToolSurveyElementTy
         if (!isset($results["comments"][$language->code])) {
             $results["comments"][$language->code] = [];
         }
-        $text = $result->result_value["text"];
-        $time = $result->time;
-        $value = new StdClass;
-        $value->sessionId = $result->session_id;
-        $value->time = $time;
-        $value->text = $text;
+        $text                                   = $result->result_value["text"];
+        $time                                   = $result->time;
+        $value                                  = new StdClass;
+        $value->sessionId                       = $result->session_id;
+        $value->time                            = $time;
+        $value->text                            = $text;
         $results["comments"][$language->code][] = $value;
 
         return $results;

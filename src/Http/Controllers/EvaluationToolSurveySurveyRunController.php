@@ -191,10 +191,21 @@ class EvaluationToolSurveySurveyRunController extends Controller
         $language = EvaluationToolSurveyLanguage::where("code", $request->result_language)->first();
 
         $deleteResult = false;
+        // check if result shall be deleted
+        if ($request->has("delete_result") && $request->delete_result) {
+            $deleteResult = true;
+        }
 
         if (!$surveyStepResult = EvaluationToolSurveyStepResult::where("session_id", $request->session_id)
             ->where("survey_step_id", $request->survey_step_id)
+            ->when($surveyStep->survey_element_type->key === "video", function ($query) use ($request) {
+                $query->where("time", $request->time);
+            })
             ->first()) {
+            // send error if no result but deleted param is sent
+            if ($deleteResult) {
+                return $this->errorResponse("no result found, but deleted parameter was send", 409);
+            }
             $surveyStepResult = new EvaluationToolSurveyStepResult();
         } else {
             // video can store several results, but overwrite if result is at same timecode position
@@ -203,19 +214,10 @@ class EvaluationToolSurveySurveyRunController extends Controller
                 if (!$request->has("time")) {
                     return $this->errorResponse("video results must send a timecode (i.e. 00:00:02:25)", 409);
                 }
-
-                // check if result shall be deleted
-                if (!$request->has("delete_result") && $request->delete_result == true) {
-                    $deleteResult = true;
-                }
-
-                if (!$surveyStepResult = EvaluationToolSurveyStepResult::where("session_id", $request->session_id)
-                    ->where("survey_step_id", $request->survey_step_id)
-                    ->where("time", $request->time)
-                    ->first()) {
-                    $surveyStepResult = new EvaluationToolSurveyStepResult();
-                } else {
-                    $surveyStepResult->changed_answer++;
+                // delete records
+                if ($deleteResult) {
+                    $surveyStepResult->delete();
+                    return $this->showOne($surveyStepResult->refresh());
                 }
             } else {
                 $surveyStepResult->changed_answer++;
