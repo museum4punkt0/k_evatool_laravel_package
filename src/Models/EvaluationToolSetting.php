@@ -62,8 +62,8 @@ class EvaluationToolSetting extends Model
     public function setSettingsAttribute($settings)
     {
         foreach ($this->settingsAssetUrlKeys as $url) {
-            if (isset($settings[$url . "Url"])) {
-                unset($settings[$url . "Url"]);
+            if (isset($settings->{$url . "Url"})) {
+                unset($settings->{$url . "Url"});
             }
         }
 
