@@ -14,7 +14,6 @@ class EvaluationToolSurveyStoreRequest extends FormRequest
     {
         parent::__construct();
         EvaluationToolHelper::reverseTransform($request, EvaluationToolSurveyTransformer::class);
-
     }
     /**
      * Determine if the user is authorized to make this request.
@@ -41,7 +40,7 @@ class EvaluationToolSurveyStoreRequest extends FormRequest
             "published"          => "boolean",
             "languages"          => "array",
             "languages.*"        => ['required', 'min:2', 'max:2', 'exists:evaluation_tool_survey_languages,code'],
-            // "setting_id" => ['exists:evaluation_tool_settings,id']
+            "setting_id"          => ['required', 'exists:evaluation_tool_settings,id']
         ];
     }
 }
