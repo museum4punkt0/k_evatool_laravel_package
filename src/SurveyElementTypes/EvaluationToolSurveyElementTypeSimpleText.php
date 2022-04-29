@@ -10,6 +10,7 @@ use Twoavy\EvaluationTool\Models\EvaluationToolSurveyElement;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStepResult;
+use Twoavy\EvaluationTool\Rules\IsMediaType;
 
 class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElementTypeBase
 {
@@ -80,10 +81,14 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
      */
     public static function rules(): array
     {
-        $maxCount = 10;
         return [
             'params.text'    => ['required', 'array', 'min:1'],
             'params.text.*'  => self::TEXT_RULES,
+            'params.url'     => ['required', 'url'],
+            'params.assetId' => [
+                "exists:evaluation_tool_assets,id",
+                new IsMediaType("image"),
+            ],
             'languageKeys.*' => ['required', 'exists:evaluation_tool_survey_languages,code'],
         ];
     }
