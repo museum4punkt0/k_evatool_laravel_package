@@ -77,6 +77,13 @@ class EvaluationToolSurveyStepResultCombinedTransformer extends TransformerAbstr
             }
         }
 
+        // Simple text
+        if ($type == "simpleText" && isset($params->assetId)) {
+            if ($imageAsset = EvaluationToolAsset::find($params->assetId)) {
+                $params->imageAsset = $imageAsset->only("id", "urls");
+            }
+        }
+
         // Yay nay
         if ($type == "yayNay" && isset($params->assetIds) && is_array($params->assetIds) && !empty($params->assetIds)) {
 

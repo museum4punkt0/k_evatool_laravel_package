@@ -107,6 +107,14 @@ class EvaluationToolSurveyElementController extends Controller
             }
         }
 
+        // simple text
+        if ($surveyElement->survey_element_type_id == 3) {
+            $surveyElement->assets()->detach();
+            if (isset($surveyElement->params->assetId)) {
+                $surveyElement->assets()->attach($surveyElement->params->assetId);
+            }
+        }
+
         // video
         if ($surveyElement->survey_element_type_id == 7) {
             $surveyElement->assets()->detach();

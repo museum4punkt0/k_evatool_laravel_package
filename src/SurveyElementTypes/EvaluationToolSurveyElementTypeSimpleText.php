@@ -84,7 +84,7 @@ class EvaluationToolSurveyElementTypeSimpleText extends EvaluationToolSurveyElem
         return [
             'params.text'    => ['required', 'array', 'min:1'],
             'params.text.*'  => self::TEXT_RULES,
-            'params.url'     => ['required', 'url'],
+            'params.url'     => ['url'],
             'params.assetId' => [
                 "exists:evaluation_tool_assets,id",
                 new IsMediaType("image"),
