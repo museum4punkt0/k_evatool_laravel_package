@@ -17,13 +17,6 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
      */
     public function transform(EvaluationToolSurvey $survey): array
     {
-        $availableSettings = EvaluationToolSetting::all()->transform(function ($setting) {
-            return [
-                "id" => $setting->id,
-                "name" => $setting->name
-            ];
-        });
-
         $transformed = [
             "id"                     => (int)$survey->id,
             "name"                   => (string)$survey->name,
@@ -43,7 +36,6 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
             "adminLayout"            => $survey->admin_layout ?: [],
             "setting"                => $survey->setting_id ? EvaluationToolHelper::transformModel($survey->setting) : null,
             "settingId"              => $survey->setting_id,
-            "availableSettings"      => $availableSettings,
             "createdAt"              => $survey->created_at,
             "createdBy"              => $survey->created_by_user ? $survey->created_by_user->name : null,
             "updatedAt"              => $survey->updated_at,
