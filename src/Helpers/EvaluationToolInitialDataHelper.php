@@ -45,7 +45,16 @@ class EvaluationToolInitialDataHelper
     protected static function ensureSetting(): void
     {
         if (!EvaluationToolSetting::first()) {
-            $settings = new stdClass();
+            // get all languages
+            $languages             = EvaluationToolSurveyLanguage::all()->pluck("code");
+
+            // init settings
+            $settings              = new stdClass();
+            $settings->companyName = new StdClass();
+            $languages->each(function ($languageKey) use ($settings) {
+                $settings->companyName->{$languageKey} = "Company name";
+            });
+
             EvaluationToolSetting::create([
                 'name'     => 'Default Configuration',
                 'default'  => true,
