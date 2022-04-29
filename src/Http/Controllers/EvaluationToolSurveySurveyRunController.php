@@ -839,9 +839,17 @@ class EvaluationToolSurveySurveyRunController extends Controller
         $statusByUuid->isAnswered = false;
         $statusByUuid->result     = null;
 
+
         if ($surveyStep->survey_element_type->key === "video") {
-            if ($surveyStep->survey_step_result_by_uuid($uuid)->get()->count() > 0) {
-                $statusByUuid->result     = $surveyStep->survey_step_result_by_uuid($uuid)->get()->map(function ($result) {
+
+            $timeBasedStepIds = collect($surveyStep->time_based_steps)->pluck('stepId');
+            $resultStepIds = EvaluationToolSurveyStepResult::where('session_id', $uuid)->get()->pluck('survey_step_id');
+            // all steps are answered, if all time based step ids presented in result step ids collection
+            $allStepsAnswered = $resultStepIds->intersect($timeBasedStepIds)->count() === $timeBasedStepIds->count();
+
+
+            if ($allStepsAnswered) {
+                $statusByUuid->result = $surveyStep->survey_step_result_by_uuid($uuid)->get()->map(function ($result) {
                     return [
                         "timecode"    => $result->time,
                         "resultValue" => $result->result_value
