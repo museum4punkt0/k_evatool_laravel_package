@@ -45,7 +45,11 @@ class EvaluationToolSurveyStepObserver
 
         // if survey is archived, prevent changes to elements which are directly used in archived survey
         if ($surveyStep->survey->archived) {
-            abort(409, 'Survey step update forbidden as survey is archived');
+            /*return response()->json([
+                'success' => false,
+                'reason' => 'Forbidde: cannot edit step which is part of archived survey'
+            ], 409);*/
+            abort(409, 'cannot edit steps of archived survey');
         }
 
         if ($surveyStep->survey_element->survey_element_type->key === "video") {

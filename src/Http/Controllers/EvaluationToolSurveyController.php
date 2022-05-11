@@ -136,11 +136,9 @@ class EvaluationToolSurveyController extends Controller
         $survey->archived = !$survey->archived;
         if ($survey->archived === true) {
             $survey->archived_at = now();
-            $survey->published = !$survey->published;
+            $survey->published = false;
         } else {
             $survey->archived_at = null;
-
-
         }
         $survey->save();
 
