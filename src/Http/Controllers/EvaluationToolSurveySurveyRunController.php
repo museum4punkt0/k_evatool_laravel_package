@@ -95,9 +95,10 @@ class EvaluationToolSurveySurveyRunController extends Controller
         $data = $this->showAll($surveySteps, 200, EvaluationToolSurveyStepResultCombinedTransformer::class, false, false);
 
         return response()->json([
-            "uuid"   => $request->uuid,
-            "survey" => $this->transformData($survey, EvaluationToolSurveyTransformer::class, true),
-            "steps"  => $data,
+            "uuid"       => $request->uuid,
+            "survey"     => $this->transformData($survey, EvaluationToolSurveyTransformer::class, true),
+            "steps"      => $data,
+            "surveyPath" => $this->surveyPath($surveySlug, $uuid)
         ]);
     }
 
@@ -369,10 +370,15 @@ class EvaluationToolSurveySurveyRunController extends Controller
      * Retrieve the survey paths possible
      *
      * @param $surveySlug
-     * @param EvaluationToolSurveyRunSurveyPathRequest $request
+     * @param EvaluationToolSurveyRunIndexRequest $request
      * @return JsonResponse
      */
-    public function getSurveyPath($surveySlug, EvaluationToolSurveyRunSurveyPathRequest $request): JsonResponse
+    public function getSurveyPath($surveySlug, EvaluationToolSurveyRunIndexRequest $request): JsonResponse
+    {
+        return $this->successResponse($this->surveyPath($surveySlug, $request->uuid));
+    }
+
+    public function surveyPath($surveySlug, $uuid = null)
     {
         if (!$survey = EvaluationToolSurvey::where("slug", $surveySlug)->first()) {
             return $this->errorResponse("survey not found", 409);
@@ -380,8 +386,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
 
         $results = null;
 
-        if ($request->has("uuid")) {
-            $uuid    = $request->uuid;
+        if ($uuid) {
             $results = EvaluationToolSurveyStepResult::where("session_id", $uuid)->whereIn("survey_step_id", $survey->survey_steps->pluck("id"))->orderBy("answered_at", "ASC")->get();
         }
 
@@ -419,7 +424,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
 //        $response->maxCount       = $this->getPathMaximumDepth($path);
         $response->path = $path;
 
-        return $this->successResponse($response);
+        return $response;
     }
 
     public function followPath($stepId, $survey, $results, $stepIsDone = false, $remaining = false): array
@@ -843,13 +848,13 @@ class EvaluationToolSurveySurveyRunController extends Controller
         if ($surveyStep->survey_element_type->key === "video") {
 
             $timeBasedStepIds = collect($surveyStep->time_based_steps)->pluck('stepId');
-            $resultStepIds = EvaluationToolSurveyStepResult::where('session_id', $uuid)->get()->pluck('survey_step_id');
+            $resultStepIds    = EvaluationToolSurveyStepResult::where('session_id', $uuid)->get()->pluck('survey_step_id');
             // all steps are answered, if all time based step ids presented in result step ids collection
             $allStepsAnswered = $resultStepIds->intersect($timeBasedStepIds)->count() === $timeBasedStepIds->count();
 
 
             if ($allStepsAnswered) {
-                $statusByUuid->result = $surveyStep->survey_step_result_by_uuid($uuid)->get()->map(function ($result) {
+                $statusByUuid->result     = $surveyStep->survey_step_result_by_uuid($uuid)->get()->map(function ($result) {
                     return [
                         "timecode"    => $result->time,
                         "resultValue" => $result->result_value
