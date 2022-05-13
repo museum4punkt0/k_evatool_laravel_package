@@ -25,6 +25,7 @@ use Twoavy\EvaluationTool\Traits\EvaluationToolResponse;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyStepResultCombinedTransformer;
 use Twoavy\EvaluationTool\Http\Requests\EvaluationToolSurveySurveyStepResultStoreRequest;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyTransformer;
+use Twoavy\EvaluationTool\Utilities\EvaluationToolSurveyProgress;
 
 class EvaluationToolSurveySurveyRunController extends Controller
 {
@@ -98,7 +99,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
             "uuid"       => $request->uuid,
             "survey"     => $this->transformData($survey, EvaluationToolSurveyTransformer::class, true),
             "steps"      => $data,
-            "surveyPath" => $this->surveyPath($surveySlug, $uuid)
+//            "surveyPath" => (new EvaluationToolSurveyProgress)->surveyPath($surveySlug, $uuid)
         ]);
     }
 
@@ -375,178 +376,10 @@ class EvaluationToolSurveySurveyRunController extends Controller
      */
     public function getSurveyPath($surveySlug, EvaluationToolSurveyRunIndexRequest $request): JsonResponse
     {
-        return $this->successResponse($this->surveyPath($surveySlug, $request->uuid));
+        return $this->successResponse((new EvaluationToolSurveyProgress())->surveyPath($surveySlug, $request->uuid));
     }
 
-    public function surveyPath($surveySlug, $uuid = null)
-    {
-        if (!$survey = EvaluationToolSurvey::where("slug", $surveySlug)->first()) {
-            return $this->errorResponse("survey not found", 409);
-        }
 
-        $results = null;
-
-        if ($uuid) {
-            $results = EvaluationToolSurveyStepResult::where("session_id", $uuid)->whereIn("survey_step_id", $survey->survey_steps->pluck("id"))->orderBy("answered_at", "ASC")->get();
-        }
-
-        $path         = new StdClass;
-        $firstStep    = $survey->survey_steps->where("is_first_step")->first();
-        $path->stepId = $firstStep->id;
-
-        // check of step has results and label as "done"
-        $done      = false;
-        $remaining = false;
-
-        if ($results->first() && $results->first()->survey_step_id == $firstStep->id) {
-            $path->done = true;
-            $done       = true;
-            $this->doneCount++;
-
-            if ($results->count() == 1) {
-                $lastResult = $results->first();
-            }
-
-            // remove the first result
-            $results->shift();
-            if ($results->count() === 0) {
-                $path->lastDone = true;
-                $remaining      = true;
-                $path->ended    = $this->checkLastResultForEnd($lastResult, $firstStep);
-            }
-        }
-
-        $path->children = $this->followPath($firstStep->id, $survey, $results, $done, $remaining);
-
-        $response                 = new StdClass;
-        $response->doneCount      = $this->doneCount;
-        $response->remainingCount = $this->remainingCount;
-//        $response->maxCount       = $this->getPathMaximumDepth($path);
-        $response->path = $path;
-
-        return $response;
-    }
-
-    public function followPath($stepId, $survey, $results, $stepIsDone = false, $remaining = false): array
-    {
-        $step        = $survey->survey_steps->find($stepId);
-        $element     = $step->survey_element;
-        $elementType = $element->survey_element_type->key;
-
-        $pathParts = [];
-
-        if ($step->next_step_id) {
-            $pathParts[] = $survey->survey_steps->find($step->next_step_id)->id;
-        }
-
-        if ($step->result_based_next_steps) {
-
-            // the same array merge works on all element types. yet they are split here in case they need to be handled individually
-            if ($elementType == "emoji") {
-                $pathParts = array_merge($pathParts, collect($step->result_based_next_steps)->pluck("stepId")->toArray());
-            }
-            if ($elementType == "multipleChoice") {
-                $pathParts = array_merge($pathParts, collect($step->result_based_next_steps)->pluck("stepId")->toArray());
-            }
-            if ($elementType == "binary") {
-                $pathParts = array_merge($pathParts, collect($step->result_based_next_steps)->pluck("stepId")->toArray());
-            }
-            if ($elementType == "starRating") {
-                $pathParts = array_merge($pathParts, collect($step->result_based_next_steps)->pluck("stepId")->toArray());
-            }
-        }
-
-        // array of elements that shall be amended to the path
-        $pathAmend = [];
-
-        if (!empty($pathParts)) {
-            foreach ($pathParts as $pathPart) {
-                $subPath         = new StdClass;
-                $subPath->stepId = $pathPart;
-
-                // check if there are (still) results and previous step is done
-                $done = $stepIsDone;
-                if ($results->count() > 0 && $stepIsDone) {
-
-                    // check of step has results and label as "done"
-                    if ($results->first()->survey_step_id == $pathPart) {
-                        $subPath->done = true;
-                        $done          = true;
-                        $this->doneCount++;
-
-                        if ($results->count() == 1) {
-                            $lastResult = $results->first();
-                        }
-
-                        // remove the first result
-                        $results->shift();
-                        if ($results->count() == 0) {
-                            $subPath->lastDone = true;
-                            $remaining         = true;
-                            $subPath->ended    = $this->checkLastResultForEnd($lastResult, $survey->survey_steps->find($pathPart));
-                        }
-                    }
-                }
-
-                // keep following the path recursively
-                if ($children = $this->followPath($pathPart, $survey, $results, $done, $remaining)) {
-                    $subPath->children = $children;
-                }
-
-                $pathAmend[] = $subPath;
-            }
-        }
-
-        return $pathAmend;
-    }
-
-    public function checkLastResultForEnd($result, $step): bool
-    {
-        $elementType = $step->survey_element_type->key;
-
-        if (!$step->next_step_id) {
-            if (!$step->result_based_next_steps) {
-                return true;
-            } else {
-                if ($elementType == "emoji") {
-                    return EvaluationToolSurveyElementTypeEmoji::isResultBasedMatch($result, $step);
-                }
-
-                if ($elementType == "binary") {
-                    return EvaluationToolSurveyElementTypeBinary::isResultBasedMatch($result, $step);
-                }
-
-                if ($elementType == "starRating") {
-                    return EvaluationToolSurveyElementTypeStarRating::isResultBasedMatch($result, $step);
-                }
-
-                if ($elementType == "multipleChoice") {
-                    return EvaluationToolSurveyElementTypeMultipleChoice::isResultBasedMatch($result, $step);
-                }
-            }
-        }
-        return false;
-    }
-
-    public function getPathMaximumDepth($path)
-    {
-        return $this->walkPath($path->children);
-    }
-
-    public function walkPath($path, $depth = 1)
-    {
-        foreach ($path as $subPath) {
-            if (isset($subPath->children)) {
-                $depth++;
-                $newDepth = $this->walkPath($subPath->children, $depth);
-//                echo $newDepth . "-" . $depth . PHP_EOL;
-                if ($newDepth == $depth) {
-//                    $depth--;
-                }
-            }
-        }
-        return $depth;
-    }
 
     public function createAudioAsset($audioData, EvaluationToolSurveyStepResult $result)
     {
@@ -811,9 +644,10 @@ class EvaluationToolSurveySurveyRunController extends Controller
     public function getResultBasedNextStep($surveyStep)
     {
         switch ($surveyStep->survey_element->survey_element_type->key) {
-            case "binary":
-                $stepId = EvaluationToolSurveyElementTypeBinary::getResultBasedNextStep($surveyStep);
-                break;
+//            TODO: BUG if result based match
+//            case "binary":
+//                $stepId = EvaluationToolSurveyElementTypeBinary::getResultBasedNextStep($surveyStep);
+//                break;
             case "starRating":
                 $stepId = EvaluationToolSurveyElementTypeStarRating::getResultBasedNextStep($surveyStep);
                 break;
