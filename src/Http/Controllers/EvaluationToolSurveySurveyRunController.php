@@ -376,7 +376,7 @@ class EvaluationToolSurveySurveyRunController extends Controller
      */
     public function getSurveyPath($surveySlug, EvaluationToolSurveyRunIndexRequest $request): JsonResponse
     {
-        return $this->successResponse((new EvaluationToolSurveyProgress())->surveyPath($surveySlug, $request->uuid));
+        return $this->successResponse((new EvaluationToolSurveyProgress($request->uuid))->surveyPath($surveySlug));
     }
 
 
@@ -644,10 +644,9 @@ class EvaluationToolSurveySurveyRunController extends Controller
     public function getResultBasedNextStep($surveyStep)
     {
         switch ($surveyStep->survey_element->survey_element_type->key) {
-//            TODO: BUG if result based match
-//            case "binary":
-//                $stepId = EvaluationToolSurveyElementTypeBinary::getResultBasedNextStep($surveyStep);
-//                break;
+            case "binary":
+                $stepId = EvaluationToolSurveyElementTypeBinary::getResultBasedNextStep($surveyStep);
+                break;
             case "starRating":
                 $stepId = EvaluationToolSurveyElementTypeStarRating::getResultBasedNextStep($surveyStep);
                 break;

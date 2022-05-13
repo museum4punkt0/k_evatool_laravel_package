@@ -13,15 +13,18 @@ use Twoavy\EvaluationTool\SurveyElementTypes\EvaluationToolSurveyElementTypeStar
 
 class EvaluationToolSurveyProgress
 {
-    public function __construct()
+    public function __construct($uuid)
     {
-        $this->doneCount = 0;
+        $this->uuid = $uuid;
 
+        $this->doneCount = 0;
         // Helper to determine survey's current step inside path
         $this->currentStepReminder = null;
+
+        $this->timeBasedSteps = null;
     }
 
-    public function surveyPath($surveySlug, $uuid = null)
+    public function surveyPath($surveySlug)
     {
         if (!$survey = EvaluationToolSurvey::where("slug", $surveySlug)->first()) {
             return $this->errorResponse("survey not found", 409);
@@ -29,8 +32,8 @@ class EvaluationToolSurveyProgress
 
         $results = null;
 
-        if ($uuid) {
-            $results = EvaluationToolSurveyStepResult::where("session_id", $uuid)
+        if ($this->uuid) {
+            $results = EvaluationToolSurveyStepResult::where("session_id", $this->uuid)
                 ->whereIn("survey_step_id", $survey->survey_steps->pluck("id"))
                 ->orderBy("answered_at", "ASC")->get();
         }
@@ -50,6 +53,7 @@ class EvaluationToolSurveyProgress
 
             if ($results->count() == 1) {
                 $lastResult = $results->first();
+                $this->setCurrentStepReminder($lastResult);
             }
 
             // remove the first result
@@ -61,7 +65,7 @@ class EvaluationToolSurveyProgress
             }
         }
 
-        $path->children = $this->followPath($firstStep->id, $survey, $results, $uuid, $done, $remaining);
+        $path->children = $this->followPath($firstStep->id, $survey, $results, $done, $remaining);
 
         $remainingPath = $this->getRemainingPath($path);
         $remainingCount = $this->getPathDepth($remainingPath);
@@ -72,18 +76,24 @@ class EvaluationToolSurveyProgress
         $response->remainingCount    = $remainingCount;
         $response->maxCount          = $maxCount;
         $response->currentStepNumber = $remainingCount === 0 ? $maxCount : $this->doneCount + 1;
+        $response->remainingPath     = $remainingPath;
         $response->path              = $path;
 
         return $response;
     }
 
-    public function followPath($stepId, $survey, $results, $uuid, $stepIsDone = false, $remaining = false): array
+    public function followPath($stepId, $survey, $results, $stepIsDone = false, $remaining = false): array
     {
         $step        = $survey->survey_steps->find($stepId);
         $element     = $step->survey_element;
         $elementType = $element->survey_element_type->key;
 
         $pathParts = [];
+
+//        TODO: skip time based steps
+        if (isset($step->time_based_steps)) {
+            $this->timeBasedSteps = collect($step->time_based_steps)->pluck('stepId');
+        }
 
         if ($step->next_step_id) {
             $pathParts[] = $survey->survey_steps->find($step->next_step_id)->id;
@@ -117,7 +127,6 @@ class EvaluationToolSurveyProgress
                 // check if there are (still) results and previous step is done
                 $done = $stepIsDone;
                 if ($results->count() > 0 && $stepIsDone) {
-
                     // check of step has results and label as "done"
                     if ($results->first()->survey_step_id == $pathPart) {
                         $subPath->done = true;
@@ -126,9 +135,7 @@ class EvaluationToolSurveyProgress
 
                         if ($results->count() == 1) {
                             $lastResult = $results->first();
-                            $lastStep = $lastResult->survey_step;
-                            $lastStep->resultByUuid = (new EvaluationToolSurveySurveyRunController)->getResultsByUuid($lastStep, $uuid)->result;
-                            $this->currentStepReminder =  (new EvaluationToolSurveySurveyRunController)->getResultBasedNextStep($lastStep)->id;
+                            $lastStep = $this->setCurrentStepReminder($lastResult);
                         }
 
                         $results->shift();
@@ -136,8 +143,8 @@ class EvaluationToolSurveyProgress
                         if ($results->count() == 0) {
                             $subPath->lastDone = true;
                             $remaining         = true;
-                            $subPath->ended    = $this->checkLastResultForEnd($lastResult, $survey->survey_steps->find($pathPart));
-                            $subPath->nextStep    = $this->currentStepReminder;
+                            $subPath->ended    = $this->checkLastResultForEnd($lastResult, $lastStep);
+                            $subPath->nextStep = $this->currentStepReminder;
                         }
                     }
                 }
@@ -148,7 +155,7 @@ class EvaluationToolSurveyProgress
                 }
 
                 // keep following the path recursively
-                if ($children = $this->followPath($pathPart, $survey, $results, $uuid, $done, $remaining)) {
+                if ($children = $this->followPath($pathPart, $survey, $results, $done, $remaining)) {
                     $subPath->children = $children;
                 }
 
@@ -170,10 +177,10 @@ class EvaluationToolSurveyProgress
                 if ($elementType == "emoji") {
                     return EvaluationToolSurveyElementTypeEmoji::isResultBasedMatch($result, $step);
                 }
-// TODO: BUG if result based match
-//                if ($elementType == "binary") {
-//                    return EvaluationToolSurveyElementTypeBinary::isResultBasedMatch($result, $step);
-//                }
+
+                if ($elementType == "binary") {
+                    return EvaluationToolSurveyElementTypeBinary::isResultBasedMatch($result, $step);
+                }
 
                 if ($elementType == "starRating") {
                     return EvaluationToolSurveyElementTypeStarRating::isResultBasedMatch($result, $step);
@@ -240,6 +247,26 @@ class EvaluationToolSurveyProgress
         }
 
         return $remainingPath;
+    }
+
+    /**
+     *  Sets currentStepReminder helper to determine survey's current step inside path
+     *
+     * @param $lastResult
+     * @return mixed
+     */
+    protected function setCurrentStepReminder($lastResult)
+    {
+        $lastStep = $lastResult->survey_step;
+
+        if (isset($lastStep->result_based_step_id)) {
+            $lastStep->resultByUuid = (new EvaluationToolSurveySurveyRunController)->getResultsByUuid($lastStep, $this->uuid)->result;
+            $this->currentStepReminder =  (new EvaluationToolSurveySurveyRunController)->getResultBasedNextStep($lastStep)->id;
+        } else {
+            $this->currentStepReminder = $lastStep->next_step_id;
+        }
+
+        return $lastStep;
     }
 
 }
