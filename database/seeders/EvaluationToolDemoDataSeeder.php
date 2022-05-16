@@ -3,6 +3,8 @@
 namespace Twoavy\EvaluationTool\Seeders;
 
 use Illuminate\Database\Seeder;
+use Twoavy\EvaluationTool\Models\EvaluationToolSetting;
+use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Seeders\demo\EvaluationToolDemoSurveyAllElementTypes;
 use Twoavy\EvaluationTool\Seeders\demo\EvaluationToolDemoSurveyResultBased;
 use Twoavy\EvaluationTool\Seeders\Demo\EvaluationToolDemoSurveySimpleLinear;
@@ -21,5 +23,10 @@ class EvaluationToolDemoDataSeeder extends Seeder
             EvaluationToolDemoSurveyAllElementTypes::class,
             EvaluationToolDemoSurveyResultBased::class,
         ]);
+
+        EvaluationToolSurvey::all()->each(function ($survey) {
+            $survey->setting_id = EvaluationToolSetting::first()->id;
+            $survey->save();
+        });
     }
 }

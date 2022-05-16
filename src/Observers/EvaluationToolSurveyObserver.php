@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyLanguage;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurveyStep;
-use Twoavy\EvaluationTool\Seeders\EvaluationToolSurveyLanguageSeeder;
+use Twoavy\EvaluationTool\Seeders\EvaluationToolSettingSeeder;
 
 class EvaluationToolSurveyObserver
 {

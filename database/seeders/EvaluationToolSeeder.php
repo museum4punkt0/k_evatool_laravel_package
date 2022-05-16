@@ -19,6 +19,7 @@ class EvaluationToolSeeder extends Seeder
 
         $this->call([
             EvaluationToolSurveyLanguageSeeder::class,
+            EvaluationToolSettingSeeder::class,
             EvaluationToolAssetSeeder::class,
             EvaluationToolDemoDataSeeder::class
             //            EvaluationToolSurveySeeder::class,

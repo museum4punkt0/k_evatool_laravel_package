@@ -33,7 +33,6 @@ class EvaluationToolDemoSurveyAllElementTypes extends Seeder
         // set survey id
         $surveyId = $survey->id;
 
-
         // create elements
         EvaluationToolSurveyElementFactory::times(1)->simpleText([
             "text" => [
