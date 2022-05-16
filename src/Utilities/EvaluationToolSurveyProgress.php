@@ -21,7 +21,8 @@ class EvaluationToolSurveyProgress
         // Helper to determine survey's current step inside path
         $this->currentStepReminder = null;
 
-        $this->timeBasedSteps = null;
+        $this->remainingPath = null;
+        $this->remainingCount = 1;
     }
 
     public function surveyPath($surveySlug)
@@ -33,9 +34,20 @@ class EvaluationToolSurveyProgress
         $results = null;
 
         if ($this->uuid) {
+            // get time based steps to remove those from the results list
+            // they give no information about next step (not relevant for survey progress detection tree)
+            $timeBasedStepIds = $survey
+                ->survey_steps()
+                ->whereNotNull('time_based_steps')
+                ->pluck('time_based_steps')
+                ->flatten()
+                ->pluck('stepId');
+
             $results = EvaluationToolSurveyStepResult::where("session_id", $this->uuid)
                 ->whereIn("survey_step_id", $survey->survey_steps->pluck("id"))
+                ->whereNotIn("survey_step_id", $timeBasedStepIds)
                 ->orderBy("answered_at", "ASC")->get();
+
         }
 
         $path         = new StdClass;
@@ -46,7 +58,7 @@ class EvaluationToolSurveyProgress
         $done      = false;
         $remaining = false;
 
-        if ($results->first() && $results->first()->survey_step_id == $firstStep->id) {
+        if ($results->isNotEmpty() && $results->first()->survey_step_id == $firstStep->id) {
             $path->done = true;
             $done       = true;
             $this->doneCount++;
@@ -67,8 +79,7 @@ class EvaluationToolSurveyProgress
 
         $path->children = $this->followPath($firstStep->id, $survey, $results, $done, $remaining);
 
-        $remainingPath = $this->getRemainingPath($path);
-        $remainingCount = $this->getPathDepth($remainingPath);
+        $remainingCount = $this->getRemainingCount($path);
         $maxCount = $this->doneCount + $remainingCount;
 
         $response                    = new StdClass;
@@ -76,7 +87,6 @@ class EvaluationToolSurveyProgress
         $response->remainingCount    = $remainingCount;
         $response->maxCount          = $maxCount;
         $response->currentStepNumber = $remainingCount === 0 ? $maxCount : $this->doneCount + 1;
-        $response->remainingPath     = $remainingPath;
         $response->path              = $path;
 
         return $response;
@@ -89,11 +99,6 @@ class EvaluationToolSurveyProgress
         $elementType = $element->survey_element_type->key;
 
         $pathParts = [];
-
-//        TODO: skip time based steps
-        if (isset($step->time_based_steps)) {
-            $this->timeBasedSteps = collect($step->time_based_steps)->pluck('stepId');
-        }
 
         if ($step->next_step_id) {
             $pathParts[] = $survey->survey_steps->find($step->next_step_id)->id;
@@ -198,55 +203,53 @@ class EvaluationToolSurveyProgress
      *  Get the survey path depth
      *
      * @param $path
-     * @return int
+     * @param int $depth
      */
-    protected function getPathDepth($path) :int
+    protected function setRemainingCount($path, int $depth = 1)
     {
-        if(!isset($path->children)) return 1;
-
-        $maxDepth = 2;
-        foreach ($path->children as $subPath) {
-            $subPathDepth = 3;
-            while (isset($subPath->children)) {
-                foreach ($subPath->children as $subSubPath) {
-                    if (isset($subSubPath->children)) {
-                        $subPathDepth ++;
-
-                        if ($subPathDepth > $maxDepth) {
-                            $maxDepth = $subPathDepth;
-                        }
-                    }
-                    $subPath = $subSubPath;
-                }
-            }
+        if ($this->remainingCount< $depth) {
+            $this->remainingCount= $depth;
         }
 
-        return $maxDepth;
+        if (isset($path->children)) {
+            foreach ($path->children as $subPath) {
+                $this->setRemainingCount($subPath, $depth + 1);
+            }
+        }
     }
 
     /**
-     *  Get remaining path from current step
+     *  Set remaining path from current step
      *
      * @param $path
-     * @return StdClass
      */
-    protected function getRemainingPath($path) :StdClass
+    protected function setRemainingPath($path)
     {
-        $remainingPath = $path;
-        if(!isset($path->children)) return $remainingPath;
-
-        foreach ($path->children as $subPath) {
-            while (isset($subPath->children)) {
-                foreach ($subPath->children as $subSubPath) {
-                    if (isset($subPath->isCurrent)) {
-                        $remainingPath = $subPath;
-                    }
-                    $subPath = $subSubPath;
-                }
-            }
+        if (isset($path->isCurrent)) {
+            $this->remainingPath = $path;
         }
 
-        return $remainingPath;
+        if (isset($path->children)) {
+            foreach($path->children as $subPath) {
+                $this->setRemainingPath($subPath);
+            }
+        }
+    }
+
+
+    /**å
+     * @param $path
+     * @return int
+     */
+    protected function getRemainingCount($path) :int
+    {
+        $this->remainingPath = $path;
+
+        $this->setRemainingPath($path);
+
+        $this->setRemainingCount($this->remainingPath);
+
+        return $this->remainingCount;
     }
 
     /**
@@ -259,7 +262,7 @@ class EvaluationToolSurveyProgress
     {
         $lastStep = $lastResult->survey_step;
 
-        if (isset($lastStep->result_based_step_id)) {
+        if (isset($lastStep->result_based_next_steps)) {
             $lastStep->resultByUuid = (new EvaluationToolSurveySurveyRunController)->getResultsByUuid($lastStep, $this->uuid)->result;
             $this->currentStepReminder =  (new EvaluationToolSurveySurveyRunController)->getResultBasedNextStep($lastStep)->id;
         } else {
