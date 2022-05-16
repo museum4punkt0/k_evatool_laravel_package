@@ -79,7 +79,7 @@ class EvaluationToolSurveyProgress
 
         $path->children = $this->followPath($firstStep->id, $survey, $results, $done, $remaining);
 
-        $remainingCount = $this->getRemainingCount($path);
+        $remainingCount = $this->getRemainingCount($path, $this->doneCount);
         $maxCount = $this->doneCount + $remainingCount;
 
         $response                    = new StdClass;
@@ -236,14 +236,13 @@ class EvaluationToolSurveyProgress
         }
     }
 
-
-    /**å
+    /**
      * @param $path
      * @return int
      */
-    protected function getRemainingCount($path) :int
+    protected function getRemainingCount($path, $doneCount) :int
     {
-        $this->remainingPath = $path;
+        if ($doneCount === 0) $this->remainingPath = $path;
 
         $this->setRemainingPath($path);
 
