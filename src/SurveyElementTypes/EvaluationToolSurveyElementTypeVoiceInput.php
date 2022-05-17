@@ -51,13 +51,13 @@ class EvaluationToolSurveyElementTypeVoiceInput extends EvaluationToolSurveyElem
     {
         return [
             "result_value.manual_text" => [
-                'sometimes',
+                'required_without:result_value.audio',
                 'string',
                 'min:1',
                 'max:1000',
             ],
             "result_value.audio"       => [
-                'sometimes',
+                'required_without:result_value.manual_text',
                 'string',
                 'starts_with:data:audio'
             ]
