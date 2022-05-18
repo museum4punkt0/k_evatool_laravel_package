@@ -56,11 +56,12 @@ class EvaluationToolInitialDataHelper
                 $settings              = new stdClass();
                 $settings->companyName = new StdClass();
                 $languages->each(function ($languageKey) use ($settings) {
-                    $settings->companyName->{$languageKey} = "Company name";
+                    $settings->companyName->{$languageKey} = "k:eva";
+                    $settings->pageTitle->{$languageKey} = "k:eva";
                 });
 
                 EvaluationToolSetting::create([
-                    'name'     => 'Default Configuration',
+                    'name'     => 'k:eva Standard-Konfiguration',
                     'default'  => true,
                     'settings' => $settings
                 ]);
