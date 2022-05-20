@@ -1,11 +1,3 @@
 # k:evatool laravel package
-## Production
-#### Install
-
-Copy / clone the package into ./packages/twoavy/evaluation-tool in the Laravel container app
-
-The run this in the Laravel container app
-```
-php composer.phar install
-php artisan migrate
-```
+## Usage and installation
+Please refer to the installation instructions in git@github.com:museum4punkt0/k_evatool_laravel_container_app.git
