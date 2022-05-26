@@ -27,7 +27,7 @@ class EvaluationToolInitialDataHelper
      */
     protected static function ensureLanguage(): void
     {
-        if(Schema::hasTable("evaluation_tool_survey_languages")) {
+        if (Schema::hasTable("evaluation_tool_survey_languages")) {
             if (!EvaluationToolSurveyLanguage::first()) {
                 EvaluationToolSurveyLanguage::create([
                     'code'      => 'de',
@@ -47,7 +47,7 @@ class EvaluationToolInitialDataHelper
      */
     protected static function ensureSetting(): void
     {
-        if(Schema::hasTable("evaluation_tool_settings")) {
+        if (Schema::hasTable("evaluation_tool_settings")) {
             if (!EvaluationToolSetting::first()) {
                 // get all languages
                 $languages = EvaluationToolSurveyLanguage::all()->pluck("code");
@@ -55,9 +55,10 @@ class EvaluationToolInitialDataHelper
                 // init settings
                 $settings              = new stdClass();
                 $settings->companyName = new StdClass();
+                $settings->pageTitle   = new StdClass();
                 $languages->each(function ($languageKey) use ($settings) {
                     $settings->companyName->{$languageKey} = "k:eva";
-                    $settings->pageTitle->{$languageKey} = "k:eva";
+                    $settings->pageTitle->{$languageKey}   = "k:eva";
                 });
 
                 EvaluationToolSetting::create([
