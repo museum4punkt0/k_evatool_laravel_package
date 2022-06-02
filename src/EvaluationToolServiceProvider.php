@@ -72,6 +72,12 @@ class EvaluationToolServiceProvider extends ServiceProvider
             'url'    => env('APP_URL') . "/evaluation-tool-settings-assets",
         ];
 
+        $this->app->config["filesystems.links"] = [
+            public_path('evaluation-tool-settings-assets') => storage_path('app/evaluation-tool/settings_assets'),
+            public_path('evaluation-tool-audio') => storage_path('app/evaluation-tool/audio'),
+            public_path('evaluation-tool') => storage_path('app/evaluation-tool/assets'),
+        ];
+
         // add tus server
         $this->app->singleton('tus-server', function () {
             $server = new TusServer('file');
