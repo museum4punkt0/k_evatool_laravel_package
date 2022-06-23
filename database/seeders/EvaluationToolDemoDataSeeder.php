@@ -7,7 +7,7 @@ use Twoavy\EvaluationTool\Models\EvaluationToolSetting;
 use Twoavy\EvaluationTool\Models\EvaluationToolSurvey;
 use Twoavy\EvaluationTool\Seeders\demo\EvaluationToolDemoSurveyAllElementTypes;
 use Twoavy\EvaluationTool\Seeders\demo\EvaluationToolDemoSurveyResultBased;
-use Twoavy\EvaluationTool\Seeders\Demo\EvaluationToolDemoSurveySimpleLinear;
+use Twoavy\EvaluationTool\Seeders\demo\EvaluationToolDemoSurveySimpleLinear;
 use Twoavy\EvaluationTool\Seeders\demo\EvaluationToolDemoSurveySimpleVideo;
 
 class EvaluationToolDemoDataSeeder extends Seeder
