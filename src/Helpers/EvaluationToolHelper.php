@@ -274,7 +274,9 @@ class EvaluationToolHelper
                 $nextSteps[]            = $resultBasedNextStepIds;
                 if (!empty($resultBasedNextStepIds)) {
                     foreach ($resultBasedNextStepIds as $basedNextStepId) {
-                        $nextSteps[] = self::getNextSteps(EvaluationToolSurveyStep::find($basedNextStepId));
+                        if (EvaluationToolSurveyStep::find($basedNextStepId)) {
+                            $nextSteps[] = self::getNextSteps(EvaluationToolSurveyStep::find($basedNextStepId));
+                        }
                     }
                 }
             }
@@ -310,11 +312,12 @@ class EvaluationToolHelper
         return $nextSteps;
     }
 
-    public static function arrayDepth($array) {
+    public static function arrayDepth($array)
+    {
         $max_indentation = 1;
 
         $array_str = print_r($array, true);
-        $lines = explode("\n", $array_str);
+        $lines     = explode("\n", $array_str);
 
         foreach ($lines as $line) {
             $indentation = (strlen($line) - strlen(ltrim($line))) / 4;
