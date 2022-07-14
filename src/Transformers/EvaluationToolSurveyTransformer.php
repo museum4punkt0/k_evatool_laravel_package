@@ -42,7 +42,7 @@ class EvaluationToolSurveyTransformer extends TransformerAbstract
             "updatedBy"              => $survey->updated_by_user ? $survey->updated_by_user->name : null,
             "deletedAt"              => (string)$survey->deleted_at,
             "deletedBy"              => $survey->deleted_by_user ? $survey->deleted_by_user->name : null,
-            "archived"               => $survey->archived,
+            "archived"               => (bool)$survey->archived,
             "archivedAt"             => $survey->archived_at,
             "links"                  => [
                 [
