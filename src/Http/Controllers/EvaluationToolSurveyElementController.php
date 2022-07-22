@@ -79,10 +79,11 @@ class EvaluationToolSurveyElementController extends Controller
      */
     public function destroy(EvaluationToolSurveyElement $surveyElement): JsonResponse
     {
-        // TODO: check condition
-        // if($surveyElement->survey_steps()->count() > 0) {
-        //     return $this->errorResponse("cannot be deleted, has survey steps", 409);
-        // }
+        if ($surveyElement->survey_steps()->count() > 0) {
+            return $this->errorResponse("cannot be deleted, has survey steps", 409);
+        }
+        
+        // Todo: Check for usages in timebased and result based steps
 
         $surveyElement->delete();
         return $this->showOne($surveyElement->refresh());
