@@ -9,6 +9,7 @@ use Twoavy\EvaluationTool\Console\Commands\SurveyElementAssets;
 use Twoavy\EvaluationTool\Console\Commands\TestCommand;
 use Twoavy\EvaluationTool\Console\Commands\TypesCommand;
 use Twoavy\EvaluationTool\Console\Commands\SeedSurveyResultsCommand;
+use Twoavy\EvaluationTool\Console\Commands\UserCreateAdmin;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolInitialDataHelper;
 use Twoavy\EvaluationTool\Models\EvaluationToolAsset;
 use Twoavy\EvaluationTool\Models\EvaluationToolSetting;
@@ -131,7 +132,8 @@ class EvaluationToolServiceProvider extends ServiceProvider
                 TestCommand::class,
                 TypesCommand::class,
                 SeedSurveyResultsCommand::class,
-                SurveyElementAssets::class
+                SurveyElementAssets::class,
+                UserCreateAdmin::class
             ]);
         }
     }
