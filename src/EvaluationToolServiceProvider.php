@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool;
 use TusPhp\Events\TusEvent;
 use TusPhp\Tus\Server as TusServer;
 use Illuminate\Support\ServiceProvider;
+use Twoavy\EvaluationTool\Console\Commands\ClearResultsCommand;
 use Twoavy\EvaluationTool\Console\Commands\SurveyElementAssets;
 use Twoavy\EvaluationTool\Console\Commands\TestCommand;
 use Twoavy\EvaluationTool\Console\Commands\TypesCommand;
@@ -133,7 +134,8 @@ class EvaluationToolServiceProvider extends ServiceProvider
                 TypesCommand::class,
                 SeedSurveyResultsCommand::class,
                 SurveyElementAssets::class,
-                UserCreateAdmin::class
+                UserCreateAdmin::class,
+                ClearResultsCommand::class
             ]);
         }
     }
