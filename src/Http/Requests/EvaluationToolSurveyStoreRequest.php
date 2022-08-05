@@ -5,6 +5,7 @@ namespace Twoavy\EvaluationTool\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Twoavy\EvaluationTool\Helpers\EvaluationToolHelper;
+use Twoavy\EvaluationTool\Rules\Slug;
 use Twoavy\EvaluationTool\Rules\SnakeCase;
 use Twoavy\EvaluationTool\Transformers\EvaluationToolSurveyTransformer;
 
@@ -34,7 +35,7 @@ class EvaluationToolSurveyStoreRequest extends FormRequest
     {
         return [
             "name"               => "required|min:3|max:100",
-            "slug"               => ["min:3", "max:100", new SnakeCase()],
+            "slug"               => ["min:3", "max:100", new Slug()],
             "single_step_access" => "boolean",
             "description"        => "max:500",
             "published"          => "boolean",
