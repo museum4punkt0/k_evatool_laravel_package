@@ -37,7 +37,7 @@ class UserCreateAdmin extends Command
      *
      * @return bool|int
      */
-    public function handle(): bool|int
+    public function handle()
     {
         $email    = $this->ask('What is your email?', env('ADMIN_EMAIL'));
         $name     = $this->ask('What is your name?', env('ADMIN_NAME'));
